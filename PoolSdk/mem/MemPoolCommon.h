@@ -298,7 +298,7 @@ inline void* SystemAlloc(size_t size)
 	void* ptr = VirtualAlloc(0, size << PAGE_SHIFT, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 #else
 	//linux brk
-	void* ptr = Mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, 0, 0);
+	void* ptr = mmap(NULL, size << PAGE_SHIFT, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
 #endif
 	if (ptr == nullptr) throw std::bad_alloc();
 	return ptr;
