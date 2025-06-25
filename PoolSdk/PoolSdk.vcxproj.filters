@@ -25,6 +25,12 @@
     <Filter Include="源文件\thread">
       <UniqueIdentifier>{1291ffac-4b73-4e8b-b2d4-7d2663390f3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\LoadBalancer">
+      <UniqueIdentifier>{77b1945e-b6ac-4d23-96ef-78aeb28b88c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\LoadBalancer">
+      <UniqueIdentifier>{bf1a2998-b9dd-4f85-9934-ec4e30c83366}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PoolSdk.cpp">
@@ -38,6 +44,9 @@
     </ClCompile>
     <ClCompile Include="thread\AdvancedThreadPool.cpp">
       <Filter>源文件\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadBalancer\LoadBalancer.cpp">
+      <Filter>源文件\LoadBalancer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -58,6 +67,12 @@
     </ClInclude>
     <ClInclude Include="thread\AdvancedThreadPool.h">
       <Filter>头文件\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadBalancer\LoadBalancer.h">
+      <Filter>头文件\LoadBalancer</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadBalancer\LoadBalancerFactory.h">
+      <Filter>头文件\LoadBalancer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

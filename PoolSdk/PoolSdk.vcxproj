@@ -139,12 +139,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="LoadBalancer\LoadBalancer.cpp" />
     <ClCompile Include="mem\CentralCache.cpp" />
     <ClCompile Include="mem\ConcurrentMem.cpp" />
     <ClCompile Include="PoolSdk.cpp" />
     <ClCompile Include="thread\AdvancedThreadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LoadBalancer\LoadBalancer.h" />
+    <ClInclude Include="LoadBalancer\LoadBalancerFactory.h" />
     <ClInclude Include="mem\ConcurrentMem.h" />
     <ClInclude Include="mem\ThreadCache.h" />
     <ClInclude Include="mem\MemPoolCommon.h" />
