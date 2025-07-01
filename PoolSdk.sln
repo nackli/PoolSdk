@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.36107.64
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PoolSdk", "PoolSdk\PoolSdk.vcxproj", "{4E23AB5A-85AE-406C-A541-EFDDAC9D2CB8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libSdk", "libSdk\libSdk.vcxproj", "{7204008F-3C7E-4A2D-ABAD-1F43C7DB1035}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{4E23AB5A-85AE-406C-A541-EFDDAC9D2CB8}.Release|x64.Build.0 = Release|x64
 		{4E23AB5A-85AE-406C-A541-EFDDAC9D2CB8}.Release|x86.ActiveCfg = Release|Win32
 		{4E23AB5A-85AE-406C-A541-EFDDAC9D2CB8}.Release|x86.Build.0 = Release|Win32
+		{7204008F-3C7E-4A2D-ABAD-1F43C7DB1035}.Debug|x64.ActiveCfg = Debug|x64
+		{7204008F-3C7E-4A2D-ABAD-1F43C7DB1035}.Debug|x64.Build.0 = Debug|x64
+		{7204008F-3C7E-4A2D-ABAD-1F43C7DB1035}.Debug|x86.ActiveCfg = Debug|Win32
+		{7204008F-3C7E-4A2D-ABAD-1F43C7DB1035}.Debug|x86.Build.0 = Debug|Win32
+		{7204008F-3C7E-4A2D-ABAD-1F43C7DB1035}.Release|x64.ActiveCfg = Release|x64
+		{7204008F-3C7E-4A2D-ABAD-1F43C7DB1035}.Release|x64.Build.0 = Release|x64
+		{7204008F-3C7E-4A2D-ABAD-1F43C7DB1035}.Release|x86.ActiveCfg = Release|Win32
+		{7204008F-3C7E-4A2D-ABAD-1F43C7DB1035}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

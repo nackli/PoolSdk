@@ -13,66 +13,10 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\mem">
-      <UniqueIdentifier>{606aed57-50e4-4539-8029-71e2241f13ea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="头文件\thread">
-      <UniqueIdentifier>{f5c33d98-c5e5-440b-a0ba-86870ccea4e2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\mem">
-      <UniqueIdentifier>{ae920ca5-55bf-4a22-855d-de06c2ff64c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\thread">
-      <UniqueIdentifier>{1291ffac-4b73-4e8b-b2d4-7d2663390f3c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="头文件\LoadBalancer">
-      <UniqueIdentifier>{77b1945e-b6ac-4d23-96ef-78aeb28b88c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\LoadBalancer">
-      <UniqueIdentifier>{bf1a2998-b9dd-4f85-9934-ec4e30c83366}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PoolSdk.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="mem\ConcurrentMem.cpp">
-      <Filter>源文件\mem</Filter>
-    </ClCompile>
-    <ClCompile Include="mem\CentralCache.cpp">
-      <Filter>源文件\mem</Filter>
-    </ClCompile>
-    <ClCompile Include="thread\AdvancedThreadPool.cpp">
-      <Filter>源文件\thread</Filter>
-    </ClCompile>
-    <ClCompile Include="LoadBalancer\LoadBalancer.cpp">
-      <Filter>源文件\LoadBalancer</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="mem\PageMap.h">
-      <Filter>头文件\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="mem\ObjectMemPool.h">
-      <Filter>头文件\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="mem\MemPoolCommon.h">
-      <Filter>头文件\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="mem\ThreadCache.h">
-      <Filter>头文件\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="mem\ConcurrentMem.h">
-      <Filter>头文件\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="thread\AdvancedThreadPool.h">
-      <Filter>头文件\thread</Filter>
-    </ClInclude>
-    <ClInclude Include="LoadBalancer\LoadBalancer.h">
-      <Filter>头文件\LoadBalancer</Filter>
-    </ClInclude>
-    <ClInclude Include="LoadBalancer\LoadBalancerFactory.h">
-      <Filter>头文件\LoadBalancer</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

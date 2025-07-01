@@ -30,9 +30,15 @@ private:
 	FreeList _freeLists[FREELISTS_NUM];
 
 };
-
+#ifdef _WIN32
+#define THREAD_LOCAL static __declspec(thread)
+#elif defined(__GNUC__) || defined(__clang__)
+#define THREAD_LOCAL static __thread
+#else
+#define THREAD_LOCAL 
+#endif
 //thread local storage技术(TLS) 虽然声明是全局静态变量，但是能够保证每个进程只有一份 
-static __declspec(thread) ThreadCache* pTLSThreadCache = nullptr;
+THREAD_LOCAL ThreadCache* pTLSThreadCache = nullptr;
 
 
 class CentralCache {

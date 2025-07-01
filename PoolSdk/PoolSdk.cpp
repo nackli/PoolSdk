@@ -7,32 +7,64 @@
 #include <string>
 #include "mem/Pool_Test.h"
 #include "thread/AdvancedThreadPool.h"
-
+#include "Common/FileLogger.h"
+#include "Common/LockFreeCircularQue.h"
+#include "Common/CircularQueue.h"
+#include "Common/pipe.h"
+#pragma comment(lib,"libSdk.lib")
 int main()
 {
+    FileLogger::getInstance().initLog("./logCfg.cfg");
     AdvancedThreadPool pool(2, 4);
+    PIPE_HANDLE hPipe[OPT_MAX];
 
+    hPipe[OPT_WRITE] = createNamePipe("\\\\.\\pipe\\Test");
+
+    hPipe[OPT_READ] = createNamePipe("\\\\.\\pipe\\Test");
     auto high_priority_task = pool.enqueue(
         AdvancedThreadPool::Priority::Normal,
-        [&pool]() {
+        [&pool, hPipe]() {
             while (1)
             {
                 auto threadId = std::this_thread::get_id();
-                std::cout << " High priority task running " << threadId << std::endl;
+                const char* szTestPipe = "hello nack";
+                writePipe(hPipe[OPT_WRITE], szTestPipe,strlen(szTestPipe));
+                LOG_DEBUG("High priority task running %d writePipe=%s", threadId, szTestPipe);
+                //std::cout << " High priority task running " << threadId << std::endl;
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));;
             }
 
         }
     );
 
+    auto high_priority_taskT = pool.enqueue(
+        AdvancedThreadPool::Priority::Normal,
+        [&pool, hPipe]() {
+            while (1)
+            {
+                auto threadId = std::this_thread::get_id();
+                char szData[256] = { 0 };
+                readPipe(hPipe[OPT_READ], szData, sizeof(szData));
+                LOG_DEBUG("High priority task running %d readPipe=%s", threadId, szData);
+                //std::cout << " High priority task running " << threadId << std::endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));;
+            }
 
-    size_t n = 100;
-    cout << "==========================================================" << endl;
-    BenchmarkConcurrentMalloc(n, 100,100);
-    cout << endl << endl;
+        }
+    );
 
-    BenchmarkMalloc(n, 100, 100);
-    cout << "==========================================================" << endl;
+    while (1)
+    {
+        size_t n = 1000;
+        cout << "==========================================================" << endl;
+        BenchmarkConcurrentMalloc(n, 100, 100);
+        cout << endl << endl;
+
+        BenchmarkMalloc(n, 100, 100);
+        cout << "==========================================================" << endl;
+    }
+
+
     system("pause");
     std::cout << "Hello World!\n";
 }

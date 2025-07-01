@@ -3,8 +3,8 @@
 #include <iostream>
 #include <vector>
 #include <thread>
-#include "mem/ConcurrentMem.h"
-#include "Common/FileLogger.h"
+#include "../mem/ConcurrentMem.h"
+#include "../Common/FileLogger.h"
 using namespace std;
 // ntimes 一轮申请和释放内存的次数
 // rounds 轮次

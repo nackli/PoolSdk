@@ -1,4 +1,4 @@
-// 负载均衡器工厂
+﻿// 负载均衡器工厂
 class LoadBalancerFactory {
 public:
     enum class Type {
