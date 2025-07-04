@@ -21,17 +21,19 @@
 #include <dirent.h>
 #endif
 enum LogLevel{
-    EM_LOG_DEBUG = 0,
+    EM_LOG_TRACE = 0,
+    EM_LOG_DEBUG,
     EM_LOG_INFO,
     EM_LOG_WARNING,
     EM_LOG_ERROR,
     EM_LOG_FATAL
 };
-
+#define LOG_TRACE(format, ...)   FileLogger::getInstance().log(EM_LOG_TRACE,__func__, format, ##__VA_ARGS__)
 #define LOG_DEBUG(format, ...)   FileLogger::getInstance().log(EM_LOG_DEBUG,__func__, format, ##__VA_ARGS__)
 #define LOG_INFO(format, ...)    FileLogger::getInstance().log(EM_LOG_INFO,__func__, format, ##__VA_ARGS__)
 #define LOG_WARNING(format, ...) FileLogger::getInstance().log(EM_LOG_WARNING,__func__, format, ##__VA_ARGS__)
 #define LOG_ERROR(format, ...)   FileLogger::getInstance().log(EM_LOG_ERROR,__func__, format, ##__VA_ARGS__)
+#define LOG_FATAL(format, ...)   FileLogger::getInstance().log(EM_LOG_FATAL,__func__, format, ##__VA_ARGS__)
 
 using namespace std;
 class FileLogger {
@@ -83,10 +85,12 @@ private:
         // 日志级别字符串
         const char* strLevel = nullptr;
         switch (emLevel) {
+        case EM_LOG_TRACE:   strLevel = "TRACE"; break;
         case EM_LOG_DEBUG:   strLevel = "DEBUG"; break;
         case EM_LOG_INFO:    strLevel = "INFO ";  break;
         case EM_LOG_WARNING: strLevel = "WARN ";  break;
         case EM_LOG_ERROR:   strLevel = "ERROR"; break;
+        case EM_LOG_FATAL:   strLevel = "FATAL"; break;
         }
         uint32_t uThreadId = GetCurrentThreadId();
         // 组合完整日志行

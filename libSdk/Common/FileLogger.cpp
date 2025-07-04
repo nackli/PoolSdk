@@ -102,6 +102,7 @@ static std::map<std::string, std::string> parseConfig(const std::string& path)
 
 static LogLevel stringToLevel(const std::string& strLevel) {
     static std::map<std::string, LogLevel> levelMap = {
+        {"TRACE", LogLevel::EM_LOG_TRACE},
         {"DEBUG", LogLevel::EM_LOG_DEBUG},
         {"INFO", LogLevel::EM_LOG_INFO},
         {"WARNING", LogLevel::EM_LOG_WARNING},
