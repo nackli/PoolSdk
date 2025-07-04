@@ -50,9 +50,7 @@ public:
 		begin = _freeList;
 		void* cur = _freeList;
 		for (size_t i = 1; i < n; i++)
-		{
 			cur = NextObj(cur);
-		}
 		end = cur;
 		NextObj(end) = nullptr;
 		_freeList = NextObj(cur);
@@ -300,7 +298,12 @@ inline void* SystemAlloc(size_t size)
 	//linux brk
 	void* ptr = mmap(NULL, size << PAGE_SHIFT, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
 #endif
-	if (ptr == nullptr) throw std::bad_alloc();
+	if (ptr == nullptr)
+	{
+		printf("last error = %d", ::GetLastError());
+		throw std::bad_alloc();
+	}
+
 	return ptr;
 }
 

@@ -7,7 +7,7 @@ Copyright (c) 2024. All Rights Reserved.
 #include <stdio.h>
 #include <map>
 #include <set>
-
+#define FILE_CLOSE(x)					if((x)){if(!fclose((x)))(x) = nullptr;}
 FileLogger FileLogger::m_sFileLogger;
 
 static void memory_dump(const void* ptr, unsigned int len)
@@ -118,7 +118,7 @@ FileLogger& FileLogger::getInstance() {
 }
 
 void FileLogger::setLogLevel(LogLevel level) {
-//    std::lock_guard<std::mutex> lock(m_Mutex);
+    std::lock_guard<std::mutex> lock(m_Mutex);
     m_emLogLevel = level;
 }
 
@@ -153,8 +153,9 @@ void FileLogger::setLogFileName(const std::string& strFileName)
     }
 }
 
-FileLogger::FileLogger( const string& strBase, size_t maxSize, int maxFiles, LogLevel level)
+FileLogger::FileLogger(const string& strBase, size_t maxSize, int maxFiles, LogLevel level)
     : m_strBaseName(strBase),
+    n_hFile(nullptr),
     m_iMaxSize(maxSize),
     m_iMaxFiles(maxFiles),
     m_iCurrentSize(0),
@@ -164,9 +165,9 @@ FileLogger::FileLogger( const string& strBase, size_t maxSize, int maxFiles, Log
 
 FileLogger::~FileLogger() 
 {
-    if (m_fileStream.is_open()) 
-        m_fileStream.close();
-   
+    //if (m_fileStream.is_open()) 
+    //    m_fileStream.close();
+    FILE_CLOSE(n_hFile);
 }
 
 void FileLogger::parseFileNameComponents() 
@@ -214,36 +215,46 @@ std::string FileLogger::stringFormat(const char* format, ...) {
 void FileLogger::writeToFile(const std::string& strMsg) 
 {
     size_t iMsgSize = strMsg.size();
-    if (!m_fileStream.is_open())
+    if (n_hFile == nullptr)
         openCurrentFile();
 
     if (m_iCurrentSize + iMsgSize > m_iMaxSize)
         rotateFiles();
-  
 
-    m_fileStream << strMsg;
+    if (n_hFile)
+    {
+        fwrite(strMsg.c_str(), strMsg.length(), 1, n_hFile);
+        //fflush(n_hFile);
+    }
+    //m_fileStream << strMsg;
     m_iCurrentSize += iMsgSize;
-    m_fileStream.flush();
+    
+//    m_fileStream.flush();
 }
 
 void FileLogger::openCurrentFile() {
-    if (m_fileStream.is_open())
-        m_fileStream.close();
+    FILE_CLOSE(n_hFile);
+    //if (m_fileStream.is_open())
+    //    m_fileStream.close();
 
     OnCreateDirFromFilePath(m_strBaseName);
     m_strCurrentFile = generateFileName(m_iCurrentIndex);
-    m_fileStream.open(m_strCurrentFile, std::ios::out | std::ios::app);
-    if (!m_fileStream.is_open()) {
-        throw std::runtime_error("Cannot open log file: " + m_strCurrentFile);
-    }
+    n_hFile = fopen(m_strCurrentFile.c_str(), "w");
+    //m_fileStream.open(m_strCurrentFile, std::ios::out | std::ios::app);
+    //if (!m_fileStream.is_open()) {
+    //    throw std::runtime_error("Cannot open log file: " + m_strCurrentFile);
+    //}
 
     // 获取当前文件大小
-    m_fileStream.seekp(0, std::ios::end);
-    m_iCurrentSize = static_cast<size_t>(m_fileStream.tellp());
+    //m_fileStream.seekp(0, std::ios::end);
+    //m_iCurrentSize = static_cast<size_t>(m_fileStream.tellp());
+    fseek(n_hFile, 0, SEEK_END);
+    m_iCurrentSize = ftell(n_hFile);
 }
 
 void FileLogger::rotateFiles() {
-    m_fileStream.close();
+    //m_fileStream.close();
+    FILE_CLOSE(n_hFile);
     m_iCurrentIndex++;
     m_iCurrentIndex = m_iCurrentIndex % 5000;
     openCurrentFile();

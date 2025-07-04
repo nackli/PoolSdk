@@ -46,7 +46,7 @@ public:
         if (emLevel < m_emLogLevel)
             return;
 
-        //std::lock_guard<std::mutex> lock(m_Mutex);
+        std::lock_guard<std::mutex> lock(m_Mutex);
 
         try {
             std::string strFormatted = formatMessage(emLevel, szFun, format, args...);
@@ -111,7 +111,8 @@ private:
     std::string generateFileName(int index) const;
 private:
     static FileLogger m_sFileLogger;
-    std::ofstream m_fileStream;
+    FILE* n_hFile;
+  //  std::ofstream m_fileStream;
     std::string m_strBaseName;
     std::string m_strFilePrefix;
     std::string m_strFileExt;
@@ -121,6 +122,6 @@ private:
     size_t m_iCurrentSize;
     LogLevel m_emLogLevel;
     int m_iCurrentIndex;
- //   std::mutex m_Mutex;
+    std::mutex m_Mutex;
 };
 #endif

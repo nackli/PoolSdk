@@ -66,7 +66,8 @@ int system_symbol_resolve(void* address, char* line, int size)
 
 static int system_thread_stack_walk(HANDLE hProcess, HANDLE hThread, char* line, int size)
 {
-    int n;
+    int n = 0;
+#ifdef WIN64
     CONTEXT ctx;
     STACKFRAME frame;
 
@@ -90,7 +91,7 @@ static int system_thread_stack_walk(HANDLE hProcess, HANDLE hThread, char* line,
         if (n + 1 < size)
             line[n++] = '\n';
     }
-
+#endif
     return n;
 }
 

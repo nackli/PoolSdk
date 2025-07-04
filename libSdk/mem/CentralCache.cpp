@@ -13,18 +13,28 @@ void* ThreadCache::Allocate(size_t size)
 		size_t index = SizeClass::Index(size);
 		//如果桶上有小块内存则返回给用户
 		if (!_freeLists[index].Empty())
-		{
 			return _freeLists[index].PopFront();
-		}
-		//链表中没有空闲内存需要向CentralCache申请
-		else
-		{
+		else//链表中没有空闲内存需要向CentralCache申请
 			return FetchFromCentralCache(index, alignSize);
-		}
 	}
 	return CentralCache::GetInstance()->GetLargeMem(size);
 }
 
+ThreadCache::~ThreadCache()
+{
+	for (int i = 0; i < FREELISTS_NUM ; i++)//将线程资源层所有桶里的内存块都归还给中心资源层
+	{
+		if (!_freeLists[i].Empty())
+		{
+			void* ptr = _freeLists[i].PopFront();
+			PAGE_ID id = (PAGE_ID)ptr >> PAGE_SHIFT;
+			Span* span = PageCache::GetInstance()->MapObjToSpan(ptr);
+			size_t size = span->_objSize;
+
+			ListTooLong(_freeLists[i], size);
+		}
+	}
+}
 //从CentralCache中获取多个小块内存
 void* ThreadCache::FetchFromCentralCache(size_t index, size_t size)
 {
@@ -76,9 +86,7 @@ void ThreadCache::Deallocate(void* ptr)
 		//如果现在ThreadCache中自由链表空闲内存过多就将其打包释放给CentralCache
 		//此实现细节只考虑了自由链表过长的情况，还可以加上自由链表所含闲置内存达到一个阈值时触发
 		if (_freeLists[index].MaxSize() <= _freeLists[index].Size())
-		{
 			ListTooLong(_freeLists[index], size);
-		}
 	}
 	else
 		CentralCache::GetInstance()->ReleaseLargeMem(ptr);
@@ -98,7 +106,7 @@ size_t CentralCache::FetchRangeObj(void*& begin, void*& end, size_t batch, size_
 {
 	size_t index = SizeClass::Index(size);
 
-	_spanLists[index].Mutex().lock();
+	_spanLists[index].Lock();
 	Span* span = GetOneSpan(index, size);
 	assert(span);
 	assert(span->_freeList != nullptr);
@@ -119,7 +127,7 @@ size_t CentralCache::FetchRangeObj(void*& begin, void*& end, size_t batch, size_
 	end = cur;
 	span->_useCount += actualNum;
 
-	_spanLists[index].Mutex().unlock();
+	_spanLists[index].Unlock();
 	return actualNum;
 }
 
@@ -136,7 +144,7 @@ Span* CentralCache::GetOneSpan(size_t index, size_t size)
 		}
 		it = it->_next;
 	}
-	_spanLists[index].Mutex().unlock();
+	_spanLists[index].Unlock();
 	//走到这里说明没有空闲Span了，需要向PageCache要
 
 	PageCache::GetInstance()->Mutex()->lock();
@@ -162,7 +170,7 @@ Span* CentralCache::GetOneSpan(size_t index, size_t size)
 	}
 	NextObj(tail) = nullptr;
 	span->_objSize = size;
-	_spanLists[index].Mutex().lock();
+	_spanLists[index].Lock();
 	_spanLists[index].PushFront(span);
 	return span;
 }
@@ -195,7 +203,7 @@ void CentralCache::ReleaseLargeMem(void* ptr)
 void CentralCache::ReleaseListToSpans(void* begin, size_t size)
 {
 	size_t index = SizeClass::Index(size);
-	_spanLists[index].Mutex().lock();
+	_spanLists[index].Lock();
 	//将每块小内存通过映射找到其对应的span，并挂上去
 	while (begin != nullptr)
 	{
@@ -210,15 +218,15 @@ void CentralCache::ReleaseListToSpans(void* begin, size_t size)
 		if (span->_useCount == 0)
 		{
 			_spanLists[index].Erase(span);
-			_spanLists[index].Mutex().unlock();
+			_spanLists[index].Unlock();
 			PageCache::GetInstance()->Mutex()->lock();
 			PageCache::GetInstance()->ReleaseSpan(span);
 			PageCache::GetInstance()->Mutex()->unlock();
-			_spanLists[index].Mutex().lock();
+			_spanLists[index].Lock();
 
 		}
 	}
-	_spanLists[index].Mutex().unlock();
+	_spanLists[index].Unlock();
 }
 
 
@@ -229,8 +237,8 @@ Span* PageCache::NewSpan(size_t k)
 	if (k > KPAGE - 1)
 	{
 		void* ptr = SystemAlloc(k);
-		//Span* span = new Span;
-		Span* span = _spanPool.New();
+		Span* span = new Span;
+		//Span* span = _spanPool.New();
 
 		span->_pageId = (PAGE_ID)ptr >> PAGE_SHIFT;
 		span->_n = k;
@@ -262,7 +270,8 @@ Span* PageCache::NewSpan(size_t k)
 		if (!_pageLists[i].Empty())
 		{
 			Span* span = _pageLists[i].PopFront();
-			Span* newSpan = _spanPool.New();
+			Span* newSpan = new Span;
+			//Span* newSpan = _spanPool.New();
 			newSpan->_pageId = span->_pageId;
 			newSpan->_n = k;
 
@@ -292,7 +301,8 @@ Span* PageCache::NewSpan(size_t k)
 	//只要保证PAGE和系统页面是一样大小就行
 
 	void* ptr = SystemAlloc(KPAGE - 1);
-	Span* span = _spanPool.New();
+	Span* span = new Span;
+	//Span* span = _spanPool.New();
 	span->_pageId = (PAGE_ID)ptr >> PAGE_SHIFT;
 	span->_n = KPAGE - 1;
 	_pageLists[span->_n].PushFront(span);
@@ -328,7 +338,10 @@ void PageCache::ReleaseSpan(Span* span)
 
 		// 合并出超过128页的span没办法管理，不合并了
 		if (prevSpan->_n + span->_n > KPAGE - 1)
+		{
 			break;
+		}
+		
 
 		//合并逻辑
 		span->_pageId = prevSpan->_pageId;
@@ -336,7 +349,11 @@ void PageCache::ReleaseSpan(Span* span)
 
 		_pageLists[prevSpan->_n].Erase(prevSpan);
 		//delete prevSpan;
-		_spanPool.Delete(prevSpan);
+		//SystemFree((void*)(prevSpan->_pageId << PAGE_SHIFT));
+		delete prevSpan;
+		
+	
+		//_spanPool.Delete(prevSpan);
 	}
 
 	//将在此span页之后的相邻span合并 向后合并
@@ -362,8 +379,8 @@ void PageCache::ReleaseSpan(Span* span)
 
 		span->_n += nextSpan->_n;
 		_pageLists[nextSpan->_n].Erase(nextSpan);
-		//delete nextSpan;
-		_spanPool.Delete(nextSpan);
+		delete nextSpan;
+		//_spanPool.Delete(nextSpan);
 
 
 	}

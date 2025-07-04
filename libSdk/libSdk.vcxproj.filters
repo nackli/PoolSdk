@@ -54,6 +54,9 @@
     <ClCompile Include="Common\SystemBacktrace.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Common\FileFun.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="thread\AdvancedThreadPool.h">

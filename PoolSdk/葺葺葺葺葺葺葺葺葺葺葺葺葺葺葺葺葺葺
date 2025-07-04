@@ -1,0 +1,12 @@
+[2025-07-03 16:52:00] [DEBUG] [tid:08048] [operator ()] High priority task running 8048 writePipe=hello nack
+[2025-07-03 16:52:01] [DEBUG] [tid:26564] [operator ()] High priority task running 26564 readPipe=
+[2025-07-03 16:52:01] [DEBUG] [tid:08048] [operator ()] High priority task running 8048 writePipe=hello nack
+[2025-07-04 09:46:07] [DEBUG] [tid:16208] [operator ()] High priority task running 16208 readPipe=
+[2025-07-04 09:46:07] [DEBUG] [tid:12344] [operator ()] High priority task running 12344 writePipe=hello nack
+[2025-07-04 09:46:07] [DEBUG] [tid:12344] [operator ()] High priority task running 12344 writePipe=hello nack
+[2025-07-04 09:46:07] [DEBUG] [tid:16208] [operator ()] High priority task running 16208 readPipe=
+[2025-07-04 09:46:08] [DEBUG] [tid:12344] [operator ()] High priority task running 12344 writePipe=hello nack
+[2025-07-04 09:46:08] [DEBUG] [tid:16208] [operator ()] High priority task running 16208 readPipe=
+[2025-07-04 09:46:12] [DEBUG] [tid:12344] [operator ()] High priority task running 12344 writePipe=hello nack
+[2025-07-04 09:46:22] [DEBUG] [tid:16208] [operator ()] High priority task running 16208 readPipe=
+[2025-07-04 09:46:22] [DEBUG] [tid:12344] [operator ()] High priority task running 12344 writePipe=hello nack

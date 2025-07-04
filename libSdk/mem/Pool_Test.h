@@ -3,8 +3,8 @@
 #include <iostream>
 #include <vector>
 #include <thread>
-#include "../mem/ConcurrentMem.h"
 #include "../Common/FileLogger.h"
+#include "../mem/ConcurrentMem.h"
 using namespace std;
 // ntimes 一轮申请和释放内存的次数
 // rounds 轮次
@@ -70,7 +70,8 @@ void BenchmarkConcurrentMalloc(size_t ntimes, size_t nworks, size_t rounds)
 
     for (size_t k = 0; k < nworks; ++k)
     {
-        vthread[k] = std::thread([&]() {
+        vthread[k] = std::thread([&]() 
+         {
             std::vector<void*> v;
             v.reserve(ntimes);
 
@@ -95,7 +96,8 @@ void BenchmarkConcurrentMalloc(size_t ntimes, size_t nworks, size_t rounds)
                 malloc_costtime += (end1 - begin1);
                 free_costtime += (end2 - begin2);
             }
-            });
+            FreeThreadCache();
+         });
     }
 
     for (auto& t : vthread)

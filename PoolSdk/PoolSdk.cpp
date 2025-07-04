@@ -5,18 +5,47 @@
 #include <vector>
 #include <thread>
 #include <string>
-#include "mem/Pool_Test.h"
 #include "thread/AdvancedThreadPool.h"
 #include "Common/FileLogger.h"
 #include "Common/LockFreeCircularQue.h"
 #include "Common/CircularQueue.h"
 #include "Common/pipe.h"
 #pragma comment(lib,"libSdk.lib")
+
+//void* operator new(std::size_t szMem) {
+//    if (szMem == 0)
+//        szMem = 1;
+//    void* ptrData = ConcurrentAllocate(szMem);
+//    if (void* ptr = ConcurrentAllocate(szMem))
+//        return ptr;
+//    throw std::bad_alloc{};
+//    return nullptr;
+//}
+//
+//void* operator new[](size_t size) noexcept(false) {
+//    std::printf("call:%s %zu\n", __func__, size);
+//
+//    if (size == 0) {
+//        size = 1;
+//    }
+//    if (void* ptr = std::malloc(size)) {
+//        return ptr;
+//    }
+//    throw std::bad_alloc{};
+//}
+
+
+
 int main()
 {
+   // ConcurrentAllocate(100);
     FileLogger::getInstance().initLog("./logCfg.cfg");
     AdvancedThreadPool pool(2, 4);
     PIPE_HANDLE hPipe[OPT_MAX];
+
+
+    //auto p1 = new int64_t;
+    //auto p2 = new int64_t[12];
 
     hPipe[OPT_WRITE] = createNamePipe("\\\\.\\pipe\\Test");
 
@@ -57,14 +86,26 @@ int main()
     {
         size_t n = 1000;
         cout << "==========================================================" << endl;
-        BenchmarkConcurrentMalloc(n, 100, 100);
-        cout << endl << endl;
+        //std::vector<void*> v;
+        //for (size_t i = 0; i < n; i++)
+        //{
+        //    //v.push_back(ConcurrentAlloc(16));
+        //    v.push_back(ConcurrentAllocate((16 + i) % 8192 + 1));
+        //}
+        //size_t end1 = clock();
 
-        BenchmarkMalloc(n, 100, 100);
-        cout << "==========================================================" << endl;
+        //size_t begin2 = clock();
+        //for (size_t i = 0; i < n; i++)
+        //{
+        //    ConcurrentFree(v[i]);
+        //}
+        //cout << endl << endl;
+
+        BenchmarkConcurrentMalloc(n, 100, 100);
+        //cout << "==========================================================" << endl;
     }
 
-
+ //   BenchmarkConcurrentMalloc(1, 1, 1);
     system("pause");
     std::cout << "Hello World!\n";
 }

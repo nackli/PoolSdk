@@ -11,6 +11,7 @@
 // 管理多个连续页大块内存跨度结构
 class ThreadCache {
 public:
+	~ThreadCache();
 	//向thread cache申请内存
 	void* Allocate(size_t size);
 
@@ -138,7 +139,7 @@ private:
 	PageCache(const PageCache&) = delete;
 	PageCache& operator=(const PageCache&) = delete;
 	//使用定长内存池脱离New
-	ObjectMemPool<Span> _spanPool;
+	//ObjectMemPool<Span> _spanPool;
 
 	static PageCache _sInstPageCache;
 };
