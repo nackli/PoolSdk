@@ -80,7 +80,6 @@ static void OnCreateDirFromFilePath(const string strFilePath)
 
 static std::map<std::string, std::string> parseConfig(const std::string& path) 
 {
-
     std::map<std::string, std::string> config;
     if (path.empty())
         return config;
@@ -216,46 +215,44 @@ std::string FileLogger::stringFormat(const char* format, ...) {
 void FileLogger::writeToFile(const std::string& strMsg) 
 {
     size_t iMsgSize = strMsg.size();
+        
     if (n_hFile == nullptr)
+    {
+        std::lock_guard<std::mutex> lock(m_Mutex);
         openCurrentFile();
+    }         
 
     if (m_iCurrentSize + iMsgSize > m_iMaxSize)
+    {
+        std::lock_guard<std::mutex> lock(m_Mutex);
         rotateFiles();
+    }
 
     if (n_hFile)
     {
         fwrite(strMsg.c_str(), strMsg.length(), 1, n_hFile);
-        //fflush(n_hFile);
+        fflush(n_hFile);
+        m_iCurrentSize += iMsgSize;
     }
     //m_fileStream << strMsg;
-    m_iCurrentSize += iMsgSize;
+
     
 //    m_fileStream.flush();
 }
 
 void FileLogger::openCurrentFile() {
+    //std::lock_guard<std::mutex> lock(m_Mutex);
     FILE_CLOSE(n_hFile);
-    //if (m_fileStream.is_open())
-    //    m_fileStream.close();
-
     OnCreateDirFromFilePath(m_strBaseName);
     m_strCurrentFile = generateFileName(m_iCurrentIndex);
     n_hFile = fopen(m_strCurrentFile.c_str(), "w");
-    //m_fileStream.open(m_strCurrentFile, std::ios::out | std::ios::app);
-    //if (!m_fileStream.is_open()) {
-    //    throw std::runtime_error("Cannot open log file: " + m_strCurrentFile);
-    //}
 
-    // 获取当前文件大小
-    //m_fileStream.seekp(0, std::ios::end);
-    //m_iCurrentSize = static_cast<size_t>(m_fileStream.tellp());
     fseek(n_hFile, 0, SEEK_END);
     m_iCurrentSize = ftell(n_hFile);
 }
 
 void FileLogger::rotateFiles() {
-    //m_fileStream.close();
-    FILE_CLOSE(n_hFile);
+    //std::lock_guard<std::mutex> lock(m_Mutex);
     m_iCurrentIndex++;
     m_iCurrentIndex = m_iCurrentIndex % 5000;
     openCurrentFile();
@@ -281,7 +278,7 @@ void FileLogger::purgeOldFiles() {
     size_t iIndex = mapFilePath.size();
     for (auto item : mapFilePath)
     {
-        if (iIndex > m_iMaxFiles)
+        if (iIndex > (size_t)m_iMaxFiles)
         {
             if (DeleteFileA(item.second.c_str()) == 0)
                 perror(("Error removing old log: " + item.second).c_str());

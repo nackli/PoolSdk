@@ -47,10 +47,8 @@ public:
     {
         if (emLevel < m_emLogLevel)
             return;
-
-        std::lock_guard<std::mutex> lock(m_Mutex);
-
-        try {
+      
+        try {           
             std::string strFormatted = formatMessage(emLevel, szFun, format, args...);
 
             if (strFormatted[strFormatted.length() - 1] != '\n')
@@ -125,7 +123,7 @@ private:
     int m_iMaxFiles;
     size_t m_iCurrentSize;
     LogLevel m_emLogLevel;
-    int m_iCurrentIndex;
+    size_t m_iCurrentIndex;
     std::mutex m_Mutex;
 };
 #endif
