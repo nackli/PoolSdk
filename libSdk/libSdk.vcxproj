@@ -60,11 +60,7 @@
     <ClInclude Include="mem\PageMap.h" />
     <ClInclude Include="mem\Pool_Test.h" />
     <ClInclude Include="mem\ThreadCache.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="thread\AdvancedThreadPool.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="libSdk.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
