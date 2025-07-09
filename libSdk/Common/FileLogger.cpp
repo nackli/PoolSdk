@@ -214,17 +214,17 @@ std::string FileLogger::stringFormat(const char* format, ...) {
 
 void FileLogger::writeToFile(const std::string& strMsg) 
 {
+    std::lock_guard<std::mutex> lock(m_Mutex);
     size_t iMsgSize = strMsg.size();
         
     if (n_hFile == nullptr)
     {
-        std::lock_guard<std::mutex> lock(m_Mutex);
         openCurrentFile();
     }         
 
     if (m_iCurrentSize + iMsgSize > m_iMaxSize)
     {
-        std::lock_guard<std::mutex> lock(m_Mutex);
+  
         rotateFiles();
     }
 

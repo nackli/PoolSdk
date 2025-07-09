@@ -51,6 +51,7 @@
     <ClInclude Include="Common\RwLock.h" />
     <ClInclude Include="Common\StringUtils.h" />
     <ClInclude Include="Common\SystemBacktrace.h" />
+    <ClInclude Include="hashAlg.h" />
     <ClInclude Include="LoadBalancer\LoadBalancer.h" />
     <ClInclude Include="LoadBalancer\LoadBalancerFactory.h" />
     <ClInclude Include="mem\ConcurrentMem.h" />
@@ -59,7 +60,11 @@
     <ClInclude Include="mem\PageMap.h" />
     <ClInclude Include="mem\Pool_Test.h" />
     <ClInclude Include="mem\ThreadCache.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="thread\AdvancedThreadPool.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="libSdk.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

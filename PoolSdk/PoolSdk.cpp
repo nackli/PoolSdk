@@ -6,6 +6,7 @@
 #include <thread>
 #include <string>
 #include "thread/AdvancedThreadPool.h"
+#include "mem/Pool_Test.h"
 #include "Common/FileLogger.h"
 #include "Common/LockFreeCircularQue.h"
 #include "Common/CircularQueue.h"
@@ -102,6 +103,7 @@ int main()
         //cout << endl << endl;
 
         BenchmarkConcurrentMalloc(n, 100, 100);
+        //BenchmarkMalloc(n, 100, 100);
         //cout << "==========================================================" << endl;
     }
 

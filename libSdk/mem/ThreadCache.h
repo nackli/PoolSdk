@@ -39,7 +39,7 @@ private:
 #define THREAD_LOCAL 
 #endif
 //thread local storage技术(TLS) 虽然声明是全局静态变量，但是能够保证每个进程只有一份 
-THREAD_LOCAL ThreadCache* pTLSThreadCache = nullptr;
+THREAD_LOCAL ThreadCache m_TLSThreadCache;
 
 
 class CentralCache {

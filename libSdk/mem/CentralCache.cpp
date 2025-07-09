@@ -30,8 +30,8 @@ ThreadCache::~ThreadCache()
 			PAGE_ID id = (PAGE_ID)ptr >> PAGE_SHIFT;
 			Span* span = PageCache::GetInstance()->MapObjToSpan(ptr);
 			size_t size = span->_objSize;
-
-			ListTooLong(_freeLists[i], size);
+			CentralCache::GetInstance()->ReleaseListToSpans(ptr, size);
+			//ListTooLong(_freeLists[i], size);
 		}
 	}
 }

@@ -67,7 +67,7 @@ void BenchmarkConcurrentMalloc(size_t ntimes, size_t nworks, size_t rounds)
     std::vector<std::thread> vthread(nworks);
     std::atomic<size_t> malloc_costtime = 0;
     std::atomic<size_t> free_costtime = 0;
-
+    static const size_t MAX_BYTES = 512 * 1024;
     for (size_t k = 0; k < nworks; ++k)
     {
         vthread[k] = std::thread([&]() 
@@ -81,7 +81,7 @@ void BenchmarkConcurrentMalloc(size_t ntimes, size_t nworks, size_t rounds)
                 for (size_t i = 0; i < ntimes; i++)
                 {
                     //v.push_back(ConcurrentAlloc(16));
-                    v.push_back(ConcurrentAllocate((16 + i) % 8192 + 1));
+                    v.push_back(ConcurrentAllocate((rand() + i) % MAX_BYTES + 1));
                 }
                 size_t end1 = clock();
 
@@ -96,7 +96,6 @@ void BenchmarkConcurrentMalloc(size_t ntimes, size_t nworks, size_t rounds)
                 malloc_costtime += (end1 - begin1);
                 free_costtime += (end2 - begin2);
             }
-            FreeThreadCache();
          });
     }
 
