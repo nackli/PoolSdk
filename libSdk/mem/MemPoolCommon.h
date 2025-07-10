@@ -24,22 +24,22 @@ class FreeList {
 public:
 	void PushFront(void* obj)
 	{
-		NextObj(obj) = _freeList;
-		_freeList = obj;
+		NextObj(obj) = m_freeList;
+		m_freeList = obj;
 		_size++;
 	}
 
 	void PushRangeFront(void* begin, void* end, size_t n)
 	{
-		NextObj(end) = _freeList;
-		_freeList = begin;
+		NextObj(end) = m_freeList;
+		m_freeList = begin;
 		_size += n;
 	}
 
 	void* PopFront()
 	{
-		void* obj = _freeList;
-		_freeList = NextObj(_freeList);
+		void* obj = m_freeList;
+		m_freeList = NextObj(m_freeList);
 		_size--;
 		return obj;
 	}
@@ -47,13 +47,13 @@ public:
 	void PopRangeFront(void*& begin, void*& end, size_t n)
 	{
 		assert(n <= _size);
-		begin = _freeList;
-		void* cur = _freeList;
+		begin = m_freeList;
+		void* cur = m_freeList;
 		for (size_t i = 1; i < n; i++)
 			cur = NextObj(cur);
 		end = cur;
 		NextObj(end) = nullptr;
-		_freeList = NextObj(cur);
+		m_freeList = NextObj(cur);
 		_size -= n;
 	}
 
@@ -72,7 +72,7 @@ public:
 		return _size;
 	}
 private:
-	void* _freeList = nullptr;
+	void* m_freeList = nullptr;
 	size_t _maxSize = 1; //向centralcache申请内存次数，用于慢启动获取小块内存数
 	size_t _size = 0; //链表节点个数
 };
@@ -165,71 +165,71 @@ typedef uint32_t PAGE_ID;
 typedef uint64_t PAGE_ID;
 #endif
 struct Span {
-	PAGE_ID _pageId = 0;//页号
-	size_t _n = 0;//页数
-	Span* _next = nullptr;	//指向下一个Span
-	Span* _prev = nullptr;//指向前一个Span
-	void* _freeList = nullptr;//指向小对象单链表的第一个节点，串起一堆小对象
+	PAGE_ID m_pageId = 0;//页号
+	size_t m_nPageNum = 0;//页数
+	Span* m_next = nullptr;	//指向下一个Span
+	Span* m_prev = nullptr;//指向前一个Span
+	void* m_freeList = nullptr;//指向小对象单链表的第一个节点，串起一堆小对象
 	//----------------------------------------------------------
 	//这三个字段，在释放逻辑会详细讲解
-	size_t _objSize = 0;//所含每个小对象的大小	
-	size_t _useCount = 0;//已经被分配给thread cache的小对象个数
-	bool _isUse = true;//这个Span是否从page cache上取下
+	size_t m_nObjSize = 0;//所含每个小对象的大小	
+	size_t m_nUseCount = 0;//已经被分配给thread cache的小对象个数
+	bool m_isUse = true;//这个Span是否从page cache上取下
 };
 
 class SpanList {
 public:
 	SpanList() {
-		_head = new Span;
-		_head->_next = _head;
-		_head->_prev = _head;
+		m_headSpan = ::new Span;
+		m_headSpan->m_next = m_headSpan;
+		m_headSpan->m_prev = m_headSpan;
 	}
 
 	~SpanList()//释放链表的每个节点
 	{
-		Span* cur = _head->_next;
-		while (cur != _head)
+		Span* cur = m_headSpan->m_next;
+		while (cur != m_headSpan)
 		{
-			Span* next = cur->_next;
+			Span* next = cur->m_next;
 			delete cur;
 			cur = next;
 		}
-		delete _head;
-		_head = nullptr;
+		delete m_headSpan;
+		m_headSpan = nullptr;
 	}
 
 	Span* Begin()//返回的一个数据的指针
 	{
-		return _head->_next;
+		return m_headSpan->m_next;
 	}
 
 	Span* End()//最后一个的下一个指针
 	{
-		return _head;
+		return m_headSpan;
 	}
 
 	void Insert(Span* pos, Span* newSapn) {
 		assert(pos);
 		assert(newSapn);
 
-		Span* prev = pos->_prev;
+		Span* prev = pos->m_prev;
 
-		prev->_next = newSapn;
-		newSapn->_prev = prev;
+		prev->m_next = newSapn;
+		newSapn->m_prev = prev;
 
-		newSapn->_next = pos;
-		pos->_prev = newSapn;
+		newSapn->m_next = pos;
+		pos->m_prev = newSapn;
 	}
 
 	void Erase(Span* pos) {
 		assert(pos);
-		assert(pos != _head);
+		assert(pos != m_headSpan);
 
 		//不用释放空间
-		Span* prev = pos->_prev;
-		Span* next = pos->_next;
-		prev->_next = next;
-		next->_prev = prev;
+		Span* prev = pos->m_prev;
+		Span* next = pos->m_next;
+		prev->m_next = next;
+		next->m_prev = prev;
 	}
 
 	//尾插
@@ -244,15 +244,10 @@ public:
 		Insert(Begin(), newspan);
 	}
 
-
-	std::mutex &Mutex() {
-		return _mtx;
-	}
-
 	//尾删
 	Span* PopBack()//实际是将尾部位置的节点拿出来
 	{
-		Span* span = _head->_prev;
+		Span* span = m_headSpan->m_prev;
 		Erase(span);
 
 		return span;
@@ -261,7 +256,7 @@ public:
 	//头删
 	Span* PopFront()//实际是将头部位置节点拿出来
 	{
-		Span* span = _head->_next;
+		Span* span = m_headSpan->m_next;
 		Erase(span);
 
 		return span;
@@ -269,24 +264,24 @@ public:
 
 	void Lock()
 	{
-		_mtx.lock();
+		m_mtxSpan.lock();
 	}
 
 	void Unlock()
 	{
-		_mtx.unlock();
+		m_mtxSpan.unlock();
 	}
 
 	bool Empty()
 	{
-		return _head->_next == _head;
+		return m_headSpan->m_next == m_headSpan;
 	}
 private:
 	SpanList(const SpanList&) = delete;
 	SpanList& operator=(const SpanList&) = delete;
 
-	Span* _head;		//头节点
-	std::mutex _mtx;	//桶锁
+	Span* m_headSpan;		//头节点
+	std::mutex m_mtxSpan;	//桶锁
 };
 
 inline void* SystemAlloc(size_t size)

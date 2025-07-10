@@ -153,7 +153,7 @@ void FileLogger::setLogFileName(const std::string& strFileName)
     }
 }
 
-FileLogger::FileLogger(const string& strBase, size_t maxSize, int maxFiles, LogLevel level)
+FileLogger::FileLogger(const char* strBase, size_t maxSize, int maxFiles, LogLevel level)
     : m_strBaseName(strBase),
     n_hFile(nullptr),
     m_iMaxSize(maxSize),
@@ -245,7 +245,7 @@ void FileLogger::openCurrentFile() {
     FILE_CLOSE(n_hFile);
     OnCreateDirFromFilePath(m_strBaseName);
     m_strCurrentFile = generateFileName(m_iCurrentIndex);
-    n_hFile = fopen(m_strCurrentFile.c_str(), "w");
+    n_hFile = fopen(m_strCurrentFile.c_str(), "a");
 
     fseek(n_hFile, 0, SEEK_END);
     m_iCurrentSize = ftell(n_hFile);

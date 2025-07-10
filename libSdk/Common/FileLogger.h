@@ -60,7 +60,7 @@ public:
         }
     }
 private:
-    FileLogger(const string& strBase = "log.log",
+    FileLogger(const char *strBase = "log.log",
         size_t maxSize = 20 * 1024 * 1024,
         int maxFiles = 30,
         LogLevel level = EM_LOG_DEBUG);

@@ -28,7 +28,7 @@ public:
 
 	void ListTooLong(FreeList& list, size_t size);
 private:
-	FreeList _freeLists[FREELISTS_NUM];
+	FreeList m_freeLists[FREELISTS_NUM];
 
 };
 #ifdef _WIN32
@@ -65,15 +65,14 @@ public:
 
 	static CentralCache* GetInstance()
 	{
-		return &_sInst;
+		return &s_instCentralCache;
 	}
 private:
-	SpanList _spanLists[FREELISTS_NUM];
+	SpanList m_spanLists[FREELISTS_NUM];
 
-	static CentralCache _sInst;
+	static CentralCache s_instCentralCache;
 private:
-	CentralCache()
-	{}
+	CentralCache(){}
 	CentralCache(const CentralCache&) = delete;
 	CentralCache& operator=(const CentralCache&) = delete;
 };
@@ -82,7 +81,7 @@ class PageCache {
 public:
 	static PageCache* GetInstance()
 	{
-		return &_sInstPageCache;
+		return &s_InstPageCache;
 	}
 	//获取一个新的Span
 	Span* NewSpan(size_t kpages);
@@ -95,10 +94,10 @@ public:
 
 	std::mutex* Mutex()
 	{
-		return &_mtx;
+		return &m_mtx;
 	}
 private:
-	SpanList _pageLists[KPAGE];
+	SpanList m_pageLists[KPAGE];
 
 	//pageId索引得到Span
 	//std::unordered_map<PAGE_ID, Span*> _idSpanMap;
@@ -132,7 +131,7 @@ private:
 	TCMalloc_PageMap2<32 - PAGE_SHIFT> _idSpanMap;
 #endif
 #endif
-	std::mutex _mtx;
+	std::mutex m_mtx;
 
 private:
 	PageCache()	{}
@@ -141,6 +140,6 @@ private:
 	//使用定长内存池脱离New
 	//ObjectMemPool<Span> _spanPool;
 
-	static PageCache _sInstPageCache;
+	static PageCache s_InstPageCache;
 };
 

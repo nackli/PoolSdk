@@ -7,10 +7,10 @@ public:
 	T* New()
 	{
 		T* obj = nullptr;
-		if (_freeList != nullptr)
+		if (m_freeList != nullptr)
 		{
-			obj = (T*)_freeList;
-			_freeList = NextObj(_freeList);
+			obj = (T*)m_freeList;
+			m_freeList = NextObj(m_freeList);
 		}
 		else
 		{
@@ -28,19 +28,19 @@ public:
 			obj = (T*)_mem;
 			_mem += size;
 		}
-		new(obj)T;
+		::new(obj)T;
 		return obj;
 	}
 	void Delete(T* obj)
 	{
 		obj->~T();
-		NextObj(obj) = _freeList;
-		_freeList = obj;
+		NextObj(obj) = m_freeList;
+		m_freeList = obj;
 	}
 
 private:
 	char* _mem = nullptr;
 	size_t _remainSize = 0;
-	void* _freeList = nullptr;
+	void* m_freeList = nullptr;
 };
 

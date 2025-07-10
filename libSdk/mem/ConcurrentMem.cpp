@@ -3,6 +3,7 @@
 #endif
 #include "ThreadCache.h"
 #include "ConcurrentMem.h"
+
 void* ConcurrentAllocate(size_t size)
 {
 	return m_TLSThreadCache.Allocate(size);
@@ -16,12 +17,12 @@ void ConcurrentFree(void* ptr)
 }
 
 //
-//static void* operator new(size_t szMem)
+//void* operator new(size_t szMem,char emCold)
 //{
 //	if (szMem == 0)
 //		szMem = 1;
 //	if (void* ptr = ConcurrentAllocate(szMem))
 //		return ptr;
-//	//throw std::bad_alloc{};
+//	throw std::bad_alloc{};
 //	return nullptr;
 //}

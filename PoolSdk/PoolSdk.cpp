@@ -39,7 +39,8 @@
 
 int main()
 {
-   // ConcurrentAllocate(100);
+    ConcurrentAllocate(100);
+    void *ptr = new int;
     FileLogger::getInstance().initLog("./logCfg.cfg");
     AdvancedThreadPool pool(2, 4);
     PIPE_HANDLE hPipe[OPT_MAX];
