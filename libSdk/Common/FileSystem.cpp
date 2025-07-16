@@ -96,7 +96,7 @@ vector<string> FileSystem::getFilesInDirectory(const string& strFileDir, const c
 	if (strDir[strDir.length() - 1] != '/' && strDir[strDir.length() - 1] != '\\')
 		strDir += "\\";
 
-	strDir = strDir + "*" + szExt;;
+	strDir = strDir + "*" + szExt;
 	HANDLE hFind = FindFirstFileA(strDir.c_str(), &findData);
 
 	if (hFind == INVALID_HANDLE_VALUE) {

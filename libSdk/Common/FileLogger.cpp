@@ -113,6 +113,57 @@ static LogLevel stringToLevel(const std::string& strLevel) {
     return levelMap.at(strLev);
 }
 
+static int dir_list(const char* szDir, int (CallFunFileList)(void* param, const char* name, int isdir), void* param)
+{
+    int r;
+#if _WIN32
+    BOOL next;
+    HANDLE handle;
+    WIN32_FIND_DATAA data;
+    char pathext[MAX_PATH];
+
+    // dir with wildchar
+    r = snprintf(pathext, sizeof(pathext), "%s\\*", szDir);
+    if (r >= sizeof(pathext) || r < 1)
+        return -1;
+
+    handle = FindFirstFileA(pathext, &data);
+    if (handle == INVALID_HANDLE_VALUE)
+        return -1;
+
+    next = TRUE;
+    for (r = 0; 0 == r && next; next = FindNextFileA(handle, &data))
+    {
+        if (0 == strcmp(data.cFileName, ".") || 0 == strcmp(data.cFileName, ".."))
+            continue;
+
+        r = CallFunFileList(param, data.cFileName, (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? 1 : 0);
+    }
+
+    FindClose(handle);
+    return r;
+#else
+    DIR* dir;
+    struct dirent* p;
+
+    dir = opendir(path);
+    if (!dir)
+        return -(int)errno;
+
+    r = 0;
+    for (p = readdir(dir); p && 0 == r; p = readdir(dir))
+    {
+        if (0 == strcmp(p->d_name, ".") || 0 == strcmp(p->d_name, ".."))
+            continue;
+
+        r = CallFunFileList(param, p->d_name, DT_DIR == p->d_type ? 1 : 0);
+    }
+
+    closedir(dir);
+    return r;
+#endif
+}
+
 FileLogger& FileLogger::getInstance() {
     return m_sFileLogger;
 }
@@ -189,11 +240,7 @@ std::string FileLogger::stringFormat(const char* format, ...) {
     va_list args;
     va_start(args, format);
 
-    // 确定需要的缓冲区大小
-    va_list argsCopy;
-    va_copy(argsCopy, args);
-    int neededSize = vsnprintf(nullptr, 0, format, argsCopy) + 1;
-    va_end(argsCopy);
+    int neededSize = vsnprintf(nullptr, 0, format, args) + 1;
 
     if (neededSize <= 0) {
         va_end(args);
@@ -218,15 +265,10 @@ void FileLogger::writeToFile(const std::string& strMsg)
     size_t iMsgSize = strMsg.size();
         
     if (n_hFile == nullptr)
-    {
-        openCurrentFile();
-    }         
+        openCurrentFile();  
 
     if (m_iCurrentSize + iMsgSize > m_iMaxSize)
-    {
-  
         rotateFiles();
-    }
 
     if (n_hFile)
     {
@@ -234,10 +276,6 @@ void FileLogger::writeToFile(const std::string& strMsg)
         fflush(n_hFile);
         m_iCurrentSize += iMsgSize;
     }
-    //m_fileStream << strMsg;
-
-    
-//    m_fileStream.flush();
 }
 
 void FileLogger::openCurrentFile() {
@@ -275,6 +313,7 @@ void FileLogger::purgeOldFiles() {
         } while (FindNextFileA(hFind, &findData));
         FindClose(hFind);
     }
+
     size_t iIndex = mapFilePath.size();
     for (auto item : mapFilePath)
     {
@@ -288,6 +327,7 @@ void FileLogger::purgeOldFiles() {
             break;
     }
 }
+
 
 
 int FileLogger::findMaxFileIndex() {

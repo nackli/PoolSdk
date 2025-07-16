@@ -45,7 +45,7 @@ int main()
     AdvancedThreadPool pool(2, 4);
     PIPE_HANDLE hPipe[OPT_MAX];
 
-
+    LOG_DEBUG("High priority task running %d writePipe=%s");
     //auto p1 = new int64_t;
     //auto p2 = new int64_t[12];
 

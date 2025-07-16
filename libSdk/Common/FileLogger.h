@@ -15,10 +15,12 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#define localtime_r(t, tm) localtime_s(tm, t)
+#define getCurThreadtid() GetCurrentThreadId()
 #else
 #include <sys/stat.h>
 #include <dirent.h>
+#include <pthread.h>
+#define getCurThreadtid() pthread_self()
 #endif
 enum LogLevel{
     EM_LOG_TRACE = 0,
@@ -72,13 +74,18 @@ private:
         // 格式化消息内容
         std::string strContent = stringFormat(format, args...);
 
-        // 格式化时间戳
-        time_t nowTime = time(nullptr);
+        char szTimeBuf[32];
+#if defined(_WIN32)
+        SYSTEMTIME t;
+        GetLocalTime(&t);
+        snprintf(szTimeBuf, sizeof(szTimeBuf), "%04hu-%02hu-%02hu %02hu:%02hu:%02hu.%03hu", t.wYear, t.wMonth, t.wDay, t.wHour, t.wMinute, t.wSecond, t.wMilliseconds);
+#else
         struct tm t;
-        localtime_r(&nowTime, &t);
-
-        char szTimeBuf[64];
-        strftime(szTimeBuf, sizeof(szTimeBuf), "%Y-%m-%d %T", &t);
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+        localtime_r(&tv.tv_sec, &t);
+        snprintf(szTimeBuf, sizeof(szTimeBuf), "%04d-%02d-%02d %02d:%02d:%02d.%03d", (int)t.tm_year + 1900, (int)t.tm_mon + 1, (int)t.tm_mday, (int)t.tm_hour, (int)t.tm_min, (int)t.tm_sec, (int)(tv.tv_usec / 1000) % 1000);
+#endif
 
         // 日志级别字符串
         const char* strLevel = nullptr;
@@ -90,7 +97,7 @@ private:
         case EM_LOG_ERROR:   strLevel = "ERROR"; break;
         case EM_LOG_FATAL:   strLevel = "FATAL"; break;
         }
-        uint32_t uThreadId = GetCurrentThreadId();
+        uint32_t uThreadId = getCurThreadtid();
         // 组合完整日志行
         return stringFormat("[%s] [%s] [tid:%05d] [%s] %s", szTimeBuf, strLevel, uThreadId, szFun,  strContent.c_str());
     }

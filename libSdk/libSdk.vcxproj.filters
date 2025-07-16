@@ -57,6 +57,9 @@
     <ClCompile Include="Common\FileFun.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Common\SpinLock.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="thread\AdvancedThreadPool.h">
@@ -134,7 +137,13 @@
     <ClInclude Include="Common\FileFun.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="hashAlg.h">
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\hashAlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\SpinLock.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

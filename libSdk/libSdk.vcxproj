@@ -27,6 +27,7 @@
     <ClCompile Include="Common\FileSystem.cpp" />
     <ClCompile Include="Common\pipe.cpp" />
     <ClCompile Include="Common\RwLock.cpp" />
+    <ClCompile Include="Common\SpinLock.cpp" />
     <ClCompile Include="Common\StringUtils.cpp" />
     <ClCompile Include="Common\SystemBacktrace.cpp" />
     <ClCompile Include="LoadBalancer\LoadBalancer.cpp" />
@@ -43,15 +44,16 @@
     <ClInclude Include="Common\FileFun.h" />
     <ClInclude Include="Common\FileLogger.h" />
     <ClInclude Include="Common\FileSystem.h" />
+    <ClInclude Include="Common\hashAlg.h" />
     <ClInclude Include="Common\LockFreeCircularQue.h" />
     <ClInclude Include="Common\LockFreeStack.h" />
     <ClInclude Include="Common\MemBarrier.h" />
     <ClInclude Include="Common\mmap.h" />
     <ClInclude Include="Common\pipe.h" />
     <ClInclude Include="Common\RwLock.h" />
+    <ClInclude Include="Common\SpinLock.h" />
     <ClInclude Include="Common\StringUtils.h" />
     <ClInclude Include="Common\SystemBacktrace.h" />
-    <ClInclude Include="hashAlg.h" />
     <ClInclude Include="LoadBalancer\LoadBalancer.h" />
     <ClInclude Include="LoadBalancer\LoadBalancerFactory.h" />
     <ClInclude Include="mem\ConcurrentMem.h" />
@@ -60,6 +62,7 @@
     <ClInclude Include="mem\PageMap.h" />
     <ClInclude Include="mem\Pool_Test.h" />
     <ClInclude Include="mem\ThreadCache.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="thread\AdvancedThreadPool.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
