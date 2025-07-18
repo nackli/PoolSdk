@@ -1,4 +1,3 @@
-#pragma once
 #include "SpinLock.h"
 SpinLock::SpinLock()
 {
@@ -11,10 +10,10 @@ SpinLock::~SpinLock()
 void SpinLock::Lock()
 {
     while (m_flag.test_and_set(std::memory_order_acquire)) 
-        // Èç¹ûËøÒÑ±»Õ¼ÓÃ£¬Ôò×ÔÐý£¬µÈ´ýËø¿ÉÓÃ
-        std::this_thread::yield();  // ÈÃ³öCPUÊ±¼äÆ¬
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ±ï¿½Õ¼ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        std::this_thread::yield();  // ï¿½Ã³ï¿½CPUÊ±ï¿½ï¿½Æ¬
 }
 
 void SpinLock::Unlock() {
-    m_flag.clear(std::memory_order_release);  // ÊÍ·ÅËø
+    m_flag.clear(std::memory_order_release);  // ï¿½Í·ï¿½ï¿½ï¿½
 }

@@ -5,16 +5,18 @@ Copyright (c) 2024. All Rights Reserved.
 
 #include "FileSystem.h"
 #include <string>
+#ifdef _WIN32
 #include <Windows.h>
+#else
+#include <dirent.h>
+#include <sys/stat.h>
+#endif
 #include <algorithm>
+#include <cstring>
+#include <iostream>
 
-FileSystem::FileSystem() {
-}
-
-FileSystem::~FileSystem() {
-}
-
-std::string FileSystem::DosPathToNtPath(const std::string& strPath)
+#ifdef _WIN32	
+std::string DosPathToNtPath(const std::string& strPath)
 {
 	std::string strResultPath;
 	char szDriveStrings[MAX_PATH] = { 0 };
@@ -23,29 +25,29 @@ std::string FileSystem::DosPathToNtPath(const std::string& strPath)
 
 	do
 	{
-		// »ñÈ¡ÅÌ·ûÃûµ½»º³å
+		// ï¿½ï¿½È¡ï¿½Ì·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (!::GetLogicalDriveStringsA(_countof(szDriveStrings), szDriveStrings))
 			break;
 
-		// ±éÀúÅÌ·ûÃû
+		// ï¿½ï¿½ï¿½ï¿½ï¿½Ì·ï¿½ï¿½ï¿½
 		for (int i = 0; i < _countof(szDriveStrings); i += 4)
 		{
 			pDriveStr = &szDriveStrings[i];
 			pDriveStr[2] = ('\0');
 
-			// ²éÑ¯ÅÌ·û¶ÔÓ¦µÄDOSÉè±¸Ãû³Æ
+			// ï¿½ï¿½Ñ¯ï¿½Ì·ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½DOSï¿½è±¸ï¿½ï¿½ï¿½ï¿½
 			DWORD dwCch = ::QueryDosDeviceA(pDriveStr, szDosBuf, _countof(szDosBuf));
 			if (!dwCch)
 				break;
 
-			// ½áÎ²ÓĞ 2 ¸ö NULL, ¼õÈ¥ 2 »ñµÃ×Ö·û³¤¶È
+			// ï¿½ï¿½Î²ï¿½ï¿½ 2 ï¿½ï¿½ NULL, ï¿½ï¿½È¥ 2 ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½
 			if (dwCch >= 2)
 				dwCch -= 2;
 
 			if (strPath.size() < dwCch)
 				break;
 
-			// Â·¾¶Æ´½Ó
+			// Â·ï¿½ï¿½Æ´ï¿½ï¿½
 			if (('\\') == strPath[dwCch] && 0 == strncmp(strPath.c_str(), szDosBuf, dwCch))
 			{
 				strResultPath = pDriveStr;
@@ -55,13 +57,13 @@ std::string FileSystem::DosPathToNtPath(const std::string& strPath)
 		}
 
 	} while (false);
-
 	return strResultPath;
 }
 
-std::string FileSystem::NtPathToDosPath(const std::string& strPath)
+std::string NtPathToDosPath(const std::string& strPath)
 {
 	std::string strResultPath;
+
 	char szDosBuf[MAX_PATH] = { 0 };
 
 	do
@@ -69,11 +71,11 @@ std::string FileSystem::NtPathToDosPath(const std::string& strPath)
 		if (strPath.size() < 2)
 			break;
 
-		// ·Ç NT Â·¾¶Ôò²»´¦Àí
+		// ï¿½ï¿½ NT Â·ï¿½ï¿½ï¿½ò²»´ï¿½ï¿½ï¿½
 		if ((':') != strPath[1] || ('\\') == strPath[0])
 			break;
 
-		// ²éÑ¯ÅÌ·û¶ÔÓ¦µÄDOSÉè±¸Ãû³Æ
+		// ï¿½ï¿½Ñ¯ï¿½Ì·ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½DOSï¿½è±¸ï¿½ï¿½ï¿½ï¿½
 		if (!::QueryDosDeviceA(strPath.substr(0, 2).c_str(), szDosBuf, _countof(szDosBuf)))
 			break;
 
@@ -84,13 +86,15 @@ std::string FileSystem::NtPathToDosPath(const std::string& strPath)
 
 	return strResultPath;
 }
+#endif
 
-vector<string> FileSystem::getFilesInDirectory(const string& strFileDir, const char *szExt)
+vector<string> getFilesInDirectory(const string& strFileDir, const char *szExt)
 {
 	if (strFileDir.empty())
 		return std::vector<string>();
 
 	std::vector<string> files;
+#ifdef _WIN32	
 	WIN32_FIND_DATAA findData;
 	string strDir = strFileDir;
 	if (strDir[strDir.length() - 1] != '/' && strDir[strDir.length() - 1] != '\\')
@@ -127,27 +131,157 @@ vector<string> FileSystem::getFilesInDirectory(const string& strFileDir, const c
 	FindClose(hFind);
 	std::sort(files.begin(), files.end(),
 		[](const string& strLeft, const string& strRight) {return strLeft < strRight; });
+#else
+    //printf("ext length:%d\n",m_ext.length());
+ 
+    // æ‰“å¼€ç›®å½•, DIRæ˜¯ç±»ä¼¼ç›®å½•å¥æŸ„çš„ä¸œè¥¿
+    DIR *dir = opendir(strFileDir.c_str());
+    if ( dir == NULL )
+    {
+        printf("[ERROR] %s is not a directory or not exist!", strFileDir.c_str());
+        return std::vector<string>();
+    }
+ 
+    // direntä¼šå­˜å‚¨æ–‡ä»¶çš„å„ç§å±æ€§
+    struct dirent* d_ent = NULL;
+  
+    // ä¸€è¡Œä¸€è¡Œçš„è¯»ç›®å½•ä¸‹çš„ä¸œè¥¿,è¿™ä¸ªä¸œè¥¿çš„å±æ€§æ”¾åˆ°direntçš„å˜é‡ä¸­
+    while ( (d_ent = readdir(dir)) != NULL )
+    {
+        // å¿½ç•¥ "." å’Œ ".."
+        if ( (strcmp(d_ent->d_name, "..") != 0) && (strcmp(d_ent->d_name, ".") != 0) )
+        {
+            // d_typeå¯ä»¥çœ‹åˆ°å½“å‰çš„ä¸œè¥¿çš„ç±»å‹,DT_DIRä»£è¡¨å½“å‰éƒ½åˆ°çš„æ˜¯ç›®å½•,åœ¨usr/include/dirent.hä¸­å®šä¹‰çš„
+            if ( d_ent->d_type != DT_DIR)
+            {
+                string d_name(d_ent->d_name);
+                //printf("%s\n",d_ent->d_name);
+                if (strcmp(d_name.c_str () + d_name.length () - strlen(szExt), szExt) == 0)
+                {
+                    // æ„å»ºç»å¯¹è·¯å¾„
+					string strAbsolutePath;
+      				if (strFileDir[strFileDir.length()-1] == '/')
+                       strAbsolutePath = strFileDir + string(d_ent->d_name);  
+                    else
+                        strAbsolutePath = strFileDir + "/" + string(d_ent->d_name);        
+                    files.emplace_back(strAbsolutePath);
+                }
+            }
+        }
+    }
+    // sort the returned files
+    sort(files.begin(), files.end());
+ 
+    closedir(dir);		
+#endif		
 	return 	std::vector<string>(files.begin(), files.end());
 }
 
-bool FileSystem::IsDirectoryExists(const std::string& strDir)
+bool IsDirectoryExists(const std::string& strDir)
 {
 	if (strDir.empty())
 		return false;
-	DWORD dwAttrib = GetFileAttributesA(strDir.c_str());
-	return (dwAttrib != INVALID_FILE_ATTRIBUTES) && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY);
+#ifdef _WIN32     
+    DWORD attrib = GetFileAttributesA(path.c_str());
+    return (attrib != INVALID_FILE_ATTRIBUTES) && (attrib & FILE_ATTRIBUTE_DIRECTORY);
+#else
+    struct stat statbuf;
+    if (stat(strDir.c_str(), &statbuf) != 0) {
+        return false; // statè°ƒç”¨å¤±è´¥
+    }
+    return S_ISDIR(statbuf.st_mode);
+#endif    
 }
 
-bool FileSystem::IsFileExists(const string& strFilePath)
+bool IsFileExists(const string& strFilePath)
 {
 	if (strFilePath.empty())
 		return false;
-	DWORD dwAttrib = GetFileAttributesA(strFilePath.c_str());
-	return dwAttrib != INVALID_FILE_ATTRIBUTES;
+
+#ifdef _WIN32     
+    DWORD attrib = GetFileAttributesA(strFilePath.c_str());
+    return attrib != INVALID_FILE_ATTRIBUTES;
+#else
+    struct stat statbuf;
+    if (stat(strFilePath.c_str(), &statbuf) != 0) {
+        return false; // statè°ƒç”¨å¤±è´¥
+    }
+    return S_ISREG(statbuf.st_mode);
+#endif   		
 }
 
-bool FileSystem::createDirectoryRecursive(std::string& strDir)
+
+std::string getDirFromFilePath(const std::string& filepath) {
+    size_t pos = filepath.find_last_of("/\\");
+    if (pos != std::string::npos)
+        return filepath.substr(0, pos + 1);
+    return "";
+}
+
+
+static bool OnCreateDirectoryRecursive(std::string& path)
 {
+#ifdef _WIN32    
+    if (!path.empty() && (path.back() == '\\' || path.back() == '/'))
+        path.pop_back();
+
+    if (CreateDirectoryA(path.c_str(), nullptr))
+        return true;
+
+    DWORD error = GetLastError();
+    // Ä¿Â¼ï¿½Ñ´ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Îªï¿½Ä¼ï¿½ï¿½ï¿½
+    if (error == ERROR_ALREADY_EXISTS)
+    {
+        DWORD attrib = GetFileAttributesA(path.c_str());
+        return (attrib != INVALID_FILE_ATTRIBUTES) && (attrib & FILE_ATTRIBUTE_DIRECTORY);
+    }
+    // Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿Â¼
+    else if (error == ERROR_PATH_NOT_FOUND)
+    {
+        std::string parentPath = OnGetDirectory(path);
+        if (parentPath.empty())
+            return false; // ï¿½ï¿½Â·ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½ï¿½Ä¿Â¼ï¿½ï¿½
+
+        // ï¿½İ¹é´´ï¿½ï¿½ï¿½ï¿½Ä¿Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        if (OnCreateDirectoryRecursive(parentPath))
+            return CreateDirectoryA(path.c_str(), nullptr);
+    }
+    return false;
+ #else
+    std::string strSubPath;
+    size_t iPos = 0;
+
+    // å¤„ç†è·¯å¾„ä¸­çš„æ¯ä¸€å±‚
+    while ((iPos = path.find('/', iPos)) != std::string::npos) 
+    {
+        strSubPath = path.substr(0, iPos++);
+
+        if (strSubPath.empty())
+            continue; // å¿½ç•¥æ ¹è·¯å¾„ "/"
+
+        // æ£€æŸ¥ç›®å½•æ˜¯å¦å·²ç»å­˜åœ¨
+        if (mkdir(strSubPath.c_str(), 0755) && errno != EEXIST) 
+        {
+            std::cerr << "Error creating directory: " << strerror(errno) << std::endl;
+            return false;
+        }
+    }
+
+    // åˆ›å»ºæœ€åä¸€çº§ç›®å½•
+    if (mkdir(path.c_str(), 0755) && errno != EEXIST)
+    {
+        std::cerr << "Error creating directory: " << strerror(errno) << std::endl;
+        return false;
+    }
+    return true;
+ #endif   
+}
+
+
+
+bool createDirectoryRecursive(std::string& strDir)
+{
+#if 0	
 	if (!strDir.empty() && (strDir.back() == '\\' || strDir.back() == '/'))
 		strDir.pop_back();
 
@@ -155,27 +289,30 @@ bool FileSystem::createDirectoryRecursive(std::string& strDir)
 		return true;
 
 	DWORD error = GetLastError();
-	// Ä¿Â¼ÒÑ´æÔÚ£¬¼ì²éÊÇ·ñÎªÎÄ¼ş¼Ğ
+	// Ä¿Â¼ï¿½Ñ´ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Îªï¿½Ä¼ï¿½ï¿½ï¿½
 	if (error == ERROR_ALREADY_EXISTS)
 	{
 		DWORD attrib = GetFileAttributesA(strDir.c_str());
 		return (attrib != INVALID_FILE_ATTRIBUTES) && (attrib & FILE_ATTRIBUTE_DIRECTORY);
 	}
-	// Â·¾¶²»´æÔÚ£¬´´½¨¸¸Ä¿Â¼
+	// Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿Â¼
 	else if (error == ERROR_PATH_NOT_FOUND)
 	{
 		std::string strParentPath = getDirectory(strDir);
 		if (strParentPath.empty())
-			return false; // ¸¸Â·¾¶Îª¿Õ£¨Èç¸ùÄ¿Â¼£©
+			return false; // ï¿½ï¿½Â·ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½ï¿½Ä¿Â¼ï¿½ï¿½
 
-		// µİ¹é´´½¨¸¸Ä¿Â¼²¢ÖØÊÔ
+		// ï¿½İ¹é´´ï¿½ï¿½ï¿½ï¿½Ä¿Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (createDirectoryRecursive(strParentPath))
 			return CreateDirectoryA(strDir.c_str(), nullptr);
 	}
 	return false;
+#else
+	return OnCreateDirectoryRecursive(strDir);
+#endif	
 }
 
-string FileSystem::getDirectory(const string& strFilePath)
+string getDirectory(const string& strFilePath)
 {
 	if (strFilePath.empty())
 		return string();
@@ -185,7 +322,7 @@ string FileSystem::getDirectory(const string& strFilePath)
 	return "";
 }
 
-string FileSystem::getFileName(const string& strFilePath)
+string getFileName(const string& strFilePath)
 {
 	if (strFilePath.empty())
 		return string();
@@ -195,14 +332,14 @@ string FileSystem::getFileName(const string& strFilePath)
 	return "";
 }
 
-void FileSystem::createDirFromFilePath(const string &strFilePath)
+void createDirFromFilePath(const string &strFilePath)
 {
 	string strDirName = getDirectory(strFilePath);
 	if (!IsDirectoryExists(strDirName))
 		createDirectoryRecursive(strDirName);
 }
-
-HANDLE FileSystem::openOrCreateFile(const string& strFilePath, uint32_t uDesiredAccess, uint32_t uCreationDisposition,
+#ifdef _WIN32
+HANDLE openOrCreateFile(const string& strFilePath, uint32_t uDesiredAccess, uint32_t uCreationDisposition,
 	uint32_t uFlagsAndAttributes, uint32_t uShartMode)
 {
 	createDirFromFilePath(strFilePath);
@@ -210,7 +347,7 @@ HANDLE FileSystem::openOrCreateFile(const string& strFilePath, uint32_t uDesired
 		uCreationDisposition, uFlagsAndAttributes, NULL);
 }
 
-bool FileSystem::setFilePoint(HANDLE hFile, uint32_t uPoint, uint8_t uMoveMethod)
+bool setFilePoint(HANDLE hFile, uint32_t uPoint, uint8_t uMoveMethod)
 {
 	if (hFile == INVALID_HANDLE_VALUE)
 		return false;
@@ -218,28 +355,28 @@ bool FileSystem::setFilePoint(HANDLE hFile, uint32_t uPoint, uint8_t uMoveMethod
 	return true;
 }
 
-bool FileSystem::writeFile(HANDLE hFile, void* pData, uint32_t uSize)
+bool writeFile(HANDLE hFile, void* pData, uint32_t uSize)
 {
 	if (hFile == INVALID_HANDLE_VALUE)
 		return false;
 	return WriteFile(hFile, pData, uSize, nullptr, nullptr);
 }
 
-bool FileSystem::flushFile(HANDLE hFile)
+bool flushFile(HANDLE hFile)
 {
 	if (hFile == INVALID_HANDLE_VALUE)
 		return false;
 	return FlushFileBuffers(hFile);
 }
 
-bool FileSystem::closeFile(HANDLE hFile)
+bool closeFile(HANDLE hFile)
 {
 	if (hFile == INVALID_HANDLE_VALUE)
 		return false;
 	return CloseHandle(hFile);
 }
 
-bool FileSystem::readFile(HANDLE hFile, void* pData, uint32_t uSize)
+bool readFile(HANDLE hFile, void* pData, uint32_t uSize)
 {
 	if (hFile == INVALID_HANDLE_VALUE || !pData || !uSize)
 		return false;
@@ -248,36 +385,40 @@ bool FileSystem::readFile(HANDLE hFile, void* pData, uint32_t uSize)
 	return true;
 }
 
-bool FileSystem::delFile(const string& strFilePath)
+bool delFile(const string& strFilePath)
 {
 	if (strFilePath.empty())
 		return false;
 	return ::DeleteFileA(strFilePath.c_str());
 }
+#endif
 
-bool FileSystem::IsAbsolutePath(const std::string& strPath) 
+bool IsAbsolutePath(const std::string& strPath) 
 {
 #ifdef _WIN32
-	// WindowsÂß¼­£º¼ì²éÅÌ·ûÂ·¾¶»òUNCÂ·¾¶
+	// Windowsï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì·ï¿½Â·ï¿½ï¿½ï¿½ï¿½UNCÂ·ï¿½ï¿½
 	if (strPath.size() >= 3 && strPath[1] == ':' && (strPath[2] == '/' || strPath[2] == '\\'))
 		return true;
 	if (strPath.size() >= 2 && (strPath[0] == '\\' && strPath[1] == '\\') || (strPath[0] == '/' && strPath[1] == '/'))
 		return true;
 	return false;
 #else
-	// Linux/UnixÂß¼­£º¼ì²éÊÇ·ñÒÔ'/'¿ªÍ·
+	// Linux/Unixï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½'/'ï¿½ï¿½Í·
 	return !strPath.empty() && strPath[0] == '/';
 #endif
 }
 
-string FileSystem::relative2AbsolutePath(const std::string& strRelaPath)
+string relative2AbsolutePath(const std::string& strRelaPath)
 {
+	const uint16_t MAX_PATH = 256;
 	char szFullPath[MAX_PATH];
 #ifdef _WIN32
 	GetFullPathNameA(strRelaPath.c_str(), MAX_PATH, szFullPath, nullptr);
 	return std::string(szFullPath);
 #else
-	realpath(strRelaPath.c_str(), full_path);
+	if(!realpath(strRelaPath.c_str(), szFullPath))
+		std::cerr << "real path fun: " << strerror(errno) << std::endl;
 	return std::string(szFullPath);
 #endif
 }
+

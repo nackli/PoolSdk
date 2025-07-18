@@ -1,10 +1,12 @@
 #include "FileFun.h"
+#include <unistd.h>
 
 FHANDLE openDevice(const char* szName, int iFlags)
 {
+#ifdef _WIN32 
     if (!szName)
         return nullptr;
-#ifdef _WIN32
+
     DWORD dwFlag = GENERIC_READ;
     DWORD dwMode = OPEN_ALWAYS;
     if ((iFlags & ACCESS_WRITE) == ACCESS_WRITE)
@@ -46,8 +48,11 @@ FHANDLE openDevice(const char* szName, int iFlags)
         NULL);
     if (hFile == INVALID_HANDLE_VALUE)
         throw std::runtime_error("Failed to open device");
-#else
-    FHANDLE hFile = open(devicePath.c_str(), O_RDWR);
+#else    
+    if (!szName)
+        return -1;
+        
+    FHANDLE hFile = open(szName, O_RDWR);
     if (hFile == -1)
         throw std::runtime_error("Failed to open device");
 #endif
@@ -68,7 +73,7 @@ void closeDevice(FHANDLE &hFile)
 
 }
 
-// Ð´ÈëÊý¾Ý
+// Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 bool writeDevice(FHANDLE hWrite, const void* data, size_t size) {
     if (!data || hWrite == INVALID_HANDLE_VALUE)
         return false;
@@ -80,7 +85,7 @@ bool writeDevice(FHANDLE hWrite, const void* data, size_t size) {
 #endif
 }
 
-// ¶ÁÈ¡Êý¾Ý
+// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
 bool readDevice(FHANDLE hRead, void* buffer, size_t size) {
     if (!buffer || hRead == INVALID_HANDLE_VALUE)
         return false;
@@ -92,14 +97,14 @@ bool readDevice(FHANDLE hRead, void* buffer, size_t size) {
 #endif
 }
 
-// ¶ÁÈ¡Êý¾Ý
+// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
 bool seekDevice(FHANDLE hFile, size_t iPos, int iMoveMethod) {
     if (hFile == INVALID_HANDLE_VALUE)
         return false;
 #ifdef _WIN32
     return SetFilePointer(hFile, (long)iPos, nullptr, (DWORD)iMoveMethod) != INVALID_SET_FILE_POINTER;
 #else
-    return lseek(hRead, buffer, size) != -1;
+    return lseek(hFile, iPos, iMoveMethod) != -1;
 #endif
 }
 
@@ -124,15 +129,15 @@ int getFileSize(const char* szFileName)
 #ifdef _WIN32
     HANDLE fileHandle = openDevice(szFileName, ACCESS_READ | ACCESS_SHART);
     if (fileHandle == INVALID_HANDLE_VALUE) {
-        return -1;  // ·µ»Ø-1±íÊ¾»ñÈ¡ÎÄ¼þ´óÐ¡Ê§°Ü
+        return -1;  // ï¿½ï¿½ï¿½ï¿½-1ï¿½ï¿½Ê¾ï¿½ï¿½È¡ï¿½Ä¼ï¿½ï¿½ï¿½Ð¡Ê§ï¿½ï¿½
     }
     int fileSize = GetFileSize(fileHandle, NULL);
     closeDevice(fileHandle);
     return fileSize;
 #else
     struct stat st;
-    if (stat(fileName, &st) == -1) {
-        return -1;  // ·µ»Ø-1±íÊ¾»ñÈ¡ÎÄ¼þ´óÐ¡Ê§°Ü
+    if (stat(szFileName, &st) == -1) {
+        return -1;  // ï¿½ï¿½ï¿½ï¿½-1ï¿½ï¿½Ê¾ï¿½ï¿½È¡ï¿½Ä¼ï¿½ï¿½ï¿½Ð¡Ê§ï¿½ï¿½
     }
     return st.st_size;
 #endif

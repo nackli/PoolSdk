@@ -892,7 +892,7 @@ bool OnIsExistGBK(const std::string & strInPut)
 			continue;
 		}
 
-		// GBKË«×Ö½Ú×Ö·û·¶Î§¼ì²é
+		// GBKË«ï¿½Ö½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½Î§ï¿½ï¿½ï¿½
 		if (i + 1 >= strInPut.size())
 			return false;
 
@@ -906,9 +906,9 @@ bool OnIsExistGBK(const std::string & strInPut)
 			break;
 		}
 		else
-			return false; // ²»·ûºÏGBK±àÂë¹æÔò
+			return false; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GBKï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
-	return hasGBK; // Èç¹û·¢ÏÖGBK×Ö·û·µ»Øtrue
+	return hasGBK; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GBKï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½true
 }
 
 std::string GbkToUtf8(const std::string& str)
@@ -936,8 +936,7 @@ std::string GbkToUtf8(const std::string& str)
 #elif defined(__linux__) || defined(__GNUC__)
     size_t len = str.size() * 2 + 1;
     char* temp = new char[len];
-    if (EncodingConvert("gb2312", "utf-8", const_cast<char*>(str.c_str()), str.size(), temp, len)
-        > = 0)
+    if (EncodingConvert("gb2312", "utf-8", const_cast<char*>(str.c_str()), str.size(), temp, len)>=0)
     {
    
         std::string res;

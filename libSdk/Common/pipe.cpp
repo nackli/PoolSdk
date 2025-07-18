@@ -26,26 +26,26 @@ static bool OnIsValidPipeName(const std::string& strPipe)
         return false;
     }
 
-    // Ãû³Æ²¿·ÖÑéÖ¤
+    // ï¿½ï¿½ï¿½Æ²ï¿½ï¿½ï¿½ï¿½ï¿½Ö¤
     std::string strPipePart = strPipe.substr(prefix.size());
     if (strPipePart.empty() || strPipePart.size() > 256)
         return false;
 
-    // ÔÊÐíµÄ×Ö·û: ×ÖÄ¸Êý×Ö¡¢ÏÂ»®Ïß¡¢Á¬×Ö·û¡¢µã
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½: ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½Â»ï¿½ï¿½ß¡ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½
     std::regex nameRegex(R"(^[a-zA-Z0-9_.-]+$)");
     return std::regex_match(strPipePart, nameRegex);
 #else
-    // UnixÃüÃû¹ÜµÀÍ¨³£ÎªÎÄ¼þÏµÍ³Â·¾¶
+    // Unixï¿½ï¿½ï¿½ï¿½ï¿½Üµï¿½Í¨ï¿½ï¿½Îªï¿½Ä¼ï¿½ÏµÍ³Â·ï¿½ï¿½
     if (strPipe.empty() || strPipe.size() > 4096)
         return false;
 
-    // »ù±¾Â·¾¶ÑéÖ¤
+    // ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½Ö¤
     std::regex pathRegex(R"(^(/|(/[a-zA-Z0-9_.-]+)+)$)");
     if (!std::regex_match(strPipe, pathRegex)) {
         return false;
     }
 
-    // ½ûÖ¹ÌØÊâ×Ö·û
+    // ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½
     const std::string forbidden = " *?<>|&;!$(){}[]'\"\\";
     return strPipe.find_first_of(forbidden) == std::string::npos;
 #endif
@@ -86,16 +86,16 @@ PIPE_HANDLE createNamePipe(const char* szPipeName)
         NULL);
 #else	
     mkfifo(szPipeName, 0666);
-    return open(fifo, O_WRONLY);
+    return open(szPipeName, O_WRONLY);
 #endif
 }
 
-// Ð´ÈëÊý¾Ý
+// Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 bool writePipe(PIPE_HANDLE hWrite, const void* data, size_t size) {
     return writeDevice(hWrite, data, size);
 }
 
-// ¶ÁÈ¡Êý¾Ý
+// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
 bool readPipe(PIPE_HANDLE hRead, void* buffer, size_t size) {
     return readDevice(hRead, buffer, size);
 }

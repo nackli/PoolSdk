@@ -6,24 +6,24 @@
 #include <unordered_map>
 #include "PageMap.h"
 
-//SpanÒ»¸ö¿ç¶ÈµÄ´ó¿éÄÚ´æ
-// ¹ÜÀíÒÔÒ³Îªµ¥Î»µÄ´ó¿éÄÚ´æ
-// ¹ÜÀí¶à¸öÁ¬ĞøÒ³´ó¿éÄÚ´æ¿ç¶È½á¹¹
+//SpanÒ»ï¿½ï¿½ï¿½ï¿½ÈµÄ´ï¿½ï¿½ï¿½Ú´ï¿½
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³Îªï¿½ï¿½Î»ï¿½Ä´ï¿½ï¿½ï¿½Ú´ï¿½
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½È½á¹¹
 class ThreadCache {
 public:
 	~ThreadCache();
-	//Ïòthread cacheÉêÇëÄÚ´æ
+	//ï¿½ï¿½thread cacheï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½
 	void* Allocate(size_t size);
 
 	/*
-	* µ±thread cacheÃ»ÓĞ¶ÔÓ¦Ğ¡¿éÄÚ´æÊ±£¬»á´Ócentral cacheÖĞ»ñÈ¡Ğ¡¿éÄÚ´æ
-	index£º	ÓÃÓÚÈ·¶¨´ÓÖĞĞÄ»º´æµÄÄÄ¸öÍ°ÖĞ½øĞĞ»ñÈ¡ÄÚ´æ¿éµÄ´óĞ¡£¬È·¶¨ÁËÄÚ´æ¿éµÄ´óĞ¡
-	size£º	»ñÈ¡Ö¸¶¨ÄÚ´æ´óĞ¡µÄ¸öÊı¡£
+	* ï¿½ï¿½thread cacheÃ»ï¿½Ğ¶ï¿½Ó¦Ğ¡ï¿½ï¿½ï¿½Ú´ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½central cacheï¿½Ğ»ï¿½È¡Ğ¡ï¿½ï¿½ï¿½Ú´ï¿½
+	indexï¿½ï¿½	ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½Í°ï¿½Ğ½ï¿½ï¿½Ğ»ï¿½È¡ï¿½Ú´ï¿½ï¿½Ä´ï¿½Ğ¡ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½Ä´ï¿½Ğ¡
+	sizeï¿½ï¿½	ï¿½ï¿½È¡Ö¸ï¿½ï¿½ï¿½Ú´ï¿½ï¿½Ğ¡ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½
 	*/
 	void* FetchFromCentralCache(size_t index, size_t size);
 
 	//	------------------------------------------------------------------------ -
-		//ÊÍ·ÅÂß¼­
+		//ï¿½Í·ï¿½ï¿½ß¼ï¿½
 	void Deallocate(void* ptr);
 
 	void ListTooLong(FreeList& list, size_t size);
@@ -34,29 +34,30 @@ private:
 #ifdef _WIN32
 #define THREAD_LOCAL static __declspec(thread)
 #elif defined(__GNUC__) || defined(__clang__)
-#define THREAD_LOCAL static __thread
+#include <pthread.h>
+#define THREAD_LOCAL static __attribute__((thread))
 #else
-#define THREAD_LOCAL 
+#define THREAD_LOCAL  static __thread
 #endif
-//thread local storage¼¼Êõ(TLS) ËäÈ»ÉùÃ÷ÊÇÈ«¾Ö¾²Ì¬±äÁ¿£¬µ«ÊÇÄÜ¹»±£Ö¤Ã¿¸ö½ø³ÌÖ»ÓĞÒ»·İ 
+//thread local storageï¿½ï¿½ï¿½ï¿½(TLS) ï¿½ï¿½È»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½Ö¾ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¹ï¿½ï¿½ï¿½Ö¤Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½Ò»ï¿½ï¿½ 
 THREAD_LOCAL ThreadCache m_TLSThreadCache;
 
 
 class CentralCache {
 public:
-	//ÔÚ¶ÔÓ¦µÄÍ°ÖĞ»ñÈ¡Ò»¸öº¬ÓĞĞ¡¶ÔÏóµÄSpan
+	//ï¿½Ú¶ï¿½Ó¦ï¿½ï¿½Í°ï¿½Ğ»ï¿½È¡Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½ï¿½Span
 	Span* GetOneSpan(size_t index, size_t size);
 	/*
-	* »ñÈ¡Ò»ÅúĞ¡¶ÔÏó
-	begin£º		´æ·Å»ñÈ¡µÚÒ»¸öÄÚ´æ¿éµÄµØÖ·
-	end£º		´æ·Å»ñÈ¡×îºóÒ»¸öÄÚ´æ¿éµÄµØÖ·
-	batch£º	ÏëÒª´ÓÖĞĞÄ»º´æÖĞ½øĞĞ»ñÈ¡ÄÚ´æ¿éµÄÊıÁ¿
-	size£º		Ã¿¸öÄÚ´æ¿éµÄ´óĞ¡
-	ret£º		Êµ¼Ê´Ócentral½øĞĞ»ñÈ¡ÄÚ´æ¿éµÄ¸öÊı
+	* ï¿½ï¿½È¡Ò»ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½
+	beginï¿½ï¿½		ï¿½ï¿½Å»ï¿½È¡ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ú´ï¿½ï¿½Äµï¿½Ö·
+	endï¿½ï¿½		ï¿½ï¿½Å»ï¿½È¡ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ú´ï¿½ï¿½Äµï¿½Ö·
+	batchï¿½ï¿½	ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½Ğ½ï¿½ï¿½Ğ»ï¿½È¡ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	sizeï¿½ï¿½		Ã¿ï¿½ï¿½ï¿½Ú´ï¿½ï¿½Ä´ï¿½Ğ¡
+	retï¿½ï¿½		Êµï¿½Ê´ï¿½centralï¿½ï¿½ï¿½Ğ»ï¿½È¡ï¿½Ú´ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½
 	*/
 	size_t FetchRangeObj(void*& begin, void*& end, size_t batch, size_t size);
 
-	//ÊÍ·ÅÂß¼­
+	//ï¿½Í·ï¿½ï¿½ß¼ï¿½
 	void ReleaseListToSpans(void* begin, size_t size);
 
 	void* GetLargeMem(size_t size);
@@ -83,13 +84,13 @@ public:
 	{
 		return &s_InstPageCache;
 	}
-	//»ñÈ¡Ò»¸öĞÂµÄSpan
+	//ï¿½ï¿½È¡Ò»ï¿½ï¿½ï¿½Âµï¿½Span
 	Span* NewSpan(size_t kpages);
 
-	//¸ù¾İµØÖ·Ë÷Òıµ½Span
+	//ï¿½ï¿½ï¿½İµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Span
 	Span* MapObjToSpan(void* obj);
 
-	//ÊÍ·ÅSpan
+	//ï¿½Í·ï¿½Span
 	void ReleaseSpan(Span* span);
 
 	std::mutex* Mutex()
@@ -99,32 +100,32 @@ public:
 private:
 	SpanList m_pageLists[KPAGE];
 
-	//pageIdË÷ÒıµÃµ½Span
+	//pageIdï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½Span
 	//std::unordered_map<PAGE_ID, Span*> _idSpanMap;
 
-	//-------------»ùÊıÊ÷½øĞĞĞÔÄÜÓÅ»¯---------------------//
+	//-------------ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å»ï¿½---------------------//
 	//std::unordered_map<PAGE_ID, Span*> _idSpanMap;
 	//std::map<PAGE_ID, Span*> _idSpanMap;
 	// 
 	// 
-//½øĞĞĞÔÄÜÓÅ»¯
-// Ê×ÏÈÅĞ¶Ï²Ù×÷ÏµÍ³
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å»ï¿½
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¶Ï²ï¿½ï¿½ï¿½ÏµÍ³
 #if (_WIN32)
-// WindowsÏµÍ³ÏÂµÄ´úÂë
-  // È»ºóÅĞ¶ÏÎ»Êı
+// WindowsÏµÍ³ï¿½ÂµÄ´ï¿½ï¿½ï¿½
+  // È»ï¿½ï¿½ï¿½Ğ¶ï¿½Î»ï¿½ï¿½
 #if defined(_WIN64)
 /*
-*   32Î»ÏµÍ³ÏÂ£¬Ò»¹²Ö»ÓĞ2^19¸öÒ³¡£µ«64Î»ÏµÍ³ÏÂ¿ÉÒÔÓĞ×ã×ã2^51¸öÒ³£¬ÒâÎ¶×Å»ùÊıÊ÷ÄÚĞèÒªÓÃµ½2^51¸övoid*Ö¸Õë£¬
-	Ã¿¸öÖ¸ÕëÕ¼ÓÃ8×Ö½Ú£¬ĞèÒª2^54×Ö½ÚÄÚ´æ²ÅÄÜ´æ·ÅÏÂÈç´ËÖ®¶àµÄÖ¸Õë¡£ÏÔÈ»£¬64Î»ÏµÍ³ÏÂµÄ»ùÊıÊ÷Òª½øĞĞÌØÊâ´¦Àí
+*   32Î»ÏµÍ³ï¿½Â£ï¿½Ò»ï¿½ï¿½Ö»ï¿½ï¿½2^19ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½64Î»ÏµÍ³ï¿½Â¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2^51ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½Î¶ï¿½Å»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ãµï¿½2^51ï¿½ï¿½void*Ö¸ï¿½ë£¬
+	Ã¿ï¿½ï¿½Ö¸ï¿½ï¿½Õ¼ï¿½ï¿½8ï¿½Ö½Ú£ï¿½ï¿½ï¿½Òª2^54ï¿½Ö½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½Ü´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½ï¿½Ö¸ï¿½ë¡£ï¿½ï¿½È»ï¿½ï¿½64Î»ÏµÍ³ï¿½ÂµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â´¦ï¿½ï¿½
 */
-	TCMalloc_PageMap3<64 - PAGE_SHIFT> _idSpanMap;//64Î»ÏµÍ³ÏÂµ÷ÓÃ3²ã»ùÊıÊ÷
+	TCMalloc_PageMap3<64 - PAGE_SHIFT> _idSpanMap;//64Î»ÏµÍ³ï¿½Âµï¿½ï¿½ï¿½3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #else
-	TCMalloc_PageMap2<32 - PAGE_SHIFT> _idSpanMap;//32Î»ÏµÍ³ÏÂµ÷ÓÃ2²ã»ùÊıÊ÷
+	TCMalloc_PageMap2<32 - PAGE_SHIFT> _idSpanMap;//32Î»ÏµÍ³ï¿½Âµï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #endif
 
 #elif (__linux__)
-// LinuxÏµÍ³ÏÂµÄ´úÂë
-  // È»ºóÅĞ¶ÏÎ»Êı
+// LinuxÏµÍ³ï¿½ÂµÄ´ï¿½ï¿½ï¿½
+  // È»ï¿½ï¿½ï¿½Ğ¶ï¿½Î»ï¿½ï¿½
 #if (__x86_64__)
 	TCMalloc_PageMap3<64 - PAGE_SHIFT> _idSpanMap;
 #else
@@ -137,7 +138,7 @@ private:
 	PageCache()	{}
 	PageCache(const PageCache&) = delete;
 	PageCache& operator=(const PageCache&) = delete;
-	//Ê¹ÓÃ¶¨³¤ÄÚ´æ³ØÍÑÀëNew
+	//Ê¹ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½New
 	//ObjectMemPool<Span> _spanPool;
 
 	static PageCache s_InstPageCache;

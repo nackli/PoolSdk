@@ -1,4 +1,5 @@
 #pragma once
+#include <stddef.h>
 #ifndef _PLATFORM_BASE64_CODE_H_
 #define _PLATFORM_BASE64_CODE_H_
 size_t base64_encode(char* target, const void* source, size_t bytes);

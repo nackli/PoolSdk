@@ -1,20 +1,25 @@
 #pragma once
 #include <cassert>
 #include <mutex>
+#ifdef _WIN32
 #include <memoryapi.h>
 #pragma warning(disable:4334)
-//ÄÚ´æ³Ø×î´óÉêÇë¿ÉÉêÇë×Ö½ÚÊı
+#else
+#include <sys/mman.h>
+#endif
+
+//ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½
 static const size_t MAX_BYTES = 256 * 1024;
-//ThreadCacheºÍCentralCacheÖĞÍ°µÄ¸öÊı
-static const size_t FREELISTS_NUM = 208;
+//ThreadCacheï¿½ï¿½CentralCacheï¿½ï¿½Í°ï¿½Ä¸ï¿½ï¿½ï¿½
+static const uint8_t FREELISTS_NUM = 208;
 
-//PageCacheµÄÍ°Êı
-static const size_t KPAGE = 129;
-//Ò»¸öPageµÄ´óĞ¡:2^13 -- ¿ÉÒÔ¸Ä½øÒ»ÏÂ£¬ÏÈ»ñÈ¡ÏµÍ³Ò»Ò³µÄ´óĞ¡£¬È»ºóÔÙÈ·¶¨
-static const size_t PAGE_SHIFT = 13;
+//PageCacheï¿½ï¿½Í°ï¿½ï¿½
+static const uint8_t KPAGE = 129;
+//Ò»ï¿½ï¿½Pageï¿½Ä´ï¿½Ğ¡:2^13 -- ï¿½ï¿½ï¿½Ô¸Ä½ï¿½Ò»ï¿½Â£ï¿½ï¿½È»ï¿½È¡ÏµÍ³Ò»Ò³ï¿½Ä´ï¿½Ğ¡ï¿½ï¿½È»ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½
+static const uint8_t PAGE_SHIFT = 13;
 
-//Ğ¡¿éÄÚ´æÍ·4/8¸ö×Ö½Ú´æ´¢Ö¸ÏòÏÂÒ»¸öĞ¡¿éÄÚ´æ
-//ÓÃÓÚÕÒµ½ÏÂÒ»¸öĞ¡¿éÄÚ´æ
+//Ğ¡ï¿½ï¿½ï¿½Ú´ï¿½Í·4/8ï¿½ï¿½ï¿½Ö½Ú´æ´¢Ö¸ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½Ú´ï¿½
+//ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½Ú´ï¿½
 inline  static void*& NextObj(void* obj)
 {
 	return *(void**)obj;
@@ -73,14 +78,14 @@ public:
 	}
 private:
 	void* m_freeList = nullptr;
-	size_t _maxSize = 1; //ÏòcentralcacheÉêÇëÄÚ´æ´ÎÊı£¬ÓÃÓÚÂıÆô¶¯»ñÈ¡Ğ¡¿éÄÚ´æÊı
-	size_t _size = 0; //Á´±í½Úµã¸öÊı
+	size_t _maxSize = 1; //ï¿½ï¿½centralcacheï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡Ğ¡ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½
+	size_t _size = 0; //ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½
 };
 
 
 class SizeClass {
 public:
-	//¶ÔËùĞèÄÚ´æ×Ö½ÚÊıÏòÉÏÈ¡Õû
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½
 	static size_t _RoundUp(size_t size, size_t align)
 	{
 		return  (size + align - 1) & ~(align - 1);
@@ -94,8 +99,8 @@ public:
 		else if (size <= 64 * 1024) return _RoundUp(size, 1024);
 		else if (size <= MAX_BYTES) return _RoundUp(size, 8 * 1024);
 		else {
-			//ÕâÀïÊÇ³¬¹ıMAX_BYTESµÄÇé¿ö
-			//³¬¹ıMAX_BYTESÔòÖ±½Ó°´Ò³¶ÔÆë
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Ç³ï¿½ï¿½ï¿½MAX_BYTESï¿½ï¿½ï¿½ï¿½ï¿½
+			//ï¿½ï¿½ï¿½ï¿½MAX_BYTESï¿½ï¿½Ö±ï¿½Ó°ï¿½Ò³ï¿½ï¿½ï¿½ï¿½
 			return _RoundUp(size, 1 << PAGE_SHIFT);
 		}
 	}
@@ -105,17 +110,17 @@ public:
 	{
 		return ((size + (1 << align_shift) - 1) >> align_shift) - 1;
 	}
-	//¶ÔËùĞè×Ö½ÚÊıÏòÉÏÈ¡Õû£¬²¢µÃµ½ÆäÍ°ÏÂ±ê
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½Í°ï¿½Â±ï¿½
 	static size_t Index(size_t size)
 	{
 		assert(size <= MAX_BYTES);
 		/*
-		* threadCacheÖĞÃ¿¸öÍ°Ëùº¬µÄÄÚ´æ¿é´óĞ¡²»Ò»
-		* [1,128] ÖĞÓĞ16¸öÍ°£¬ÏàÁÚÍ°Ö®¼äÄÚ´æ´óĞ¡Ïà²î8B
-		* [129,1024] ÓĞ56¸öÍ°£¬ÏàÁÚÍ°Ö®¼äÄÚ´æ´óĞ¡Ïà²î16B
-		* [1025,8*1024] ÓĞ56¸öÍ°£¬ÏàÁÚÍ°Ö®¼äÄÚ´æ´óĞ¡Ïà²î128B
-		* [8*1024+1,64*1024] ÓĞ56¸öÍ°£¬ÏàÁÚÍ°Ö®¼äÄÚ´æ´óĞ¡Ïà²î1024B
-		* [64*1024+1,256*1024] ÓĞ24¸öÍ°£¬ÏàÁÚÍ°Ö®¼äÄÚ´æ´óĞ¡Ïà²î8*1024B
+		* threadCacheï¿½ï¿½Ã¿ï¿½ï¿½Í°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½Ò»
+		* [1,128] ï¿½ï¿½ï¿½ï¿½16ï¿½ï¿½Í°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í°Ö®ï¿½ï¿½ï¿½Ú´ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½8B
+		* [129,1024] ï¿½ï¿½56ï¿½ï¿½Í°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í°Ö®ï¿½ï¿½ï¿½Ú´ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½16B
+		* [1025,8*1024] ï¿½ï¿½56ï¿½ï¿½Í°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í°Ö®ï¿½ï¿½ï¿½Ú´ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½128B
+		* [8*1024+1,64*1024] ï¿½ï¿½56ï¿½ï¿½Í°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í°Ö®ï¿½ï¿½ï¿½Ú´ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½1024B
+		* [64*1024+1,256*1024] ï¿½ï¿½24ï¿½ï¿½Í°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í°Ö®ï¿½ï¿½ï¿½Ú´ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½8*1024B
 		*/
 		static const int group_array[] = { 16,56,56,56,24 };
 		if (size <= 128) return _Index(size, 3);
@@ -135,19 +140,19 @@ public:
 		return -1;
 	}
 
-	//threadcacheÒ»´ÎÏòcentralcacheÒªµÄobjÊıÁ¿µÄÉÏÏŞ
+	//threadcacheÒ»ï¿½ï¿½ï¿½ï¿½centralcacheÒªï¿½ï¿½objï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	static size_t NumMoveSize(size_t size)
 	{
 		assert(size > 0);
-		//ÂıÆô¶¯²ßÂÔ
-		//Ğ¡¶ÔÏóÒ»´ÎÅúÁ¿ÉêÇëµÄÉÏÏŞ¸ß
-		//´ó¶ÔÏóÒ»´ÎÅúÁ¿ÉêÇëµÄÉÏÏŞµÍ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		//Ğ¡ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ş¸ï¿½
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Şµï¿½
 		size_t num = MAX_BYTES / size;
 		if (num < 2) num = 2;
 		else if (num > 512) num = 512;
 		return num;
 	}
-	//central cacheÒ»´ÎÏòpage cacheË÷ÒªµÄspanµÄÒ³Êı
+	//central cacheÒ»ï¿½ï¿½ï¿½ï¿½page cacheï¿½ï¿½Òªï¿½ï¿½spanï¿½ï¿½Ò³ï¿½ï¿½
 	static size_t NumMovePage(size_t size)
 	{
 		size_t num = NumMoveSize(size);
@@ -161,20 +166,20 @@ public:
 typedef uint64_t PAGE_ID;
 #elif _WIN32
 typedef uint32_t PAGE_ID;
-#elif LINUX
+#else
 typedef uint64_t PAGE_ID;
 #endif
 struct Span {
-	PAGE_ID m_pageId = 0;//Ò³ºÅ
-	size_t m_nPageNum = 0;//Ò³Êı
-	Span* m_next = nullptr;	//Ö¸ÏòÏÂÒ»¸öSpan
-	Span* m_prev = nullptr;//Ö¸ÏòÇ°Ò»¸öSpan
-	void* m_freeList = nullptr;//Ö¸ÏòĞ¡¶ÔÏóµ¥Á´±íµÄµÚÒ»¸ö½Úµã£¬´®ÆğÒ»¶ÑĞ¡¶ÔÏó
+	PAGE_ID m_pageId = 0;//Ò³ï¿½ï¿½
+	size_t m_nPageNum = 0;//Ò³ï¿½ï¿½
+	Span* m_next = nullptr;	//Ö¸ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Span
+	Span* m_prev = nullptr;//Ö¸ï¿½ï¿½Ç°Ò»ï¿½ï¿½Span
+	void* m_freeList = nullptr;//Ö¸ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½Ò»ï¿½ï¿½ï¿½Úµã£¬ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½
 	//----------------------------------------------------------
-	//ÕâÈı¸ö×Ö¶Î£¬ÔÚÊÍ·ÅÂß¼­»áÏêÏ¸½²½â
-	size_t m_nObjSize = 0;//Ëùº¬Ã¿¸öĞ¡¶ÔÏóµÄ´óĞ¡	
-	size_t m_nUseCount = 0;//ÒÑ¾­±»·ÖÅä¸øthread cacheµÄĞ¡¶ÔÏó¸öÊı
-	bool m_isUse = true;//Õâ¸öSpanÊÇ·ñ´Ópage cacheÉÏÈ¡ÏÂ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶Î£ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½ï¿½ï¿½
+	size_t m_nObjSize = 0;//ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½Ä´ï¿½Ğ¡	
+	size_t m_nUseCount = 0;//ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½thread cacheï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	bool m_isUse = true;//ï¿½ï¿½ï¿½Spanï¿½Ç·ï¿½ï¿½page cacheï¿½ï¿½È¡ï¿½ï¿½
 };
 
 class SpanList {
@@ -185,7 +190,7 @@ public:
 		m_headSpan->m_prev = m_headSpan;
 	}
 
-	~SpanList()//ÊÍ·ÅÁ´±íµÄÃ¿¸ö½Úµã
+	~SpanList()//ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½Úµï¿½
 	{
 		Span* cur = m_headSpan->m_next;
 		while (cur != m_headSpan)
@@ -198,12 +203,12 @@ public:
 		m_headSpan = nullptr;
 	}
 
-	Span* Begin()//·µ»ØµÄÒ»¸öÊı¾İµÄÖ¸Õë
+	Span* Begin()//ï¿½ï¿½ï¿½Øµï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½İµï¿½Ö¸ï¿½ï¿½
 	{
 		return m_headSpan->m_next;
 	}
 
-	Span* End()//×îºóÒ»¸öµÄÏÂÒ»¸öÖ¸Õë
+	Span* End()//ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ö¸ï¿½ï¿½
 	{
 		return m_headSpan;
 	}
@@ -225,27 +230,27 @@ public:
 		assert(pos);
 		assert(pos != m_headSpan);
 
-		//²»ÓÃÊÍ·Å¿Õ¼ä
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Í·Å¿Õ¼ï¿½
 		Span* prev = pos->m_prev;
 		Span* next = pos->m_next;
 		prev->m_next = next;
 		next->m_prev = prev;
 	}
 
-	//Î²²å
+	//Î²ï¿½ï¿½
 	void PushBack(Span* newspan)
 	{
 		Insert(End(), newspan);
 	}
 
-	//Í·²å
+	//Í·ï¿½ï¿½
 	void PushFront(Span* newspan)
 	{
 		Insert(Begin(), newspan);
 	}
 
 	//Î²É¾
-	Span* PopBack()//Êµ¼ÊÊÇ½«Î²²¿Î»ÖÃµÄ½ÚµãÄÃ³öÀ´
+	Span* PopBack()//Êµï¿½ï¿½ï¿½Ç½ï¿½Î²ï¿½ï¿½Î»ï¿½ÃµÄ½Úµï¿½ï¿½Ã³ï¿½ï¿½ï¿½
 	{
 		Span* span = m_headSpan->m_prev;
 		Erase(span);
@@ -254,7 +259,7 @@ public:
 	}
 
 	//Í·É¾
-	Span* PopFront()//Êµ¼ÊÊÇ½«Í·²¿Î»ÖÃ½ÚµãÄÃ³öÀ´
+	Span* PopFront()//Êµï¿½ï¿½ï¿½Ç½ï¿½Í·ï¿½ï¿½Î»ï¿½Ã½Úµï¿½ï¿½Ã³ï¿½ï¿½ï¿½
 	{
 		Span* span = m_headSpan->m_next;
 		Erase(span);
@@ -280,8 +285,8 @@ private:
 	SpanList(const SpanList&) = delete;
 	SpanList& operator=(const SpanList&) = delete;
 
-	Span* m_headSpan;		//Í·½Úµã
-	std::mutex m_mtxSpan;	//Í°Ëø
+	Span* m_headSpan;		//Í·ï¿½Úµï¿½
+	std::mutex m_mtxSpan;	//Í°ï¿½ï¿½
 };
 
 inline void* SystemAlloc(size_t size)
@@ -295,7 +300,9 @@ inline void* SystemAlloc(size_t size)
 #endif
 	if (ptr == nullptr)
 	{
+#ifdef _WIN32	
 		printf("last error = %d", ::GetLastError());
+#endif		
 		throw std::bad_alloc();
 	}
 
@@ -308,7 +315,7 @@ inline void SystemFree(void* ptr)
 #ifdef _WIN32
 	VirtualFree(ptr, 0, MEM_RELEASE);
 #else
-	// sbrk unmmapµÈ
+	// sbrk unmmapï¿½ï¿½
 	munmap(ptr,0);
 #endif
 }

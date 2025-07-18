@@ -1,7 +1,8 @@
 #pragma once
 #include "ObjectMemPool.h"
-// µ¥²ã»ùÊýÊ÷
-template <int BITS>//BITS±íÊ¾×î´óÒ³ºÅËùÕ¼µÄ¶þ½øÖÆÎ»£¬32-PAGE_SHIFT »ò64-PAGE_SHIFT
+#include <string.h>
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+template <int BITS>//BITSï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½32-PAGE_SHIFT ï¿½ï¿½64-PAGE_SHIFT
 class TCMalloc_PageMap1 {
 private:
 	static const int LENGTH = 1 << BITS;
@@ -10,40 +11,42 @@ public:
 	typedef uintptr_t Number;
 	explicit TCMalloc_PageMap1()
 	{
+#if 0
 		size_t requiredBytes = sizeof(void*) << BITS;
 		size_t alignedSize = SizeClass::_AlignSize(requiredBytes, 1 << PAGE_SHIFT);
 		array_ = (void**)systemalloc(alignedSize >> PAGE_SHIFT);
 		memset(array_, 0, sizeof(void*) << BITS);
+#endif		
 	}
-	// ·µ»ØKEYµÄµ±Ç°Öµ¡£Èç¹û»¹Ã»ÓÐÉèÖÃ»òÕßk³¬³ö·¶Î§£¬·µ»ØNULL¡£
+	// ï¿½ï¿½ï¿½ï¿½KEYï¿½Äµï¿½Ç°Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½kï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½NULLï¿½ï¿½
 	void* get(Number k) const {
 		if ((k >> BITS) > 0) {
 			return NULL;
 		}
 		return array_[k];
 	}
-	// ÒªÇó "k" ÔÚ·¶Î§ "[0,2^BITS-1]" ÄÚ¡£
-	// ÒªÇó "k" ÒÑ¾­ÔÚÖ®Ç°È·±£¹ý¡£
+	// Òªï¿½ï¿½ "k" ï¿½Ú·ï¿½Î§ "[0,2^BITS-1]" ï¿½Ú¡ï¿½
+	// Òªï¿½ï¿½ "k" ï¿½Ñ¾ï¿½ï¿½ï¿½Ö®Ç°È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	//
-	// ÉèÖÃ¼ü 'k' µÄÖµÎª 'v'¡£
+	// ï¿½ï¿½ï¿½Ã¼ï¿½ 'k' ï¿½ï¿½ÖµÎª 'v'ï¿½ï¿½
 	void set(Number k, void* v) {
 		array_[k] = v;
 	}
 };
-// Á½²ã»ùÊýÊ÷
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 template <int BITS>
 class TCMalloc_PageMap2 {
 private:
-	// ÔÚ¸ù½Úµã·Å32¸öÌõÄ¿£¬Ã¿¸öÒ¶½Úµã·Å(2^BITS)/32¸öÌõÄ¿¡£
+	// ï¿½Ú¸ï¿½ï¿½Úµï¿½ï¿½32ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½Ã¿ï¿½ï¿½Ò¶ï¿½Úµï¿½ï¿½(2^BITS)/32ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½
 	static const int ROOT_BITS = 5;
 	static const int ROOT_LENGTH = 1 << ROOT_BITS;
 	static const int LEAF_BITS = BITS - ROOT_BITS;
 	static const int LEAF_LENGTH = 1 << LEAF_BITS;
-	// Ò¶½Úµã
+	// Ò¶ï¿½Úµï¿½
 	struct Leaf {
 		void* values[LEAF_LENGTH];
 	};
-	Leaf* root_[ROOT_LENGTH];// Ö¸Ïò32¸ö×Ó½ÚµãµÄÖ¸Õë
+	Leaf* root_[ROOT_LENGTH];// Ö¸ï¿½ï¿½32ï¿½ï¿½ï¿½Ó½Úµï¿½ï¿½Ö¸ï¿½ï¿½
 public:
 	typedef uintptr_t Number;
 	explicit TCMalloc_PageMap2()
@@ -69,10 +72,10 @@ public:
 	bool Ensure(Number start, size_t n) {
 		for (Number key = start; key <= start + n - 1;) {
 			const Number i1 = key >> LEAF_BITS;
-			// ¼ì²éÒç³ö
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			if (i1 >= ROOT_LENGTH)
 				return false;
-			// Èç¹û±ØÒª£¬´´½¨µÚ¶þ²ã½Úµã
+			// ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½Úµï¿½
 			if (root_[i1] == NULL) {
 				static ObjectMemPool<Leaf> LeafPool;
 				Leaf* leaf = LeafPool.New();
@@ -80,35 +83,35 @@ public:
 				memset(leaf, 0, sizeof(*leaf));
 				root_[i1] = leaf;
 			}
-			// ½«¼üÌáÉýµ½Õâ¸öÒ¶½Úµã¸²¸ÇµÄÏÂÒ»¸öÇøÓò
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½Úµã¸²ï¿½Çµï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			key = ((key >> LEAF_BITS) + 1) << LEAF_BITS;
 		}
 		return true;
 	}
 	void PreallocateMoreMemory() {
-		// ·ÖÅä×ã¹»µÄÄÚ´æÀ´¸ú×ÙËùÓÐ¿ÉÄÜµÄÒ³Ãæ
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ã¹»ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¿ï¿½ï¿½Üµï¿½Ò³ï¿½ï¿½
 		Ensure(0, 1 << BITS);
 	}
 };
-// Èý²ã»ùÊýÊ÷½á¹¹
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¹¹
 template <int BITS>
 class TCMalloc_PageMap3 {
 private:
-	// Ã¿¸öÄÚ²¿²ãÏûºÄ¶àÉÙÎ»
-	static const int INTERIOR_BITS = (BITS + 2) / 3; // ÏòÉÏÈ¡Õû
+	// Ã¿ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½Î»
+	static const int INTERIOR_BITS = (BITS + 2) / 3; // ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½
 	static const int INTERIOR_LENGTH = 1 << INTERIOR_BITS;
-	// Ò¶×Ó²ãÏûºÄ¶àÉÙÎ»
+	// Ò¶ï¿½Ó²ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½Î»
 	static const int LEAF_BITS = BITS - 2 * INTERIOR_BITS;
 	static const int LEAF_LENGTH = 1 << LEAF_BITS;
-	// ÄÚ²¿½Úµã
+	// ï¿½Ú²ï¿½ï¿½Úµï¿½
 	struct Node {
-		Node* ptrs[INTERIOR_LENGTH]; // Ö¸ÏòÏÂÒ»²ã½ÚµãµÄÖ¸Õë
+		Node* ptrs[INTERIOR_LENGTH]; // Ö¸ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Úµï¿½ï¿½Ö¸ï¿½ï¿½
 	};
-	// Ò¶×Ó½Úµã
+	// Ò¶ï¿½Ó½Úµï¿½
 	struct Leaf {
-		void* values[LEAF_LENGTH]; // Êµ¼ÊµÄÊý¾ÝÖµ
+		void* values[LEAF_LENGTH]; // Êµï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½Öµ
 	};
-	Node* root_; // »ùÊýÊ÷µÄ¸ù½Úµã
+	Node* root_; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½Úµï¿½
 	Node* NewNode() {
 		static ObjectMemPool<Node> NodePool;
 		Node* result = NodePool.New();
@@ -118,65 +121,65 @@ private:
 		return result;
 	}
 public:
-	typedef uintptr_t Number; // Ò³ºÅµÄÀàÐÍ
+	typedef uintptr_t Number; // Ò³ï¿½Åµï¿½ï¿½ï¿½ï¿½ï¿½
 	explicit TCMalloc_PageMap3()
 	{
 		//allocator_ = allocator;
-		root_ = NewNode(); // ´´½¨¸ù½Úµã
+		root_ = NewNode(); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½
 	}
-	void* get(Number k) const { // ¸ù¾ÝÒ³ºÅ»ñÈ¡Öµ
-		const Number i1 = k >> (LEAF_BITS + INTERIOR_BITS); // µÚÒ»²ãË÷Òý
-		const Number i2 = (k >> LEAF_BITS) & (INTERIOR_LENGTH - 1); // µÚ¶þ²ãË÷Òý
-		const Number i3 = k & (LEAF_LENGTH - 1); // µÚÈý²ãË÷Òý
+	void* get(Number k) const { // ï¿½ï¿½ï¿½ï¿½Ò³ï¿½Å»ï¿½È¡Öµ
+		const Number i1 = k >> (LEAF_BITS + INTERIOR_BITS); // ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		const Number i2 = (k >> LEAF_BITS) & (INTERIOR_LENGTH - 1); // ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		const Number i3 = k & (LEAF_LENGTH - 1); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-		if ((k >> BITS) > 0 || // ¼ì²éÒ³ºÅÊÇ·ñ³¬³ö·¶Î§
-			root_->ptrs[i1] == NULL || root_->ptrs[i1]->ptrs[i2] == NULL)  // ¼ì²é½ÚµãÊÇ·ñ´æÔÚ
-			return NULL; // Èç¹ûÃ»ÓÐÕÒµ½»òÕß³¬³ö·¶Î§£¬·µ»ØNULL
+		if ((k >> BITS) > 0 || // ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½Ç·ñ³¬³ï¿½ï¿½ï¿½Î§
+			root_->ptrs[i1] == NULL || root_->ptrs[i1]->ptrs[i2] == NULL)  // ï¿½ï¿½ï¿½Úµï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
+			return NULL; // ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½Î§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½NULL
 		
-		return reinterpret_cast<Leaf*>(root_->ptrs[i1]->ptrs[i2])->values[i3]; // Èç¹ûÕÒµ½£¬·µ»ØÖµ
+		return reinterpret_cast<Leaf*>(root_->ptrs[i1]->ptrs[i2])->values[i3]; // ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
 	}
-	void set(Number k, void* v) { // ¸ù¾ÝÒ³ºÅÉèÖÃÖµ
-		assert(k >> BITS == 0); // ¶ÏÑÔÒ³ºÅÔÚ·¶Î§ÄÚ
-		Ensure(k, 1); //È·±£µÚkÒ³¶ÔÓ¦½Úµã´æÔÚ,²»´æÔÚÔò¿ª±Ù½Úµã¿Õ¼ä
-		const Number i1 = k >> (LEAF_BITS + INTERIOR_BITS); // µÚÒ»²ãË÷Òý
-		const Number i2 = (k >> LEAF_BITS) & (INTERIOR_LENGTH - 1); // µÚ¶þ²ãË÷Òý
-		const Number i3 = k & (LEAF_LENGTH - 1); // µÚÈý²ãË÷Òý
-		reinterpret_cast<Leaf*>(root_->ptrs[i1]->ptrs[i2])->values[i3] = v; // ÉèÖÃÖµ
+	void set(Number k, void* v) { // ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+		assert(k >> BITS == 0); // ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½Ú·ï¿½Î§ï¿½ï¿½
+		Ensure(k, 1); //È·ï¿½ï¿½ï¿½ï¿½kÒ³ï¿½ï¿½Ó¦ï¿½Úµï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò¿ª±Ù½Úµï¿½Õ¼ï¿½
+		const Number i1 = k >> (LEAF_BITS + INTERIOR_BITS); // ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		const Number i2 = (k >> LEAF_BITS) & (INTERIOR_LENGTH - 1); // ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		const Number i3 = k & (LEAF_LENGTH - 1); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		reinterpret_cast<Leaf*>(root_->ptrs[i1]->ptrs[i2])->values[i3] = v; // ï¿½ï¿½ï¿½ï¿½Öµ
 	}
-	bool Ensure(Number start, size_t n) { // È·±£Ò»¶ÎÒ³ºÅ·¶Î§ÄÚµÄ½Úµã¶¼´æÔÚ
+	bool Ensure(Number start, size_t n) { // È·ï¿½ï¿½Ò»ï¿½ï¿½Ò³ï¿½Å·ï¿½Î§ï¿½ÚµÄ½Úµã¶¼ï¿½ï¿½ï¿½ï¿½
 		for (Number key = start; key <= start + n - 1;) 
-		{ // ±éÀúÒ³ºÅ·¶Î§
-			const Number i1 = key >> (LEAF_BITS + INTERIOR_BITS); // µÚÒ»²ãË÷Òý
-			const Number i2 = (key >> LEAF_BITS) & (INTERIOR_LENGTH - 1); // µÚ¶þ²ãË÷Òý
-			// ¼ì²éÒç³öÇé¿ö
+		{ // ï¿½ï¿½ï¿½ï¿½Ò³ï¿½Å·ï¿½Î§
+			const Number i1 = key >> (LEAF_BITS + INTERIOR_BITS); // ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			const Number i2 = (key >> LEAF_BITS) & (INTERIOR_LENGTH - 1); // ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			if (i1 >= INTERIOR_LENGTH || i2 >= INTERIOR_LENGTH)
-				return false; // Èç¹û³¬³ö·¶Î§£¬·µ»Øfalse
-			// Èç¹ûÐèÒª£¬´´½¨µÚ¶þ²ã½Úµã
+				return false; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½false
+			// ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½Úµï¿½
 			if (root_->ptrs[i1] == NULL)
 			{
-				Node* n = NewNode(); // ´´½¨ÐÂ½Úµã
+				Node* n = NewNode(); // ï¿½ï¿½ï¿½ï¿½ï¿½Â½Úµï¿½
 				if (n == NULL) 
-					return false; // Èç¹ûÄÚ´æ·ÖÅäÊ§°Ü£¬·µ»Øfalse
-				root_->ptrs[i1] = n; // ÉèÖÃÖ¸ÏòÐÂ½ÚµãµÄÖ¸Õë
+					return false; // ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½false
+				root_->ptrs[i1] = n; // ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Â½Úµï¿½ï¿½Ö¸ï¿½ï¿½
 			}
-			// Èç¹ûÐèÒª£¬´´½¨Ò¶×Ó½Úµã
+			// ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½Ó½Úµï¿½
 			if (root_->ptrs[i1]->ptrs[i2] == NULL)
 			{
 				static ObjectMemPool<Leaf> LeafPool_3;
 				Leaf* leaf = reinterpret_cast<Leaf*>(LeafPool_3.New());
 
 				if (leaf == NULL) 
-					return false; // Èç¹ûÄÚ´æ·ÖÅäÊ§°Ü£¬·µ»Øfalse
+					return false; // ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½false
 
-				memset(leaf, 0, sizeof(*leaf)); // ³õÊ¼»¯Ò¶×ÓÎªÁã
-				root_->ptrs[i1]->ptrs[i2] = reinterpret_cast<Node*>(leaf); // ÉèÖÃÖ¸ÏòÐÂÒ¶×ÓµÄÖ¸Õë
+				memset(leaf, 0, sizeof(*leaf)); // ï¿½ï¿½Ê¼ï¿½ï¿½Ò¶ï¿½ï¿½Îªï¿½ï¿½
+				root_->ptrs[i1]->ptrs[i2] = reinterpret_cast<Node*>(leaf); // ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½Óµï¿½Ö¸ï¿½ï¿½
 			}
-			// ½«Ò³ºÅÍÆ½øµ½ÏÂÒ»¸öÒ¶×Ó½ÚµãµÄ·¶Î§
+			// ï¿½ï¿½Ò³ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ò¶ï¿½Ó½Úµï¿½Ä·ï¿½Î§
 			key = ((key >> LEAF_BITS) + 1) << LEAF_BITS;
 		}
-		return true; // Èç¹û³É¹¦£¬·µ»Øtrue
+		return true; // ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½true
 	}
 	void PreallocateMoreMemory() {
-		// ÌáÇ°¿ª±ÙÄ³¶Î¿Õ¼äÒÔÌáÉýÐ§ÂÊ£¬Èç¹ûÐèÒª£¬ÊµÏÖÕâ¸öº¯Êý
+		// ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Ä³ï¿½Î¿Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Ê£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 };

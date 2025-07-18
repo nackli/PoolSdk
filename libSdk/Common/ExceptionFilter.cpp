@@ -8,13 +8,14 @@ Copyright (c) 2024. All Rights Reserved.
 #include <iostream>
 #include <stdint.h>
 #include <signal.h>
-#include <new.h>
+
 #include <sstream>
 #include <limits>
 #include <exception>
 #define DUMP_FILE_NAME				"crash.dmp"
 
 #ifdef _WIN32
+#include <new.h>
 #include <windows.h>
 #include <DbgHelp.h>
 #include <minwinbase.h>
@@ -56,7 +57,7 @@ static void Snapshot(const std::string& path)
 {
 	__try
 	{
-		//м╗╧Щ╢╔╥╒рЛЁё╩Ях║╤яу╩
+		//м╗О©╫О©╫О©╫О©╫О©╫О©╫О©╫ЛЁёО©╫О©╫х║О©╫О©╫у╩
 		RaiseException(0xE0000001, 0, 0, 0);
 	}
 	__except (GenerateDump(GetExceptionInformation(), path)) {}
@@ -142,21 +143,21 @@ static void UnexpectedHandler() {
 
 static void InstallUnexceptedExceptionHandler()
 {
-	//SEHё╗Windows ╫А╧╧╩╞рЛЁё╢╕юМё╘ё╛йТсзWin32 API
+	//SEHО©╫О©╫Windows О©╫А╧╧О©╫О©╫О©╫ЛЁёО©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫Win32 API
 	::SetUnhandledExceptionFilter(UnhandledStructuredException);
 
-	//C ткппй╠©Б (CRT) рЛЁё╢╕юМё╛си CRT лА╧╘╣дрЛЁё╢╕юМ╩Зжф║ё
+	//C О©╫О©╫О©╫О©╫й╠О©╫О©╫ (CRT) О©╫ЛЁёО©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ CRT О©╫А╧╘О©╫О©╫О©╫ЛЁёО©╫О©╫О©╫О©╫О©╫О©╫О©╫ф║О©╫
 	_set_purecall_handler(PureCallHandler);
 	_set_new_handler(NewHandler);
 	_set_invalid_parameter_handler(InvalidParameterHandler);
 	_set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
 
-	//C ткппй╠пе╨е╢╕юМё╛си CRT лА╧╘╣дпе╨е╢╕юМ╩Зжф║ё
+	//C О©╫О©╫О©╫О©╫й╠О©╫е╨е╢О©╫О©╫О©╫О©╫О©╫О©╫О©╫ CRT О©╫А╧╘О©╫О©╫О©╫е╨е╢О©╫О©╫О©╫О©╫О©╫О©╫ф║О©╫
 	signal(SIGABRT, SigabrtHandler);
 	signal(SIGINT, SigintHandler);
 	signal(SIGTERM, SigtermHandler);
 	signal(SIGILL, SigillHandler);
-	//C++ ткппй╠рЛЁё╢╕юМё╛APIси╠Йв╪©БлА╧╘
+	//C++ О©╫О©╫О©╫О©╫й╠О©╫ЛЁёО©╫О©╫О©╫О©╫О©╫О©╫APIО©╫и╠О©╫в╪О©╫О©╫О©╫А╧╘
 	set_terminate(TerminateHandler);
 	set_unexpected(UnexpectedHandler);
 }
@@ -185,7 +186,8 @@ static void DisableSetUnhandlerExcptionFilter()
 	}
 }
 #else
-
+#include <execinfo.h>
+#include <cstring>
 static void generate_stack_trace() {
 	void* array[10];
 	size_t size;
@@ -211,30 +213,31 @@ static void generate_stack_trace() {
 
 static void SignalHandler(int sig) {
 	printf("Caught signal %d\n", sig);
-	exit(1); // ╩Руъй╧сцфДкШ╥╫й╫мкЁЖЁлпР
+	generate_stack_trace();
+	exit(1); // О©╫О©╫О©╫О©╫й╧О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫й╫О©╫кЁО©╫О©╫О©╫О©╫О©╫
 }
 #endif
 
 /*
-	SIGHUP	1	жуж╧╫ЬЁлё╛ originally used to notify process of system terminal hangup
-	SIGINT	2	жп╤опе╨её╛м╗Ёёси╪Эелио╣джп╤о╪Эё╗Ctrl + Cё╘╡ЗиЗё╛сцсзжуж╧г╟л╗╫ЬЁл
-	SIGQUIT	3	мкЁЖпе╨её╛м╗Ёёси╪Эелио╣дмкЁЖ╪Эё╗Ctrl + \ё╘╡ЗиЗё╛жуж╧╫ЬЁл╡╒╡ЗиЗ╨кпдв╙╢╒нд╪Ч
-	SIGILL	4	╥г╥╗ж╦аНё╛╫ЬЁлж╢ппак╥г╥╗ж╦аНй╠╥╒км
-	SIGABRT	6	╫ЬЁлрЛЁёжпж╧ё╛м╗Ёёсиabort()╨╞йЩ╣Всц╡ЗиЗ
-	SIGBUS	7	с╡╪Чвэоъ╢МнСё╗хГн╢╤тфК╥цнйё╘
-	SIGFPE	8	╦║╣ЦрЛЁёё╛хГЁЩртаЦ╣хйЩя╖тккЦ╢МнС
-	SIGKILL	9	г©жфжуж╧╫ЬЁлё╛╫ЬЁлнч╥╗╡╤╩Я╩Р╨Жбт╦цпе╨е
-	SIGSEGV	11	╤н╢МнСё╛╫ЬЁлйтм╪╥цнйн╢╥жеД╩Р╡╩©и╥цнй╣ддз╢ФгЬсРй╠╥╒км
-	SIGPIPE	13	╧э╣ю╢МнСё╛╫ЬЁлоРря╧ь╠у╣д╧э╣юп╢хКйЩ╬щй╠╥╒км
-	SIGALRM	14	й╠жс╤╗й╠пе╨её╛сцсз╤╗й╠╡ывВ
-	SIGTERM	15	жуж╧пе╨её╛сцсзгКгС╫ЬЁлжуж╧ё╛╫ЬЁл©ирт╡╤╩Я╡╒╫ЬппгЕюМ╧╓вВ╨СмкЁЖ
-	SIGUSR1	30	сц╩╖вт╤╗рЕпе╨е1ё╛сцсзс╕сцЁлпРвт╤╗рЕ╣дм╗пе╩Р©ьжф
-	SIGUSR2	31	сц╩╖вт╤╗рЕпе╨е2ё╛сцсзс╕сцЁлпРвт╤╗рЕ╣дм╗пе╩Р©ьжф
-	SIGCHLD	17 / 18	вс╫ЬЁлв╢л╛╦д╠Дё╛╣╠вс╫ЬЁлжуж╧╩Рмёж╧й╠оР╦╦╫ЬЁл╥╒км
-	SIGCONT	18 / 19	╪лпЬж╢пппе╨её╛╩ж╦╢╠╩тщмё╫ЬЁл╣дж╢пп
-	SIGSTOP	19 / 17	тщмё╫ЬЁлж╢ппё╛╫ЬЁлнч╥╗╡╤╩Я╩Р╨Жбт╦цпе╨е
-	SIGTSTP	20	тщмё╫ЬЁлж╢ппё╛м╗Ёёси╪Эелио╣дтщмё╪Эё╗Ctrl + Zё╘╡ЗиЗ
-	SIGWINCH	28	╢╟©з╢Сп║╦д╠Дё╛╣╠жу╤к╢╟©з╢Сп║╦д╠Дй╠╥╒км
+	SIGHUP	1	О©╫О©╫ж╧О©╫О©╫О©╫лёО©╫ originally used to notify process of system terminal hangup
+	SIGINT	2	О©╫п╤О©╫О©╫е╨еёО©╫м╗О©╫О©╫О©╫и╪О©╫О©╫О©╫О©╫о╣О©╫О©╫п╤о╪О©╫О©╫О©╫Ctrl + CО©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ж╧г╟л╗О©╫О©╫О©╫О©╫
+	SIGQUIT	3	О©╫кЁО©╫О©╫е╨еёО©╫м╗О©╫О©╫О©╫и╪О©╫О©╫О©╫О©╫о╣О©╫О©╫кЁО©╫О©╫О©╫О©╫О©╫Ctrl + \О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ж╧О©╫О©╫О©╫л╡О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫в╙О©╫О©╫О©╫д╪О©╫
+	SIGILL	4	О©╫г╥О©╫ж╦О©╫Нё╛О©╫О©╫О©╫О©╫ж╢О©╫О©╫О©╫к╥г╥О©╫ж╦О©╫О©╫й╠О©╫О©╫О©╫О©╫
+	SIGABRT	6	О©╫О©╫О©╫О©╫О©╫ЛЁёО©╫О©╫ж╧О©╫О©╫м╗О©╫О©╫О©╫О©╫abort()О©╫О©╫О©╫О©╫О©╫О©╫О©╫ц╡О©╫О©╫О©╫
+	SIGBUS	7	с╡О©╫О©╫О©╫О©╫О©╫ъ╢О©╫О©╫О©╫О©╫О©╫н╢О©╫О©╫О©╫О©╫О©╫О©╫йёО©╫
+	SIGFPE	8	О©╫О©╫О©╫О©╫О©╫ЛЁёО©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫я╖О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+	SIGKILL	9	г©О©╫О©╫О©╫О©╫ж╧О©╫О©╫О©╫лёО©╫О©╫О©╫О©╫О©╫О©╫ч╥О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫т╦О©╫О©╫е╨О©╫
+	SIGSEGV	11	О©╫н╢О©╫О©╫Сё╛╫О©╫О©╫О©╫О©╫О©╫м╪О©╫О©╫О©╫О©╫н╢О©╫О©╫О©╫О©╫Р╡╩©и╥О©╫О©╫й╣О©╫О©╫з╢О©╫О©╫О©╫О©╫О©╫й╠О©╫О©╫О©╫О©╫
+	SIGPIPE	13	О©╫э╣О©╫О©╫О©╫О©╫Сё╛╫О©╫О©╫О©╫О©╫О©╫О©╫я╧ь╠у╣д╧э╣О©╫п╢О©╫О©╫О©╫О©╫О©╫О©╫й╠О©╫О©╫О©╫О©╫
+	SIGALRM	14	й╠О©╫с╤О©╫й╠О©╫е╨еёО©╫О©╫О©╫О©╫з╤О©╫й╠О©╫О©╫О©╫О©╫
+	SIGTERM	15	О©╫О©╫ж╧О©╫е╨еёО©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ж╧О©╫О©╫О©╫О©╫О©╫л©О©╫О©╫т╡О©╫О©╫Я╡╒╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫кЁО©╫
+	SIGUSR1	30	О©╫ц╩О©╫О©╫т╤О©╫О©╫О©╫О©╫е╨О©╫1О©╫О©╫О©╫О©╫О©╫О©╫с╕О©╫цЁО©╫О©╫О©╫О©╫т╤О©╫О©╫О©╫О©╫м╗О©╫е╩О©╫О©╫О©╫О©╫
+	SIGUSR2	31	О©╫ц╩О©╫О©╫т╤О©╫О©╫О©╫О©╫е╨О©╫2О©╫О©╫О©╫О©╫О©╫О©╫с╕О©╫цЁО©╫О©╫О©╫О©╫т╤О©╫О©╫О©╫О©╫м╗О©╫е╩О©╫О©╫О©╫О©╫
+	SIGCHLD	17 / 18	О©╫с╫О©╫О©╫О©╫в╢л╛О©╫д╠Дё╛О©╫О©╫О©╫с╫О©╫О©╫О©╫О©╫О©╫ж╧О©╫О©╫мёж╧й╠О©╫Р╦╦╫О©╫О©╫л╥О©╫О©╫О©╫
+	SIGCONT	18 / 19	О©╫О©╫О©╫О©╫ж╢О©╫О©╫О©╫е╨еёО©╫О©╫ж╦О©╫О©╫О©╫О©╫О©╫мёО©╫О©╫О©╫л╣О©╫ж╢О©╫О©╫
+	SIGSTOP	19 / 17	О©╫О©╫мёО©╫О©╫О©╫О©╫ж╢О©╫пёО©╫О©╫О©╫О©╫О©╫О©╫ч╥О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫т╦О©╫О©╫е╨О©╫
+	SIGTSTP	20	О©╫О©╫мёО©╫О©╫О©╫О©╫ж╢О©╫пёО©╫м╗О©╫О©╫О©╫и╪О©╫О©╫О©╫О©╫о╣О©╫О©╫О©╫мёО©╫О©╫О©╫О©╫Ctrl + ZО©╫О©╫О©╫О©╫О©╫О©╫
+	SIGWINCH	28	О©╫О©╫О©╫з╢О©╫п║О©╫д╠Дё╛О©╫О©╫О©╫у╤к╢О©╫О©╫з╢О©╫п║О©╫д╠О©╫й╠О©╫О©╫О©╫О©╫
 */
 void initExceptionDump()
 {
@@ -243,7 +246,7 @@ void initExceptionDump()
 	DisableSetUnhandlerExcptionFilter();
 #else
 	const char signalId[] = { SIGILL,SIGABRT,SIGFPE,SIGPIPE,SIGTERM,SIGSEGV };
-	for(int iIndex = 0;iIndex < sizeof(signalId) / sizeof(signalId);iIndex++)
+	for(size_t iIndex = 0;iIndex < sizeof(signalId) / sizeof(signalId);iIndex++)
 		signal(signalId[iIndex], SignalHandler);
 #endif
 }
