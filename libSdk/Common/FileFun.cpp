@@ -1,5 +1,7 @@
 #include "FileFun.h"
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 FHANDLE openDevice(const char* szName, int iFlags)
 {

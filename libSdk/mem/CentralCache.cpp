@@ -3,18 +3,20 @@
 #endif
 #include "ThreadCache.h"
 
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
+
 void* ThreadCache::Allocate(size_t size)
 {
-	//������ڴ����Ϸ�
 	assert(size > 0);
 	if (size <= MAX_BYTES)
 	{
 		size_t alignSize = SizeClass::RoundUp(size);
 		size_t index = SizeClass::Index(size);
-		//���Ͱ����С���ڴ��򷵻ظ��û�
 		if (!m_freeLists[index].Empty())
 			return m_freeLists[index].PopFront();
-		else//������û�п����ڴ���Ҫ��CentralCache����
+		else
 			return FetchFromCentralCache(index, alignSize);
 	}
 	return CentralCache::GetInstance()->GetLargeMem(size);
@@ -22,7 +24,7 @@ void* ThreadCache::Allocate(size_t size)
 
 ThreadCache::~ThreadCache()
 {
-	for (uint8_t i = 0; i < FREELISTS_NUM ; i++)//���߳���Դ������Ͱ����ڴ�鶼�黹��������Դ��
+	for (uint8_t i = 0; i < FREELISTS_NUM ; i++)
 	{
 		if (!m_freeLists[i].Empty())
 		{
@@ -35,33 +37,17 @@ ThreadCache::~ThreadCache()
 		}
 	}
 }
-//��CentralCache�л�ȡ���С���ڴ�
+
 void* ThreadCache::FetchFromCentralCache(size_t index, size_t size)
 {
-	/* ������
-	* ����ʼ���������㷨
-	1���ʼ����һ����central cacheһ�ν�������Ҫ̫�࣬��ΪҪ̫������ò��굼���˷�
-	2��������г������������
-	ڴ�Ĵ�С��batchNum�ͻ�������ֱ������
-	3��sizeԽ��һ����central cacheҪ��batchNum ��ԽС
-	4��sizeԽС��һ����central cacheҪ��batchNum ��Խ��
-
-	* ÿ��Ͱ���Լ���maxSize����ʾ��������ٴΣ�ÿ�γɹ����붼��������ֵ
-	* Ҫ����Ŀ����ڴ���� = min(maxSize,MAX_BYTES/size)
-	* MAX_BYTES/size:С������������޴󣬴�������������С
-	*/
-	size_t batch = std::min(m_freeLists[index].MaxSize(), SizeClass::NumMoveSize(size));
+	size_t batch = min(m_freeLists[index].MaxSize(), SizeClass::NumMoveSize(size));
 
 	if (batch == m_freeLists[index].MaxSize())
 		m_freeLists[index].MaxSize()++;
 
 	void* start = nullptr;
 	void* end = nullptr;
-	//FetchRangeObj��CentralCache�ķ���
 	size_t actual_batch = CentralCache::GetInstance()->FetchRangeObj(start, end, batch, size);
-	//���actual_numΪ0�����ʾ�ڴ��ȡʧ�ܣ�
-	// 1.Ҫô�����ڴ�û���뵽���������봦�����쳣�ģ������ߵ���
-	// 2.Ҫô�����߼�����Ӧ�ö��Լ��
 	assert(actual_batch > 0);
 
 	if (actual_batch > 1)
@@ -71,7 +57,6 @@ void* ThreadCache::FetchFromCentralCache(size_t index, size_t size)
 	return start;
 }
 
-//�ͷŶ����ڴ��ThreadCache
 void ThreadCache::Deallocate(void* ptr)
 {
 	//PAGE_ID id = (PAGE_ID)ptr >> PAGE_SHIFT;
@@ -83,9 +68,6 @@ void ThreadCache::Deallocate(void* ptr)
 	{
 		size_t index = SizeClass::Index(size);
 		m_freeLists[index].PushFront(ptr);
-
-		//�������ThreadCache���������������ڴ����ͽ������ͷŸ�CentralCache
-		//��ʵ��ϸ��ֻ������������������������������Լ��������������������ڴ�ﵽһ����ֵʱ����
 		if (m_freeLists[index].MaxSize() <= m_freeLists[index].Size())
 			ListTooLong(m_freeLists[index], size);
 	}
@@ -102,7 +84,7 @@ void ThreadCache::ListTooLong(FreeList& list, size_t size)
 }
 
 CentralCache CentralCache::s_instCentralCache;
-//��ȡһЩС���ڴ�
+
 size_t CentralCache::FetchRangeObj(void*& begin, void*& end, size_t batch, size_t size)
 {
 	size_t index = SizeClass::Index(size);
@@ -112,7 +94,6 @@ size_t CentralCache::FetchRangeObj(void*& begin, void*& end, size_t batch, size_
 	assert(span);
 	assert(span->m_freeList != nullptr);
 
-	//��span��С���ڴ��У�ѡȡһ����
 	void* cur = span->m_freeList;
 	batch--;
 	size_t actualNum = 1;
@@ -132,10 +113,9 @@ size_t CentralCache::FetchRangeObj(void*& begin, void*& end, size_t batch, size_
 	return actualNum;
 }
 
-//��spanList�ϻ�ȡһ�����п���С���ڴ��span
+
 Span* CentralCache::GetOneSpan(size_t index, size_t size)
 {
-	//�����Ҷ�Ӧ��SpanList���鿴�Ƿ���Span����С�����ڴ�
 	Span* it = m_spanLists[index].Begin();
 	while (it != m_spanLists[index].End())
 	{
@@ -146,20 +126,15 @@ Span* CentralCache::GetOneSpan(size_t index, size_t size)
 		it = it->m_next;
 	}
 	m_spanLists[index].Unlock();
-	//�ߵ�����˵��û�п���Span�ˣ���Ҫ��PageCacheҪ
 
 	PageCache::GetInstance()->Mutex()->lock();
 	Span* span = PageCache::GetInstance()->NewSpan(SizeClass::NumMovePage(size));
 	PageCache::GetInstance()->Mutex()->unlock();
 
-	//��PageCache��ȡ��Span�󣬽�Span�������Ĵ���ڴ棬�г�����С���ڴ棬����freeList��
-
-	//��ȡ��PageCache�õ��Ĵ���ڴ����β��ַ
 	char* start = (char*)(span->m_pageId << PAGE_SHIFT);
 	size_t bytes = span->m_nPageNum << PAGE_SHIFT;
 	char* end = start + bytes;
 
-	//������ڴ��з�Ϊһ��һ��С�ڴ棬�����ӵ�freeList��
 	span->m_freeList = start;
 	start += size;
 	void* tail = span->m_freeList;
@@ -200,22 +175,18 @@ void CentralCache::ReleaseLargeMem(void* ptr)
 	}
 }
 
-//��ThreadCache�ͷŵ�С���ڴ����¹ҵ�Span�ϣ�����spanС���ڴ涼���黹ʱ�����ͷŵ�PageCache��
 void CentralCache::ReleaseListToSpans(void* begin, size_t size)
 {
 	size_t index = SizeClass::Index(size);
 	m_spanLists[index].Lock();
-	//��ÿ��С�ڴ�ͨ��ӳ���ҵ����Ӧ��span��������ȥ
 	while (begin != nullptr)
 	{
 		void* next = NextObj(begin);
 		Span* span = PageCache::GetInstance()->MapObjToSpan(begin);
-		//ͷ����span��freeList��
 		NextObj(begin) = span->m_freeList;
 		span->m_freeList = begin;
 		span->m_nUseCount--;
 		begin = next;
-		//���span������С���ڴ��Ϊ��ʹ��������յ�PageCache��
 		if (span->m_nUseCount == 0)
 		{
 			m_spanLists[index].Erase(span);
@@ -244,18 +215,18 @@ Span* PageCache::NewSpan(size_t k)
 		span->m_pageId = (PAGE_ID)ptr >> PAGE_SHIFT;
 		span->m_nPageNum = k;
 
-		//-------------���������������Ż�---------------------//
+	
 		//_idSpanMap[span->m_pageId] = span;
 		//_idSpanMap[span->m_pageId] = span;
 		_idSpanMap.set(span->m_pageId, span);
 		return span;
 	}
 
-	//����һ��Ͱ��û��Span
+
 	if (!m_pageLists[k].Empty())
 	{
 		Span* span = m_pageLists[k].PopFront();
-		//���ֳ���CentralCache��spanÿ��ҳ����ָ��ӳ������
+	
 		for (size_t i = 0; i < span->m_nPageNum; i++)
 		{
 			//_idSpanMap[span->m_pageId + i] = span;
@@ -267,7 +238,7 @@ Span* PageCache::NewSpan(size_t k)
 
 	for (size_t i = k + 1; i < KPAGE; i++)
 	{
-		//�����kpages���Ͱ����span��ֱ�ӷָ�span
+	
 		if (!m_pageLists[i].Empty())
 		{
 			Span* span = m_pageLists[i].PopFront();
@@ -280,13 +251,13 @@ Span* PageCache::NewSpan(size_t k)
 			span->m_pageId += k;
 			m_pageLists[span->m_nPageNum].PushFront(span);
 
-			//�������PageCache�б����ҳ��ֻ��Ҫ������βҳ����ӳ�伴��
+	
 			//_idSpanMap[span->m_pageId] = span;
 			//_idSpanMap[span->m_pageId + span->m_nPageNum - 1] = span;
 
 			_idSpanMap.set(span->m_pageId, span);
 			_idSpanMap.set(span->m_pageId + span->m_nPageNum - 1, span);
-			//���ֳ���CentralCache��spanÿ��ҳ����ָ��ӳ������
+		
 			for (size_t i = 0; i < newSpan->m_nPageNum; i++)
 			{
 				//_idSpanMap[newSpan->m_pageId + i] = newSpan;
@@ -296,10 +267,7 @@ Span* PageCache::NewSpan(size_t k)
 			return newSpan;
 		}
 	}
-	//�����kpages���Ͱ��û��span������ϵͳ����
 
-	//��ϵͳ������ڴ�������ַ��ֱ��ӳ��Ϊҳ��
-	//ֻҪ��֤PAGE��ϵͳҳ����һ����С����
 
 	void* ptr = SystemAlloc(KPAGE - 1);
 	Span* span = ::new Span;
@@ -311,7 +279,7 @@ Span* PageCache::NewSpan(size_t k)
 
 }
 
-//�������ַת��Ϊҳ�ţ�Ѱ�Ҷ�Ӧ��span
+
 Span* PageCache::MapObjToSpan(void* obj)
 {
 	PAGE_ID id = (PAGE_ID)obj >> PAGE_SHIFT;
@@ -320,15 +288,13 @@ Span* PageCache::MapObjToSpan(void* obj)
 	return ret;
 }
 
-//��CentralCache�����Ŀ���span��ҳ�����ڵ�span�ϲ�
+
 void PageCache::ReleaseSpan(Span* span)
 {
-	//�Ƚ�С�ڴ�span��һҳ������ҳ�ϲ�
+
 	while (1)
 	{
 		PAGE_ID id = span->m_pageId;
-
-		//�����Ż�
 		auto ret = (Span*)_idSpanMap.get(id);
 		if (ret == nullptr)
 			break;
@@ -337,14 +303,11 @@ void PageCache::ReleaseSpan(Span* span)
 		if (prevSpan->m_isUse == true)
 			break;
 
-		// �ϲ�������128ҳ��spanû�취���������ϲ���
 		if (prevSpan->m_nPageNum + span->m_nPageNum > KPAGE - 1)
 		{
 			break;
 		}
 		
-
-		//�ϲ��߼�
 		span->m_pageId = prevSpan->m_pageId;
 		span->m_nPageNum += prevSpan->m_nPageNum;
 
@@ -357,13 +320,11 @@ void PageCache::ReleaseSpan(Span* span)
 		//_spanPool.Delete(prevSpan);
 	}
 
-	//���ڴ�spanҳ֮�������span�ϲ� ���ϲ�
 	while (1)
 	{
 
 		PAGE_ID nextId = span->m_pageId + span->m_nPageNum;
 
-		//-------------���������������Ż�---------------------//
 		auto ret = (Span*)_idSpanMap.get(nextId);
 		if (ret == nullptr)
 		{
@@ -385,11 +346,9 @@ void PageCache::ReleaseSpan(Span* span)
 
 
 	}
-	//�ϲ���Ҫ�޸�pageId��span����������Ȼ���ҵ�֮ǰ���ͷŵ�span
 	m_pageLists[span->m_nPageNum].PushFront(span);
 	span->m_isUse = false;
 
-	//-------------���������������Ż�---------------------//
 	/*_idSpanMap[span->m_pageId] = span;
 	_idSpanMap[span->m_pageId + span->m_nPageNum - 1] = span;*/
 

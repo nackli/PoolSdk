@@ -1,7 +1,12 @@
 #pragma once
 #include "MemPoolCommon.h"
-#include <stdlib.h>
-#include<algorithm>
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
 template<class T>
 class ObjectMemPool {
 public:
@@ -17,14 +22,14 @@ public:
 		{
 			if (_remainSize < sizeof(T))
 			{
-				size_t allocSize = std::max(sizeof(T), (size_t)128 * 1024);
+				size_t allocSize = max(sizeof(T), (size_t)128 * 1024);
 				_mem = (char*)SystemAlloc(allocSize >> PAGE_SHIFT);
 				if (_mem == nullptr)
 					throw std::bad_alloc();
 
 				_remainSize = allocSize;
 			}
-			size_t size = std::max(sizeof(T), sizeof(void*));
+			size_t size = max(sizeof(T), sizeof(void*));
 			_remainSize -= size;
 			obj = (T*)_mem;
 			_mem += size;

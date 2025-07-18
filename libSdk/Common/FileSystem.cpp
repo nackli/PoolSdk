@@ -182,7 +182,7 @@ bool IsDirectoryExists(const std::string& strDir)
 	if (strDir.empty())
 		return false;
 #ifdef _WIN32     
-    DWORD attrib = GetFileAttributesA(path.c_str());
+    DWORD attrib = GetFileAttributesA(strDir.c_str());
     return (attrib != INVALID_FILE_ATTRIBUTES) && (attrib & FILE_ATTRIBUTE_DIRECTORY);
 #else
     struct stat statbuf;
@@ -238,7 +238,7 @@ static bool OnCreateDirectoryRecursive(std::string& path)
     // ·�������ڣ�������Ŀ¼
     else if (error == ERROR_PATH_NOT_FOUND)
     {
-        std::string parentPath = OnGetDirectory(path);
+        std::string parentPath = getDirFromFilePath(path);
         if (parentPath.empty())
             return false; // ��·��Ϊ�գ����Ŀ¼��
 
@@ -410,7 +410,9 @@ bool IsAbsolutePath(const std::string& strPath)
 
 string relative2AbsolutePath(const std::string& strRelaPath)
 {
+#ifndef _WIN32
 	const uint16_t MAX_PATH = 256;
+#endif
 	char szFullPath[MAX_PATH];
 #ifdef _WIN32
 	GetFullPathNameA(strRelaPath.c_str(), MAX_PATH, szFullPath, nullptr);

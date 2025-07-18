@@ -10,7 +10,11 @@ Copyright (c) 2024. All Rights Reserved.
 #include <algorithm>
 #include <cctype>
 #include "FileSystem.h"
+#ifdef _WIN32
+#define UNUSED_FUN
+#else
 #define UNUSED_FUN __attribute__((unused))
+#endif
 #define FILE_CLOSE(x)					if((x)){if(!fclose((x)))(x) = nullptr;}
 FileLogger FileLogger::m_sFileLogger;
 
@@ -352,7 +356,7 @@ void FileLogger::purgeOldFiles()
 #ifdef _WIN32
 
     WIN32_FIND_DATAA findData;
-    string strDir = OnGetDirectory(m_strBaseName);
+    string strDir = getDirFromFilePath(m_strBaseName);
     HANDLE hFind = FindFirstFileA((m_strFilePrefix + "_*" + m_strFileExt).c_str(), &findData);
     if (hFind != INVALID_HANDLE_VALUE) {
         do {

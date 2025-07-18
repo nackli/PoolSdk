@@ -57,7 +57,6 @@ static void Snapshot(const std::string& path)
 {
 	__try
 	{
-		//ͨ�������쳣��ȡ��ջ
 		RaiseException(0xE0000001, 0, 0, 0);
 	}
 	__except (GenerateDump(GetExceptionInformation(), path)) {}
@@ -143,21 +142,21 @@ static void UnexpectedHandler() {
 
 static void InstallUnexceptedExceptionHandler()
 {
-	//SEH��Windows �ṹ���쳣������������Win32 API
+
 	::SetUnhandledExceptionFilter(UnhandledStructuredException);
 
-	//C ����ʱ�� (CRT) �쳣�������� CRT �ṩ���쳣�������ơ�
+
 	_set_purecall_handler(PureCallHandler);
 	_set_new_handler(NewHandler);
 	_set_invalid_parameter_handler(InvalidParameterHandler);
 	_set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
 
-	//C ����ʱ�źŴ������� CRT �ṩ���źŴ������ơ�
+
 	signal(SIGABRT, SigabrtHandler);
 	signal(SIGINT, SigintHandler);
 	signal(SIGTERM, SigtermHandler);
 	signal(SIGILL, SigillHandler);
-	//C++ ����ʱ�쳣������API�ɱ�׼���ṩ
+
 	set_terminate(TerminateHandler);
 	set_unexpected(UnexpectedHandler);
 }
@@ -214,31 +213,10 @@ static void generate_stack_trace() {
 static void SignalHandler(int sig) {
 	printf("Caught signal %d\n", sig);
 	generate_stack_trace();
-	exit(1); // ����ʹ��������ʽ�˳�����
+	exit(1);
 }
 #endif
 
-/*
-	SIGHUP	1	��ֹ���̣� originally used to notify process of system terminal hangup
-	SIGINT	2	�ж��źţ�ͨ���ɼ����ϵ��жϼ���Ctrl + C��������������ֹǰ̨����
-	SIGQUIT	3	�˳��źţ�ͨ���ɼ����ϵ��˳�����Ctrl + \����������ֹ���̲���������ת���ļ�
-	SIGILL	4	�Ƿ�ָ�����ִ���˷Ƿ�ָ��ʱ����
-	SIGABRT	6	�����쳣��ֹ��ͨ����abort()�������ò���
-	SIGBUS	7	Ӳ�����ߴ�����δ������ʣ�
-	SIGFPE	8	�����쳣������������ѧ�������
-	SIGKILL	9	ǿ����ֹ���̣������޷��������Ը��ź�
-	SIGSEGV	11	�δ��󣬽�����ͼ����δ����򲻿ɷ��ʵ��ڴ�����ʱ����
-	SIGPIPE	13	�ܵ����󣬽������ѹرյĹܵ�д������ʱ����
-	SIGALRM	14	ʱ�Ӷ�ʱ�źţ����ڶ�ʱ����
-	SIGTERM	15	��ֹ�źţ��������������ֹ�����̿��Բ��񲢽��������������˳�
-	SIGUSR1	30	�û��Զ����ź�1������Ӧ�ó����Զ����ͨ�Ż����
-	SIGUSR2	31	�û��Զ����ź�2������Ӧ�ó����Զ����ͨ�Ż����
-	SIGCHLD	17 / 18	�ӽ���״̬�ı䣬���ӽ�����ֹ��ֹͣʱ�򸸽��̷���
-	SIGCONT	18 / 19	����ִ���źţ��ָ�����ͣ���̵�ִ��
-	SIGSTOP	19 / 17	��ͣ����ִ�У������޷��������Ը��ź�
-	SIGTSTP	20	��ͣ����ִ�У�ͨ���ɼ����ϵ���ͣ����Ctrl + Z������
-	SIGWINCH	28	���ڴ�С�ı䣬���ն˴��ڴ�С�ı�ʱ����
-*/
 void initExceptionDump()
 {
 #ifdef _WIN32

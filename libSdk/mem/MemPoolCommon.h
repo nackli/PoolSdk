@@ -8,18 +8,14 @@
 #include <sys/mman.h>
 #endif
 
-//�ڴ���������������ֽ���
 static const size_t MAX_BYTES = 256 * 1024;
-//ThreadCache��CentralCache��Ͱ�ĸ���
+
 static const uint8_t FREELISTS_NUM = 208;
 
-//PageCache��Ͱ��
 static const uint8_t KPAGE = 129;
-//һ��Page�Ĵ�С:2^13 -- ���ԸĽ�һ�£��Ȼ�ȡϵͳһҳ�Ĵ�С��Ȼ����ȷ��
 static const uint8_t PAGE_SHIFT = 13;
 
-//С���ڴ�ͷ4/8���ֽڴ洢ָ����һ��С���ڴ�
-//�����ҵ���һ��С���ڴ�
+
 inline  static void*& NextObj(void* obj)
 {
 	return *(void**)obj;
@@ -78,14 +74,14 @@ public:
 	}
 private:
 	void* m_freeList = nullptr;
-	size_t _maxSize = 1; //��centralcache�����ڴ������������������ȡС���ڴ���
-	size_t _size = 0; //�����ڵ����
+	size_t _maxSize = 1; 
+	size_t _size = 0; 
 };
 
 
 class SizeClass {
 public:
-	//�������ڴ��ֽ�������ȡ��
+
 	static size_t _RoundUp(size_t size, size_t align)
 	{
 		return  (size + align - 1) & ~(align - 1);
@@ -99,8 +95,7 @@ public:
 		else if (size <= 64 * 1024) return _RoundUp(size, 1024);
 		else if (size <= MAX_BYTES) return _RoundUp(size, 8 * 1024);
 		else {
-			//�����ǳ���MAX_BYTES�����
-			//����MAX_BYTES��ֱ�Ӱ�ҳ����
+
 			return _RoundUp(size, 1 << PAGE_SHIFT);
 		}
 	}
@@ -110,18 +105,11 @@ public:
 	{
 		return ((size + (1 << align_shift) - 1) >> align_shift) - 1;
 	}
-	//�������ֽ�������ȡ�������õ���Ͱ�±�
+
 	static size_t Index(size_t size)
 	{
 		assert(size <= MAX_BYTES);
-		/*
-		* threadCache��ÿ��Ͱ�������ڴ���С��һ
-		* [1,128] ����16��Ͱ������Ͱ֮���ڴ��С���8B
-		* [129,1024] ��56��Ͱ������Ͱ֮���ڴ��С���16B
-		* [1025,8*1024] ��56��Ͱ������Ͱ֮���ڴ��С���128B
-		* [8*1024+1,64*1024] ��56��Ͱ������Ͱ֮���ڴ��С���1024B
-		* [64*1024+1,256*1024] ��24��Ͱ������Ͱ֮���ڴ��С���8*1024B
-		*/
+
 		static const int group_array[] = { 16,56,56,56,24 };
 		if (size <= 128) return _Index(size, 3);
 		else if (size <= 1024) {
@@ -140,19 +128,16 @@ public:
 		return -1;
 	}
 
-	//threadcacheһ����centralcacheҪ��obj����������
 	static size_t NumMoveSize(size_t size)
 	{
 		assert(size > 0);
-		//����������
-		//С����һ��������������޸�
-		//�����һ��������������޵�
+	
 		size_t num = MAX_BYTES / size;
 		if (num < 2) num = 2;
 		else if (num > 512) num = 512;
 		return num;
 	}
-	//central cacheһ����page cache��Ҫ��span��ҳ��
+
 	static size_t NumMovePage(size_t size)
 	{
 		size_t num = NumMoveSize(size);
@@ -170,16 +155,16 @@ typedef uint32_t PAGE_ID;
 typedef uint64_t PAGE_ID;
 #endif
 struct Span {
-	PAGE_ID m_pageId = 0;//ҳ��
-	size_t m_nPageNum = 0;//ҳ��
-	Span* m_next = nullptr;	//ָ����һ��Span
-	Span* m_prev = nullptr;//ָ��ǰһ��Span
-	void* m_freeList = nullptr;//ָ��С���������ĵ�һ���ڵ㣬����һ��С����
+	PAGE_ID m_pageId = 0;
+	size_t m_nPageNum = 0;
+	Span* m_next = nullptr;	
+	Span* m_prev = nullptr;
+	void* m_freeList = nullptr;
 	//----------------------------------------------------------
-	//�������ֶΣ����ͷ��߼�����ϸ����
-	size_t m_nObjSize = 0;//����ÿ��С����Ĵ�С	
-	size_t m_nUseCount = 0;//�Ѿ��������thread cache��С�������
-	bool m_isUse = true;//���Span�Ƿ��page cache��ȡ��
+	
+	size_t m_nObjSize = 0;
+	size_t m_nUseCount = 0;
+	bool m_isUse = true;
 };
 
 class SpanList {
@@ -190,7 +175,7 @@ public:
 		m_headSpan->m_prev = m_headSpan;
 	}
 
-	~SpanList()//�ͷ�������ÿ���ڵ�
+	~SpanList()
 	{
 		Span* cur = m_headSpan->m_next;
 		while (cur != m_headSpan)
@@ -203,12 +188,12 @@ public:
 		m_headSpan = nullptr;
 	}
 
-	Span* Begin()//���ص�һ�����ݵ�ָ��
+	Span* Begin()
 	{
 		return m_headSpan->m_next;
 	}
 
-	Span* End()//���һ������һ��ָ��
+	Span* End()
 	{
 		return m_headSpan;
 	}
@@ -230,27 +215,25 @@ public:
 		assert(pos);
 		assert(pos != m_headSpan);
 
-		//�����ͷſռ�
 		Span* prev = pos->m_prev;
 		Span* next = pos->m_next;
 		prev->m_next = next;
 		next->m_prev = prev;
 	}
 
-	//β��
+
 	void PushBack(Span* newspan)
 	{
 		Insert(End(), newspan);
 	}
 
-	//ͷ��
+
 	void PushFront(Span* newspan)
 	{
 		Insert(Begin(), newspan);
 	}
 
-	//βɾ
-	Span* PopBack()//ʵ���ǽ�β��λ�õĽڵ��ó���
+	Span* PopBack()
 	{
 		Span* span = m_headSpan->m_prev;
 		Erase(span);
@@ -259,7 +242,7 @@ public:
 	}
 
 	//ͷɾ
-	Span* PopFront()//ʵ���ǽ�ͷ��λ�ýڵ��ó���
+	Span* PopFront()
 	{
 		Span* span = m_headSpan->m_next;
 		Erase(span);
@@ -285,8 +268,8 @@ private:
 	SpanList(const SpanList&) = delete;
 	SpanList& operator=(const SpanList&) = delete;
 
-	Span* m_headSpan;		//ͷ�ڵ�
-	std::mutex m_mtxSpan;	//Ͱ��
+	Span* m_headSpan;		
+	std::mutex m_mtxSpan;	
 };
 
 inline void* SystemAlloc(size_t size)
@@ -315,7 +298,6 @@ inline void SystemFree(void* ptr)
 #ifdef _WIN32
 	VirtualFree(ptr, 0, MEM_RELEASE);
 #else
-	// sbrk unmmap��
 	munmap(ptr,0);
 #endif
 }
