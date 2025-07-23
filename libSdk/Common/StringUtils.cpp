@@ -892,7 +892,7 @@ bool OnIsExistGBK(const std::string & strInPut)
 			continue;
 		}
 
-		// GBK˫�ֽ��ַ���Χ���
+
 		if (i + 1 >= strInPut.size())
 			return false;
 
@@ -906,9 +906,9 @@ bool OnIsExistGBK(const std::string & strInPut)
 			break;
 		}
 		else
-			return false; // ������GBK�������
+			return false; 
 	}
-	return hasGBK; // �������GBK�ַ�����true
+	return hasGBK; 
 }
 
 std::string GbkToUtf8(const std::string& str)

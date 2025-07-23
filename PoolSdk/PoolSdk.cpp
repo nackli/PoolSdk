@@ -12,6 +12,7 @@
 #include "Common/CircularQueue.h"
 #include "Common/pipe.h"
 #include "Common/FileSystem.h"
+#include "Common/MemTable.h"
 #pragma comment(lib,"libSdk.lib")
 
 #include <winioctl.h>
@@ -217,12 +218,41 @@ std::wstring GetPhysicalDriveFromLogicalDrive(const wchar_t* logicalDrive) {
 
 #include <windows.h>
 #include <iostream>
-
+#include "Common/SkipList.h"
 
 
 
 int main()
 {
+
+
+    MemTable memtable;
+
+    memtable.Put("key1", "value1");
+    memtable.Put("key2", "value2");
+    memtable.Put("key3", "value3");
+    SkipList<int> skipList;
+    for (int i = 0; i < 30; i++)
+        skipList.insert(20 + i);
+
+    bool b = skipList.find(25);
+    bool c = skipList.find(35);
+
+    std::string value;
+    if (memtable.Get("key2", value)) {
+        std::cout << "Found key2: " << value << std::endl;
+    }
+    memtable.Put("key2", "value212314124");
+    if (memtable.Get("key2", value)) {
+        std::cout << "1111 Found key2: " << value << std::endl;
+    }
+    memtable.Delete("key2");
+
+    std::cout << "MemTable size: " << memtable.getItemCount() << std::endl;
+    std::cout << "Memory usage: " << memtable.ApproximateMemoryUsage() << " bytes" << std::endl;
+
+
+
 
     std::wstring physicalDrive = GetPhysicalDriveFromLogicalDrive(L"C:");
     TCHAR szDrive[256] = TEXT("C:\\");

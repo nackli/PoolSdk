@@ -60,6 +60,9 @@
     <ClCompile Include="Common\SpinLock.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Common\MemTable.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="thread\AdvancedThreadPool.h">
@@ -141,6 +144,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Common\SpinLock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\MemTable.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\SkipListKv.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\SkipList.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -42,67 +42,12 @@ UNUSED_FUN static void memory_dump(const void* ptr, unsigned int len)
 //         return filepath.substr(0, pos + 1);
 //     return "";
 // }
-// �ݹ鴴��Ŀ¼
+
 static bool OnCreateDirectoryRecursive(std::string& path)
 {
-// #ifdef _WIN32    
-//     if (!path.empty() && (path.back() == '\\' || path.back() == '/'))
-//         path.pop_back();
-
-//     if (CreateDirectoryA(path.c_str(), nullptr))
-//         return true;
-
-//     DWORD error = GetLastError();
-//     // Ŀ¼�Ѵ��ڣ�����Ƿ�Ϊ�ļ���
-//     if (error == ERROR_ALREADY_EXISTS)
-//     {
-//         DWORD attrib = GetFileAttributesA(path.c_str());
-//         return (attrib != INVALID_FILE_ATTRIBUTES) && (attrib & FILE_ATTRIBUTE_DIRECTORY);
-//     }
-//     // ·�������ڣ�������Ŀ¼
-//     else if (error == ERROR_PATH_NOT_FOUND)
-//     {
-//         std::string parentPath = OnGetDirectory(path);
-//         if (parentPath.empty())
-//             return false; // ��·��Ϊ�գ����Ŀ¼��
-
-//         // �ݹ鴴����Ŀ¼������
-//         if (OnCreateDirectoryRecursive(parentPath))
-//             return CreateDirectoryA(path.c_str(), nullptr);
-//     }
-//     return false;
-//  #else
-//     std::string strSubPath;
-//     size_t iPos = 0;
-
-//     // 处理路径中的每一层
-//     while ((iPos = path.find('/', iPos)) != std::string::npos) 
-//     {
-//         strSubPath = path.substr(0, iPos++);
-
-//         if (strSubPath.empty())
-//             continue; // 忽略根路径 "/"
-
-//         // 检查目录是否已经存在
-//         if (mkdir(strSubPath.c_str(), 0755) && errno != EEXIST) 
-//         {
-//             std::cerr << "Error creating directory: " << strerror(errno) << std::endl;
-//             return false;
-//         }
-//     }
-
-//     // 创建最后一级目录
-//     if (mkdir(path.c_str(), 0755) && errno != EEXIST)
-//     {
-//         std::cerr << "Error creating directory: " << strerror(errno) << std::endl;
-//         return false;
-//     }
-//     return true;
-//  #endif   
     return createDirectoryRecursive(path);
 }
 
-// ���Ŀ¼�Ƿ����
 static bool OnIsDirectoryExists(const std::string& path) {
 //  #ifdef _WIN32     
 //     DWORD attrib = GetFileAttributesA(path.c_str());
@@ -110,7 +55,7 @@ static bool OnIsDirectoryExists(const std::string& path) {
 // #else
 //     struct stat statbuf;
 //     if (stat(path.c_str(), &statbuf) != 0) {
-//         return false; // stat调用失败
+//         return false; //
 //     }
 //     return S_ISDIR(statbuf.st_mode);
 // #endif    
@@ -298,7 +243,6 @@ std::string FileLogger::stringFormat(const char* format, ...) {
         throw std::runtime_error("Error formatting log message");
     }
 
-    // ������������ʵ�ʸ�ʽ��
     std::unique_ptr<char[]> buf(new char[neededSize]);
     int actualSize = vsnprintf(buf.get(), neededSize, format, args);
     va_end(args);
@@ -384,24 +328,22 @@ void FileLogger::purgeOldFiles()
     string strDir = getDirFromFilePath(m_strBaseName);
     //printf("ext length:%d\n",m_ext.length());
  
-    // 打开目录, DIR是类似目录句柄的东西
+  
     DIR *dir = opendir(strDir.c_str());
     if ( dir == NULL )
     {
         printf("[ERROR] %s is not a directory or not exist!", strDir.c_str());
         return;
     }
- 
-    // dirent会存储文件的各种属性
+
     struct dirent* d_ent = NULL;
   
-    // 一行一行的读目录下的东西,这个东西的属性放到dirent的变量中
+
     while ( (d_ent = readdir(dir)) != NULL )
     {
-        // 忽略 "." 和 ".."
         if ( (strcmp(d_ent->d_name, ".") != 0) && (strcmp(d_ent->d_name, "..") != 0) )
         {
-            // d_type可以看到当前的东西的类型,DT_DIR代表当前都到的是目录,在usr/include/dirent.h中定义的
+ 
             if ( d_ent->d_type != DT_DIR)
             {
                 string d_name(d_ent->d_name);
@@ -410,14 +352,13 @@ void FileLogger::purgeOldFiles()
                 {
                     struct stat statbuf;
                     if (stat(d_name.c_str(), &statbuf) != 0) {
-                        return; // stat调用失败
+                        return; // 
                     }
 
                     uint64_t uTime = (static_cast<uint64_t>(statbuf.st_mtim.tv_nsec));
-                    // 构建绝对路径
+      
                     string strAbsolutePath;
                     //string absolutePath = directory + string("/") + string(d_ent->d_name);
-                    // 如果传入的目录最后是/--> 例如"a/b/", 那么后面直接链接文件名
                     if (strDir[strDir.length()-1] == '/')
                        strAbsolutePath = strDir + string(d_ent->d_name);  
                     else

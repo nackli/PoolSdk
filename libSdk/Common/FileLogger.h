@@ -72,7 +72,6 @@ private:
     void parseFileNameComponents();
     template<typename... Args>
     std::string formatMessage(LogLevel emLevel, const char* szFun, const char* format, Args... args) {
-        // ��ʽ����Ϣ����
         std::string strContent = stringFormat(format, args...);
 
         char szTimeBuf[32];
@@ -88,7 +87,6 @@ private:
         snprintf(szTimeBuf, sizeof(szTimeBuf), "%04d-%02d-%02d %02d:%02d:%02d.%03d", (int)t.tm_year + 1900, (int)t.tm_mon + 1, (int)t.tm_mday, (int)t.tm_hour, (int)t.tm_min, (int)t.tm_sec, (int)(tv.tv_usec / 1000) % 1000);
 #endif
 
-        // ��־�����ַ���
         const char* strLevel = nullptr;
         switch (emLevel) {
         case EM_LOG_TRACE:   strLevel = "TRACE"; break;
@@ -99,7 +97,6 @@ private:
         case EM_LOG_FATAL:   strLevel = "FATAL"; break;
         }
         uint32_t uThreadId = getCurThreadtid();
-        // ���������־��
         return stringFormat("[%s] [%s] [tid:%05d] [%s] %s", szTimeBuf, strLevel, uThreadId, szFun,  strContent.c_str());
     }
 

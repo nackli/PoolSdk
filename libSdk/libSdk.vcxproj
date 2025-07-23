@@ -25,6 +25,7 @@
     <ClCompile Include="Common\FileFun.cpp" />
     <ClCompile Include="Common\FileLogger.cpp" />
     <ClCompile Include="Common\FileSystem.cpp" />
+    <ClCompile Include="Common\MemTable.cpp" />
     <ClCompile Include="Common\pipe.cpp" />
     <ClCompile Include="Common\RwLock.cpp" />
     <ClCompile Include="Common\SpinLock.cpp" />
@@ -48,9 +49,12 @@
     <ClInclude Include="Common\LockFreeCircularQue.h" />
     <ClInclude Include="Common\LockFreeStack.h" />
     <ClInclude Include="Common\MemBarrier.h" />
+    <ClInclude Include="Common\MemTable.h" />
     <ClInclude Include="Common\mmap.h" />
     <ClInclude Include="Common\pipe.h" />
     <ClInclude Include="Common\RwLock.h" />
+    <ClInclude Include="Common\SkipList.h" />
+    <ClInclude Include="Common\SkipListKv.h" />
     <ClInclude Include="Common\SpinLock.h" />
     <ClInclude Include="Common\StringUtils.h" />
     <ClInclude Include="Common\SystemBacktrace.h" />
