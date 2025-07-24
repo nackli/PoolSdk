@@ -32,27 +32,28 @@ public:
     }
 
     // Insert key value pairs
-    void insert(const_value_type& value) {
-        std::vector<std::shared_ptr<item_type>> update(m_iMaxLevel);
+    void insert(const_value_type& value) 
+    {
+        std::vector<node_type> update(m_iMaxLevel);
         auto current = m_pHeader;
 
-
         //Starting from the highest level, search for the insertion position
-        for (int i = m_iCurLevel - 1; i >= 0; i--) {
-            while (current->forward[i] != nullptr && current->forward[i]->value < value) {
+        for (int i = m_iCurLevel - 1; i >= 0; i--) 
+        {
+            while (current->forward[i] != nullptr && current->forward[i]->value < value) 
                 current = current->forward[i];
-            }
+
             update[i] = current;
         }
 
         current = current->forward[0];
 
         // If the key already exists, update the value
-        if (current != nullptr && current->value == value) {
+        if (current != nullptr && current->value == value)
+        {
             current->value = value;
             return;
         }
-
 
         // Randomly determine the number of layers for a new node
         int level = random_level();
@@ -60,10 +61,11 @@ public:
         /* If the number of layers of the new node is greater than the current number of layers,
         update the update array and the current number of layers
         */
-        if (level > m_iCurLevel) {
-            for (int i = m_iCurLevel; i < level; i++) {
+        if (level > m_iCurLevel) 
+        {
+            for (int i = m_iCurLevel; i < level; i++) 
                 update[i] = m_pHeader;
-            }
+            
             m_iCurLevel = level;
         }
 
@@ -82,10 +84,10 @@ public:
         auto current = m_pHeader;
 
         // Start searching from the highest level
-        for (int i = m_iCurLevel - 1; i >= 0; i--) {
-            while (current->forward[i] != nullptr && current->forward[i]->value < value) {
+        for (int i = m_iCurLevel - 1; i >= 0; i--) 
+        {
+            while (current->forward[i] != nullptr && current->forward[i]->value < value) 
                 current = current->forward[i];
-            }
         }
 
         current = current->forward[0];
@@ -140,6 +142,19 @@ public:
         return count;
     }
 
+    // 打印跳表结构
+    void printHelper() const {
+        std::cout << "跳表结构: " << std::endl;
+        for (int i = 0; i <= m_iCurLevel; i++) {
+            auto node = m_pHeader->forward[i];
+            std::cout << "第 " << i << " 层: ";
+            while (node != nullptr) {
+                std::cout << node->value << " ";
+                node = node->forward[i];
+            }
+            std::cout << std::endl;
+        }
+    }
 private:
     int m_iMaxLevel;  // number of layers
     int m_iCurLevel;  // Current level

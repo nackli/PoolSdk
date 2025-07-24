@@ -52,6 +52,7 @@
     <ClInclude Include="Common\MemTable.h" />
     <ClInclude Include="Common\mmap.h" />
     <ClInclude Include="Common\pipe.h" />
+    <ClInclude Include="Common\RBTree.h" />
     <ClInclude Include="Common\RwLock.h" />
     <ClInclude Include="Common\SkipList.h" />
     <ClInclude Include="Common\SkipListKv.h" />

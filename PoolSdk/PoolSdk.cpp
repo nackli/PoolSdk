@@ -219,12 +219,40 @@ std::wstring GetPhysicalDriveFromLogicalDrive(const wchar_t* logicalDrive) {
 #include <windows.h>
 #include <iostream>
 #include "Common/SkipList.h"
-
+#include "Common/RBTree.h"
+#include "Common/hashAlg.h"
 
 
 int main()
 {
 
+    uint32_t uHash = ELFhash("abfadfaeirtwejginfiqhvbcvmfkr hvqa");
+    RedBlackTree<int> rbTree;
+
+    rbTree.insert(7);
+    rbTree.insert(3);
+    rbTree.insert(18);
+    rbTree.insert(10);
+    rbTree.insert(22);
+    rbTree.insert(8);
+    rbTree.insert(11);
+    rbTree.insert(26);
+
+    cout << "Red-Black Tree after insertion:" << endl;
+    rbTree.printTree();
+
+    cout << "\nDeleting 18..." << endl;
+    rbTree.remove(18);
+    rbTree.printTree();
+
+    cout << "\nSearching for 11: ";
+    auto result = rbTree.search(11);
+    if (result) {
+        cout << "Found (" << result->data << ")" << endl;
+    }
+    else {
+        cout << "Not found" << endl;
+    }
 
     MemTable memtable;
 
@@ -232,11 +260,13 @@ int main()
     memtable.Put("key2", "value2");
     memtable.Put("key3", "value3");
     SkipList<int> skipList;
-    for (int i = 0; i < 30; i++)
+    for (int i = 0; i < 300; i++)
         skipList.insert(20 + i);
 
     bool b = skipList.find(25);
     bool c = skipList.find(35);
+
+    skipList.printHelper();
 
     std::string value;
     if (memtable.Get("key2", value)) {

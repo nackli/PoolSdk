@@ -8,3 +8,16 @@ uint32_t javaHashCode(const T& container) {
     return hash;
 }
 
+uint32_t ELFhash(const char* key)
+{
+    uint32_t h = 0;
+    while (*key)
+    {
+        h = (h << 4) + *key++;
+        uint32_t g = h & 0xF0000000L;
+        if (g)
+            h ^= g >> 24;
+        h &= ~g;
+    }
+    return h;
+}
