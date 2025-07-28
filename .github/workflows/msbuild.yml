@@ -6,9 +6,9 @@
 name: MSBuild
 
 on:
-    push:
-        tags:
-          - v** #触发条件是当有以V开条的标签被创建时
+  push:
+    tags:
+      - v** #触发条件是当有以V开条的标签被创建时
 #  push:
 #    branches: [ "main" ]
 #  pull_request:
