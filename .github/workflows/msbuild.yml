@@ -24,7 +24,7 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
   BUILD_PLATFORM: x86
-  BUILD_INCLUDE_OUT: .\libSdk\Common\*.h
+  BUILD_INCLUDE_OUT: .\Common\*.h
   
 permissions:
   contents: write
