@@ -48,3 +48,27 @@ jobs:
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{env.BUILD_PLATFORM}} ${{env.SOLUTION_FILE_PATH}}
+  
+    - name: Get latest tag
+      id: get-last-tag
+      run: |
+        # 获取最新标签（如 v1.0.0）
+        LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "1.0.0")
+        echo "current_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+        
+    - name: Print version
+      if: matrix.os == 'ubuntu-latest' 
+      run: |
+        echo "version:${{ steps.get-last-tag.outputs.current_tag }}" 
+        
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1 # 使用 actions/create-release action 创建 release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 使用 GitHub Token 来创建 release
+      with:
+        
+        tag_name: ${{env.BUILD_PLATFORM}}-${{ steps.get-last-tag.outputs.current_tag }} # 使用当前推送的 tag 作为 release 的 tag 名
+        release_name: ${{env.BUILD_CONFIGURATION}}
+        draft: false # 是否为草稿版发布，false 表示发布后可以直接查看，true 表示需要手动发布
+        prerelease: false # 是否为预发布版，false 表示正式版，true 表示预发布版
