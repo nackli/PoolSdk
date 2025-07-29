@@ -224,13 +224,13 @@ std::wstring GetPhysicalDriveFromLogicalDrive(const wchar_t* logicalDrive) {
 
 int main()
 {
-    //for (int i = 1; i < 0xff; i++)
-    //{
-    //    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), i);
-    //    printf("%02d", i);
-    //    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);//设置颜色，没有添加颜色，故为原色
-    //    printf(" ");
-    //}
+    for (int i = 1; i < 0xff; i++)
+    {
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), i);
+        printf("%02d", i);
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);//设置颜色，没有添加颜色，故为原色
+        printf(" ");
+    }
     printf("\n");
     FileLogger::getInstance().initLog("./logCfg.cfg");
     LOG_TRACE("Red-Black Tree after insertion:");

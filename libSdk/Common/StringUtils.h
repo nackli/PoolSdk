@@ -8,6 +8,8 @@
 bool str2Bool(std::string strInput);
 std::string &trimLeft(std::string &strInput, const std::string strTrim = " ");
 std::string &trimRight(std::string &strInput, const std::string strTrim = " ");
+std::string& subLeft(std::string& strInput, const std::string strTrim = " ");
+std::string& subRight(std::string& strInput, const std::string strTrim = " ");
 std::string &trim(std::string& strInput, const std::string strTrim = " ");
 	
 bool equals(const char* szLeft, const char* szRight, bool bCaseSensitive = true);

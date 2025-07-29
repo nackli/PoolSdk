@@ -113,6 +113,7 @@ std::string &trimLeft(std::string &strInput,const std::string strTrim)
     strInput.erase(0, strInput.find_first_not_of(strTrim));
     return strInput;
 }
+
 /**
  * @brief 
  * @param strInput 
@@ -127,6 +128,43 @@ std::string &trimRight(std::string &strInput, const std::string strTrim)
     strInput.erase(strInput.find_last_not_of(strTrim) + 1);
     return strInput;
 }
+/**
+ * @brief
+ * @param strInput
+ * @param strTrim
+ * @return
+*/
+std::string& subLeft(std::string& strInput, const std::string strTrim)
+{
+    if (strInput.empty() || strTrim.empty())
+        return strInput;
+    size_t uPos = strInput.find_first_of(strTrim);
+    if (strInput.npos == uPos)
+        return strInput;
+    strInput = strInput.substr(0, uPos);
+    return strInput;
+}
+
+/**
+ * @brief
+ * @param strInput
+ * @param strTrim
+ * @return
+*/
+std::string& subRight(std::string& strInput, const std::string strTrim)
+{
+    if (strInput.empty() || strTrim.empty())
+        return strInput;
+    size_t uPos = strInput.find_last_of(strTrim);
+    if (strInput.npos == uPos)
+    {
+        strInput.clear();
+        return strInput;
+    }
+    strInput = strInput.substr(uPos + 1);
+    return strInput;
+}
+
 /**
  * @brief 
  * @param strInput 

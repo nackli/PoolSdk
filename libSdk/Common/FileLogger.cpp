@@ -10,6 +10,7 @@ Copyright (c) 2024. All Rights Reserved.
 #include <algorithm>
 #include <cctype>
 #include "FileSystem.h"
+#include "StringUtils.h"
 #ifdef _WIN32
 #define UNUSED_FUN
 #else
@@ -55,14 +56,12 @@ static std::map<std::string, std::string> parseConfig(const std::string& path)
 
     while (std::getline(file, line))
     {
-        if (line[0] == '#')
+        std::string strData = subLeft(line, "#");
+        if (strData.empty())
             continue;
-        size_t pos = line.find('=');
-        if (pos != std::string::npos) {
-            std::string key = line.substr(0, pos);
-            std::string value = line.substr(pos + 1);
-            config[key] = value;
-        }
+        std::pair <std::string, std::string> pairKv = spiltKv(strData);
+        if(!pairKv.first.empty())
+            config[pairKv.first] = pairKv.second;
     }
     return config;
 }
@@ -77,19 +76,9 @@ static LogLevel stringToLevel(const std::string& strLevel) {
         {"FATAL", LogLevel::EM_LOG_FATAL}
     };
     string strLev = strLevel;
-    std::transform(strLev.begin(), strLev.end(), strLev.begin(), [](unsigned char c){ return std::toupper(c); });
+    toUpper(strLev);
     return levelMap.at(strLev);
 }
-
-static bool OnStrCaseCompare(const char* s1, const char* s2)
-{
-#ifdef __LINUX__
-    return (strcasecmp(s1, s2) == 0); // #include <cstring>
-#else
-    return (_stricmp(s1, s2) == 0);
-#endif
-}
-
 
 UNUSED_FUN static int dir_list(const char* szDir, int (CallFunFileList)(void* param, const char* name, int isdir), void* param)
 {
@@ -162,13 +151,13 @@ void FileLogger::initLog(const std::string &strCfgName)
             if (!mapCfg["file_name"].empty())
                 m_strBaseName = mapCfg["file_name"];         
             if(!mapCfg["max_files"].empty())
-                m_iMaxFiles = std::stoi(mapCfg["max_files"]);
+                m_iMaxFiles = str2Int(mapCfg["max_files"]);
             if(!mapCfg["max_size"].empty())
-                m_iMaxSize = std::stoi(mapCfg["max_size"]);
+                m_iMaxSize = str2Uint(mapCfg["max_size"]);
             if (!mapCfg["log_level"].empty())
                 m_emLogLevel = stringToLevel(mapCfg["log_level"]);
             if (!mapCfg["out_put"].empty())
-                m_bOutPutFile = !OnStrCaseCompare(mapCfg["out_put"].c_str(),"console");
+                m_bOutPutFile = !equals(mapCfg["out_put"].c_str(),"console",false);
         }
         if (m_bOutPutFile)
         {
