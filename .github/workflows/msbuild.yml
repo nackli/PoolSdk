@@ -9,6 +9,9 @@ on:
   push:
     tags:
       - v** #触发条件是当有以V开条的标签被创建时
+  #Allows you to run this workflow manually from the actions tab
+  workflow_dispatch:
+  
 #  push:
 #    branches: [ "main" ]
 #  pull_request:
@@ -34,8 +37,10 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
-
+    runs-on: ${{ matrix.os }}
+    strategy:
+        matrix:
+            os: [windows-latest]
     steps:
     - uses: actions/checkout@v4
 
