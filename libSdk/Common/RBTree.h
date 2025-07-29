@@ -4,7 +4,7 @@
 
 using namespace std;
 
-enum class Color { RED, BLACK };
+enum class Color { TREE_RED, TREE_BLACK };
 
 template <typename T>
 struct Node {
@@ -17,7 +17,7 @@ struct Node {
     shared_node_type right;
     shared_node_type parent;
 
-    Node(value_type val) : data(val), color(Color::RED),
+    Node(value_type val) : data(val), color(Color::TREE_RED),
         left(nullptr), right(nullptr), parent(nullptr) {}
 };
 
@@ -29,7 +29,7 @@ class RedBlackTree {
 public:
     RedBlackTree() {
         nil = make_shared<node_type>(0);
-        nil->color = Color::BLACK;
+        nil->color = Color::TREE_BLACK;
         root = nil;
     }
 
@@ -63,7 +63,7 @@ public:
 
         z->left = nil;
         z->right = nil;
-        z->color = Color::RED;
+        z->color = Color::TREE_RED;
 
         insertFixup(z);
     }
@@ -120,7 +120,7 @@ public:
             y->color = z->color;
         }
 
-        if (yOriginalColor == Color::BLACK) {
+        if (yOriginalColor == Color::TREE_BLACK) {
             deleteFixup(x);
         }
     }
@@ -207,15 +207,15 @@ private:
 
     void insertFixup(shart_node_type z)
     {
-        while (z->parent->color == Color::RED) {
+        while (z->parent->color == Color::TREE_RED) {
             if (z->parent == z->parent->parent->left) {
                 auto y = z->parent->parent->right;
 
-                if (y->color == Color::RED) {
+                if (y->color == Color::TREE_RED) {
                     // Case 1
-                    z->parent->color = Color::BLACK;
-                    y->color = Color::BLACK;
-                    z->parent->parent->color = Color::RED;
+                    z->parent->color = Color::TREE_BLACK;
+                    y->color = Color::TREE_BLACK;
+                    z->parent->parent->color = Color::TREE_RED;
                     z = z->parent->parent;
                 }
                 else {
@@ -225,8 +225,8 @@ private:
                         leftRotate(z);
                     }
                     // Case 3
-                    z->parent->color = Color::BLACK;
-                    z->parent->parent->color = Color::RED;
+                    z->parent->color = Color::TREE_BLACK;
+                    z->parent->parent->color = Color::TREE_RED;
                     rightRotate(z->parent->parent);
                 }
             }
@@ -234,10 +234,10 @@ private:
                 // 对称情况
                 auto y = z->parent->parent->left;
 
-                if (y->color == Color::RED) {
-                    z->parent->color = Color::BLACK;
-                    y->color = Color::BLACK;
-                    z->parent->parent->color = Color::RED;
+                if (y->color == Color::TREE_RED) {
+                    z->parent->color = Color::TREE_BLACK;
+                    y->color = Color::TREE_BLACK;
+                    z->parent->parent->color = Color::TREE_RED;
                     z = z->parent->parent;
                 }
                 else {
@@ -245,13 +245,13 @@ private:
                         z = z->parent;
                         rightRotate(z);
                     }
-                    z->parent->color = Color::BLACK;
-                    z->parent->parent->color = Color::RED;
+                    z->parent->color = Color::TREE_BLACK;
+                    z->parent->parent->color = Color::TREE_RED;
                     leftRotate(z->parent->parent);
                 }
             }
         }
-        root->color = Color::BLACK;
+        root->color = Color::TREE_BLACK;
     }
 
     void transplant(shart_node_type u, shart_node_type v)
@@ -270,35 +270,35 @@ private:
 
     void deleteFixup(shart_node_type x)
     {
-            while (x != root && x->color == Color::BLACK) {
+            while (x != root && x->color == Color::TREE_BLACK) {
                 if (x == x->parent->left) {
                     auto w = x->parent->right;
 
-                    if (w->color == Color::RED) {
+                    if (w->color == Color::TREE_RED) {
                         // Case 1
-                        w->color = Color::BLACK;
-                        x->parent->color = Color::RED;
+                        w->color = Color::TREE_BLACK;
+                        x->parent->color = Color::TREE_RED;
                         leftRotate(x->parent);
                         w = x->parent->right;
                     }
 
-                    if (w->left->color == Color::BLACK && w->right->color == Color::BLACK) {
+                    if (w->left->color == Color::TREE_BLACK && w->right->color == Color::TREE_BLACK) {
                         // Case 2
-                        w->color = Color::RED;
+                        w->color = Color::TREE_RED;
                         x = x->parent;
                     }
                     else {
-                        if (w->right->color == Color::BLACK) {
+                        if (w->right->color == Color::TREE_BLACK) {
                             // Case 3
-                            w->left->color = Color::BLACK;
-                            w->color = Color::RED;
+                            w->left->color = Color::TREE_BLACK;
+                            w->color = Color::TREE_RED;
                             rightRotate(w);
                             w = x->parent->right;
                         }
                         // Case 4
                         w->color = x->parent->color;
-                        x->parent->color = Color::BLACK;
-                        w->right->color = Color::BLACK;
+                        x->parent->color = Color::TREE_BLACK;
+                        w->right->color = Color::TREE_BLACK;
                         leftRotate(x->parent);
                         x = root;
                     }
@@ -307,33 +307,33 @@ private:
                     // 对称情况
                     auto w = x->parent->left;
 
-                    if (w->color == Color::RED) {
-                        w->color = Color::BLACK;
-                        x->parent->color = Color::RED;
+                    if (w->color == Color::TREE_RED) {
+                        w->color = Color::TREE_BLACK;
+                        x->parent->color = Color::TREE_RED;
                         rightRotate(x->parent);
                         w = x->parent->left;
                     }
 
-                    if (w->right->color == Color::BLACK && w->left->color == Color::BLACK) {
-                        w->color = Color::RED;
+                    if (w->right->color == Color::TREE_BLACK && w->left->color == Color::TREE_BLACK) {
+                        w->color = Color::TREE_RED;
                         x = x->parent;
                     }
                     else {
-                        if (w->left->color == Color::BLACK) {
-                            w->right->color = Color::BLACK;
-                            w->color = Color::RED;
+                        if (w->left->color == Color::TREE_BLACK) {
+                            w->right->color = Color::TREE_BLACK;
+                            w->color = Color::TREE_RED;
                             leftRotate(w);
                             w = x->parent->left;
                         }
                         w->color = x->parent->color;
-                        x->parent->color = Color::BLACK;
-                        w->left->color = Color::BLACK;
+                        x->parent->color = Color::TREE_BLACK;
+                        w->left->color = Color::TREE_BLACK;
                         rightRotate(x->parent);
                         x = root;
                     }
                 }
             }
-            x->color = Color::BLACK;
+            x->color = Color::TREE_BLACK;
     }
 
     shart_node_type minimum(shart_node_type node)
@@ -357,7 +357,7 @@ private:
                 indent += "|  ";
             }
 
-            string color = node->color == Color::RED ? "RED" : "BLACK";
+            string color = node->color == Color::TREE_RED ? "RED" : "BLACK";
             cout << node->data << "(" << color << ")" << endl;
             printHelper(node->left, indent, false);
             printHelper(node->right, indent, true);

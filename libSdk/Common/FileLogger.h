@@ -53,10 +53,15 @@ public:
       
         try {           
             std::string strFormatted = formatMessage(emLevel, szFun, format, args...);
-
+                       
             if (strFormatted[strFormatted.length() - 1] != '\n')
                 strFormatted += '\n';
-            writeToFile(strFormatted);
+
+            if (m_bOutPutFile)
+                writeToFile(strFormatted);
+            else
+                writeToConsole(emLevel,strFormatted);
+    
         }
         catch (const std::exception& e) {
             std::cerr << "Log formatting error: " << e.what() << std::endl;
@@ -104,6 +109,8 @@ private:
 
     void writeToFile(const std::string& message);
 
+    void writeToConsole(LogLevel emLevel,const std::string& message);
+
     void openCurrentFile();
 
     void rotateFiles();
@@ -119,7 +126,6 @@ private:
 private:
     static FileLogger m_sFileLogger;
     FILE* n_hFile;
-  //  std::ofstream m_fileStream;
     std::string m_strBaseName;
     std::string m_strFilePrefix;
     std::string m_strFileExt;
@@ -129,6 +135,7 @@ private:
     size_t m_iCurrentSize;
     LogLevel m_emLogLevel;
     size_t m_iCurrentIndex;
+    bool m_bOutPutFile;
     std::mutex m_Mutex;
 };
 #endif

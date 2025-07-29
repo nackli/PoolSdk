@@ -18,6 +18,7 @@
 #include <ntddscsi.h>
 
 #pragma comment(lib, "winmm.lib")
+#include <stdio.h>
 
 
 void GetDiskPerformance(const std::string& drive_path) {
@@ -221,9 +222,23 @@ std::wstring GetPhysicalDriveFromLogicalDrive(const wchar_t* logicalDrive) {
 #include "Common/RBTree.h"
 #include "Common/hashAlg.h"
 
-
 int main()
 {
+    for (int i = 1; i < 0xff; i++)
+    {
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), i);
+        printf("%02d", i);
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);//设置颜色，没有添加颜色，故为原色
+        printf(" ");
+    }
+    printf("\n");
+    FileLogger::getInstance().initLog("./logCfg.cfg");
+    LOG_TRACE("Red-Black Tree after insertion:");
+    LOG_DEBUG("Red-Black Tree after insertion:");
+    LOG_INFO("Red-Black Tree after insertion:");
+    LOG_WARNING("Red-Black Tree after insertion:");
+    LOG_ERROR("Red-Black Tree after insertion:");
+    LOG_FATAL("Red-Black Tree after insertion:");
 
     uint32_t uHash = ELFhash("abfadfaeirtwejginfiqhvbcvmfkr hvqa");
     RedBlackTree<int> rbTree;
@@ -321,7 +336,7 @@ int main()
 
     ConcurrentAllocate(100);
     void *ptr = new int;
-    FileLogger::getInstance().initLog("./logCfg.cfg");
+
     AdvancedThreadPool pool(2, 4);
     PIPE_HANDLE hPipe[OPT_MAX];
 

@@ -36,37 +36,11 @@ UNUSED_FUN static void memory_dump(const void* ptr, unsigned int len)
     }
 }
 
-// static std::string OnGetDirectory(const std::string& filepath) {
-//     size_t pos = filepath.find_last_of("/\\");
-//     if (pos != std::string::npos)
-//         return filepath.substr(0, pos + 1);
-//     return "";
-// }
-
-static bool OnCreateDirectoryRecursive(std::string& path)
-{
-    return createDirectoryRecursive(path);
-}
-
-static bool OnIsDirectoryExists(const std::string& path) {
-//  #ifdef _WIN32     
-//     DWORD attrib = GetFileAttributesA(path.c_str());
-//     return (attrib != INVALID_FILE_ATTRIBUTES) && (attrib & FILE_ATTRIBUTE_DIRECTORY);
-// #else
-//     struct stat statbuf;
-//     if (stat(path.c_str(), &statbuf) != 0) {
-//         return false; //
-//     }
-//     return S_ISDIR(statbuf.st_mode);
-// #endif    
-    return IsDirectoryExists(path);
-}
-
 static void OnCreateDirFromFilePath(const string strFilePath)
 {
     string strCfgDir = getDirFromFilePath(strFilePath);
-    if (!OnIsDirectoryExists(strCfgDir))
-        OnCreateDirectoryRecursive(strCfgDir);
+    if (!IsDirectoryExists(strCfgDir))
+        createDirectoryRecursive(strCfgDir);
 }
 
 
@@ -104,6 +78,16 @@ static LogLevel stringToLevel(const std::string& strLevel) {
     std::transform(strLev.begin(), strLev.end(), strLev.begin(), [](unsigned char c){ return std::toupper(c); });
     return levelMap.at(strLev);
 }
+
+static bool OnStrCaseCompare(const char* s1, const char* s2)
+{
+#ifdef __LINUX__
+    return (strcasecmp(s1, s2) == 0); // #include <cstring>
+#else
+    return (_stricmp(s1, s2) == 0);
+#endif
+}
+
 
 UNUSED_FUN static int dir_list(const char* szDir, int (CallFunFileList)(void* param, const char* name, int isdir), void* param)
 {
@@ -165,6 +149,7 @@ void FileLogger::setLogLevel(LogLevel level) {
     m_emLogLevel = level;
 }
 
+
 void FileLogger::initLog(const std::string &strCfgName)
 {
     if (!strCfgName.empty())
@@ -180,9 +165,14 @@ void FileLogger::initLog(const std::string &strCfgName)
                 m_iMaxSize = std::stoi(mapCfg["max_size"]);
             if (!mapCfg["log_level"].empty())
                 m_emLogLevel = stringToLevel(mapCfg["log_level"]);
+            if (!mapCfg["out_put"].empty())
+                m_bOutPutFile = !OnStrCaseCompare(mapCfg["out_put"].c_str(),"console");
         }
-        parseFileNameComponents();
-        m_iCurrentIndex = findMaxFileIndex();
+        if (m_bOutPutFile)
+        {
+            parseFileNameComponents();
+            m_iCurrentIndex = findMaxFileIndex();
+        }
     }
 }
 
@@ -198,7 +188,7 @@ void FileLogger::setLogFileName(const std::string& strFileName)
 
 FileLogger::FileLogger(const char* strBase, size_t maxSize, int maxFiles, LogLevel level)
     :n_hFile(nullptr),
-     m_strBaseName(strBase),
+    m_strBaseName(strBase),
     m_strFilePrefix(),
     m_strFileExt(),
     m_strCurrentFile(),
@@ -206,7 +196,8 @@ FileLogger::FileLogger(const char* strBase, size_t maxSize, int maxFiles, LogLev
     m_iMaxFiles(maxFiles),
     m_iCurrentSize(0),
     m_emLogLevel(level),
-    m_iCurrentIndex(0) 
+    m_iCurrentIndex(0),
+    m_bOutPutFile(true)
 {
 }
 
@@ -252,6 +243,25 @@ std::string FileLogger::stringFormat(const char* format, ...) {
  
 
     return std::string(buf.get(), buf.get() + actualSize);
+}
+
+static void OnOutputData(LogLevel emLevel, const std::string& message)
+{
+#ifdef _WIN32
+    const uint8_t clrIndex[] = {0x0B,0x07,0x08,0x06,0x04,0x05};
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), clrIndex[emLevel]);
+    printf("%s", message.c_str());
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);
+#else
+    const uint8_t *clrIndex[] = { "/033[1;37m","/033[0;37m","/033[0;32;32m", "/033[1;33m","/033[0;32;31m","/033[1;32;31m" };
+    printf("%s%s\033[0m", clrIndex[emLevel], message.c_str());
+#endif
+}
+
+void FileLogger::writeToConsole(LogLevel emLevel, const std::string& message)
+{
+    std::lock_guard<std::mutex> lock(m_Mutex);
+    OnOutputData(emLevel, message);
 }
 
 void FileLogger::writeToFile(const std::string& strMsg) 
