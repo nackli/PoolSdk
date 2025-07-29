@@ -55,6 +55,8 @@ static std::map<std::string, std::string> parseConfig(const std::string& path)
 
     while (std::getline(file, line))
     {
+        if (line[0] == '#')
+            continue;
         size_t pos = line.find('=');
         if (pos != std::string::npos) {
             std::string key = line.substr(0, pos);
