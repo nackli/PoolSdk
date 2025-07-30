@@ -11,6 +11,7 @@ Copyright (c) 2024. All Rights Reserved.
 #include <cctype>
 #include "FileSystem.h"
 #include "StringUtils.h"
+#include "LockQueue.h"
 #ifdef _WIN32
 #define UNUSED_FUN
 #else
@@ -65,6 +66,18 @@ static std::map<std::string, std::string> parseConfig(const std::string& path)
     }
     return config;
 }
+
+//static void OnPopData2Output(FileLogger* pLogger)
+//{
+//    if (pLogger)
+//    {
+//        while (1)
+//        {
+//            pLogger->
+//
+//        }
+//    }
+//}
 
 static LogLevel stringToLevel(const std::string& strLevel) {
     static std::map<std::string, LogLevel> levelMap = {
@@ -158,12 +171,19 @@ void FileLogger::initLog(const std::string &strCfgName)
                 m_emLogLevel = stringToLevel(mapCfg["log_level"]);
             if (!mapCfg["out_put"].empty())
                 m_bOutPutFile = !equals(mapCfg["out_put"].c_str(),"console",false);
+            if (!mapCfg["out_mode"].empty())
+                m_bSync = equals(mapCfg["out_mode"].c_str(), "sync", false);
         }
         if (m_bOutPutFile)
         {
             parseFileNameComponents();
             m_iCurrentIndex = findMaxFileIndex();
         }
+    }
+    if (!m_bSync)
+    {
+        std::thread tRead(&FileLogger::outPut2File, this);
+        tRead.detach();
     }
 }
 
@@ -188,7 +208,8 @@ FileLogger::FileLogger(const char* strBase, size_t maxSize, int maxFiles, LogLev
     m_iCurrentSize(0),
     m_emLogLevel(level),
     m_iCurrentIndex(0),
-    m_bOutPutFile(true)
+    m_bOutPutFile(true),
+    m_bSync(false)
 {
 }
 
@@ -249,28 +270,58 @@ static void OnOutputData(LogLevel emLevel, const std::string& message)
 #endif
 }
 
-void FileLogger::writeToConsole(LogLevel emLevel, const std::string& message)
+void FileLogger::outPut2File()
 {
-    std::lock_guard<std::mutex> lock(m_Mutex);
-    OnOutputData(emLevel, message);
+    while (1)
+    {
+        while (!m_ctxQueue.empty())
+        {
+            std::string strData = m_ctxQueue.front();
+            size_t iMsgSize = strData.size();
+
+            if (n_hFile == nullptr)
+                openCurrentFile();
+
+            if (m_iCurrentSize + iMsgSize > m_iMaxSize)
+                rotateFiles();
+
+            if (n_hFile)
+            {
+                fwrite(strData.c_str(), strData.length(), 1, n_hFile);
+                m_iCurrentSize += iMsgSize;
+            }
+            m_ctxQueue.pop();
+        }
+        fflush(n_hFile);
+    }
 }
 
-void FileLogger::writeToFile(const std::string& strMsg) 
+void FileLogger::writeToOutPut(LogLevel emLevel, const std::string& strMsg)
 {
     std::lock_guard<std::mutex> lock(m_Mutex);
-    size_t iMsgSize = strMsg.size();
-        
-    if (n_hFile == nullptr)
-        openCurrentFile();  
-
-    if (m_iCurrentSize + iMsgSize > m_iMaxSize)
-        rotateFiles();
-
-    if (n_hFile)
+    if(!m_bOutPutFile)
+        OnOutputData(emLevel, strMsg);
+    else
     {
-        fwrite(strMsg.c_str(), strMsg.length(), 1, n_hFile);
-        fflush(n_hFile);
-        m_iCurrentSize += iMsgSize;
+        if (!m_bSync)
+            m_ctxQueue.push(strMsg);
+        else
+        {
+            size_t iMsgSize = strMsg.size();
+
+            if (n_hFile == nullptr)
+                openCurrentFile();
+
+            if (m_iCurrentSize + iMsgSize > m_iMaxSize)
+                rotateFiles();
+
+            if (n_hFile)
+            {
+                fwrite(strMsg.c_str(), strMsg.length(), 1, n_hFile);
+                fflush(n_hFile);
+                m_iCurrentSize += iMsgSize;
+            }
+        }
     }
 }
 

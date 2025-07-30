@@ -8,7 +8,7 @@
 #include "mem/Pool_Test.h"
 #include "Common/FileLogger.h"
 #include "Common/LockFreeCircularQue.h"
-#include "Common/CircularQueue.h"
+#include "Common/LockQueue.h"
 #include "Common/pipe.h"
 #include "Common/FileSystem.h"
 #include "Common/MemTable.h"
@@ -218,12 +218,62 @@ std::wstring GetPhysicalDriveFromLogicalDrive(const wchar_t* logicalDrive) {
 
 #include <windows.h>
 #include <iostream>
+#include <thread>
 #include "Common/SkipList.h"
 #include "Common/RBTree.h"
 #include "Common/hashAlg.h"
+#include "Common/FormatString.h"
+#include "Common/LockQueue.h"
+
+
+static void OnPushData(LockQueue<int>* queue)
+{
+    for (int i = 0; i < 11; i++)
+    {
+        queue->push(i);
+    }
+    std::atomic<int> iIndex = 0;
+    while (1)
+    {
+        queue->push(iIndex++);
+       // Sleep(1000);
+    }
+   
+
+}
+
+static void OnPopData(LockQueue<int>* queue)
+{
+    while(1)
+    {
+        while (!queue->empty())
+        {
+            printf("%d  ------->", queue->front());
+            queue->pop();
+        }
+
+    }
+}
 
 int main()
 {
+    string str12 = util::Format("111= %d", 123);
+    LockQueue<int> queueTest;
+    for (int i = 0; i < 30; i++)
+    {
+        std::thread tWrite(OnPushData, &queueTest);
+        tWrite.detach();
+    }
+
+    Sleep(1000);
+    for (int i = 0; i < 10; i++)
+    {
+        std::thread tRead(OnPopData, &queueTest);
+        tRead.detach();
+    }
+
+    Sleep(1000);
+
     for (int i = 1; i < 0xff; i++)
     {
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), i);

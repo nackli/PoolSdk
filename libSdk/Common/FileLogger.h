@@ -12,6 +12,7 @@
 #include <ctime>
 #include <mutex>
 #include <memory>
+#include "LockQueue.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -46,21 +47,18 @@ public:
     void initLog(const std::string &strCfgName);
     void setLogFileName(const std::string& strFileName);
     template<typename... Args>
-    void log(LogLevel emLevel, const char* szFun, const char* format, Args... args)
+    void log(LogLevel emLevel, const char* szFun, const char* format, Args&&... args)
     {
         if (emLevel < m_emLogLevel)
             return;
       
         try {           
-            std::string strFormatted = formatMessage(emLevel, szFun, format, args...);
+            std::string strFormatted = formatMessage(emLevel, szFun, format, std::forward<Args>(args)...);
                        
             if (strFormatted[strFormatted.length() - 1] != '\n')
                 strFormatted += '\n';
 
-            if (m_bOutPutFile)
-                writeToFile(strFormatted);
-            else
-                writeToConsole(emLevel,strFormatted);
+            writeToOutPut(emLevel,strFormatted);
     
         }
         catch (const std::exception& e) {
@@ -76,8 +74,8 @@ private:
     ~FileLogger();
     void parseFileNameComponents();
     template<typename... Args>
-    std::string formatMessage(LogLevel emLevel, const char* szFun, const char* format, Args... args) {
-        std::string strContent = stringFormat(format, args...);
+    std::string formatMessage(LogLevel emLevel, const char* szFun, const char* format, Args&&... args) {
+        std::string strContent = stringFormat(format, std::forward<Args>(args)...);
 
         char szTimeBuf[32];
 #if defined(_WIN32)
@@ -107,9 +105,8 @@ private:
 
     std::string stringFormat(const char* format, ...);
 
-    void writeToFile(const std::string& message);
-
-    void writeToConsole(LogLevel emLevel,const std::string& message);
+    void writeToOutPut(LogLevel emLevel,const std::string& message);
+    void outPut2File();
 
     void openCurrentFile();
 
@@ -136,6 +133,8 @@ private:
     LogLevel m_emLogLevel;
     size_t m_iCurrentIndex;
     bool m_bOutPutFile;
+    bool m_bSync;
     std::mutex m_Mutex;
+    LockQueue<std::string> m_ctxQueue;
 };
 #endif

@@ -95,7 +95,7 @@
     <ClInclude Include="Common\Base64.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Common\CircularQueue.h">
+    <ClInclude Include="Common\LockQueue.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Common\CRC32.h">
@@ -156,6 +156,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Common\RBTree.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\FormatString.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -38,13 +38,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\Base64.h" />
-    <ClInclude Include="Common\CircularQueue.h" />
+    <ClInclude Include="Common\LockQueue.h" />
     <ClInclude Include="Common\CRC32.h" />
     <ClInclude Include="Common\EvnVariables.h" />
     <ClInclude Include="Common\ExceptionFilter.h" />
     <ClInclude Include="Common\FileFun.h" />
     <ClInclude Include="Common\FileLogger.h" />
     <ClInclude Include="Common\FileSystem.h" />
+    <ClInclude Include="Common\FormatString.h" />
     <ClInclude Include="Common\hashAlg.h" />
     <ClInclude Include="Common\LockFreeCircularQue.h" />
     <ClInclude Include="Common\LockFreeStack.h" />
