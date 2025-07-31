@@ -32,12 +32,13 @@ enum LogLevel{
     EM_LOG_ERROR,
     EM_LOG_FATAL
 };
-#define LOG_TRACE(format, ...)   FileLogger::getInstance().log(EM_LOG_TRACE,__func__, format, ##__VA_ARGS__)
-#define LOG_DEBUG(format, ...)   FileLogger::getInstance().log(EM_LOG_DEBUG,__func__, format, ##__VA_ARGS__)
-#define LOG_INFO(format, ...)    FileLogger::getInstance().log(EM_LOG_INFO,__func__, format, ##__VA_ARGS__)
-#define LOG_WARNING(format, ...) FileLogger::getInstance().log(EM_LOG_WARNING,__func__, format, ##__VA_ARGS__)
-#define LOG_ERROR(format, ...)   FileLogger::getInstance().log(EM_LOG_ERROR,__func__, format, ##__VA_ARGS__)
-#define LOG_FATAL(format, ...)   FileLogger::getInstance().log(EM_LOG_FATAL,__func__, format, ##__VA_ARGS__)
+#define LOG_BASE(Level,format, ...)     FileLogger::getInstance().log(Level,__func__,__FILE__, __LINE__, format, ##__VA_ARGS__)
+#define LOG_TRACE(format, ...)          LOG_BASE(EM_LOG_TRACE, format, ##__VA_ARGS__)
+#define LOG_DEBUG(format, ...)          LOG_BASE(EM_LOG_DEBUG, format, ##__VA_ARGS__)
+#define LOG_INFO(format, ...)           LOG_BASE(EM_LOG_INFO, format, ##__VA_ARGS__)
+#define LOG_WARNING(format, ...)        LOG_BASE(EM_LOG_WARNING, format, ##__VA_ARGS__)
+#define LOG_ERROR(format, ...)          LOG_BASE(EM_LOG_ERROR, format, ##__VA_ARGS__)
+#define LOG_FATAL(format, ...)          LOG_BASE(EM_LOG_FATAL, format, ##__VA_ARGS__)
 
 using namespace std;
 class FileLogger {
@@ -46,14 +47,15 @@ public:
     void setLogLevel(LogLevel level);
     void initLog(const std::string &strCfgName);
     void setLogFileName(const std::string& strFileName);
+
     template<typename... Args>
-    void log(LogLevel emLevel, const char* szFun, const char* format, Args&&... args)
+    void log(LogLevel emLevel, const char* szFun,const char *szFileName, const int iLine, const char* format, Args&&... args)
     {
         if (emLevel < m_emLogLevel)
             return;
-      
+
         try {           
-            std::string strFormatted = formatMessage(emLevel, szFun, format, std::forward<Args>(args)...);
+            std::string strFormatted = formatMessage(emLevel, szFun, szFileName, iLine, format, std::forward<Args>(args)...);
                        
             if (strFormatted[strFormatted.length() - 1] != '\n')
                 strFormatted += '\n';
@@ -74,40 +76,20 @@ private:
     ~FileLogger();
     void parseFileNameComponents();
     template<typename... Args>
-    std::string formatMessage(LogLevel emLevel, const char* szFun, const char* format, Args&&... args) {
+    std::string formatMessage(LogLevel emLevel, const char* szFun, const char* szFileName, const int iLine, const char* format, Args&&... args) {
         std::string strContent = stringFormat(format, std::forward<Args>(args)...);
 
-        char szTimeBuf[32];
-#if defined(_WIN32)
-        SYSTEMTIME t;
-        GetLocalTime(&t);
-        snprintf(szTimeBuf, sizeof(szTimeBuf), "%04hu-%02hu-%02hu %02hu:%02hu:%02hu.%03hu", t.wYear, t.wMonth, t.wDay, t.wHour, t.wMinute, t.wSecond, t.wMilliseconds);
-#else
-        struct tm t;
-        struct timeval tv;
-        gettimeofday(&tv, NULL);
-        localtime_r(&tv.tv_sec, &t);
-        snprintf(szTimeBuf, sizeof(szTimeBuf), "%04d-%02d-%02d %02d:%02d:%02d.%03d", (int)t.tm_year + 1900, (int)t.tm_mon + 1, (int)t.tm_mday, (int)t.tm_hour, (int)t.tm_min, (int)t.tm_sec, (int)(tv.tv_usec / 1000) % 1000);
-#endif
-
-        const char* strLevel = nullptr;
-        switch (emLevel) {
-        case EM_LOG_TRACE:   strLevel = "TRACE"; break;
-        case EM_LOG_DEBUG:   strLevel = "DEBUG"; break;
-        case EM_LOG_INFO:    strLevel = "INFO ";  break;
-        case EM_LOG_WARNING: strLevel = "WARN ";  break;
-        case EM_LOG_ERROR:   strLevel = "ERROR"; break;
-        case EM_LOG_FATAL:   strLevel = "FATAL"; break;
-        }
-        uint32_t uThreadId = getCurThreadtid();
-        return stringFormat("[%s] [%s] [tid:%05d] [%s] %s", szTimeBuf, strLevel, uThreadId, szFun,  strContent.c_str());
+        return formatMessage(emLevel, szFun, szFileName, iLine,strContent.c_str());
     }
 
     std::string stringFormat(const char* format, ...);
 
-    void writeToOutPut(LogLevel emLevel,const std::string& message);
-    void outPut2File();
+    std::string formatMessage(LogLevel emLevel, const char* szFunName, const char* szFileName, const int iLine, const char* szMessage);
 
+    void writeToOutPut(LogLevel emLevel,const std::string& message);
+    void outPut2File(int iOutMode);
+    void writeMsg2File(const std::string& strMsg);
+    void writeMsg2Net(const std::string& strMsg);
     void openCurrentFile();
 
     void rotateFiles();
@@ -132,9 +114,18 @@ private:
     size_t m_iCurrentSize;
     LogLevel m_emLogLevel;
     size_t m_iCurrentIndex;
-    bool m_bOutPutFile;
+    int m_iOutPutFile;
     bool m_bSync;
     std::mutex m_Mutex;
     LockQueue<std::string> m_ctxQueue;
+    string m_strLogFormat;
+//net log
+    string m_strNetIpAdd;
+    int m_iNetPort;
+#ifdef _WIN32
+    SOCKET m_hSendSocket;
+#else
+    int m_hSendSocket;
+#endif
 };
 #endif

@@ -1,0 +1,551 @@
+[2025-07-31 11:52:02.116] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:287 main - Red-Black Tree after insertion:
+[2025-07-31 11:52:02.116] [INFO ] 10016 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:288 main - Red-Black Tree after insertion:
+[2025-07-31 11:52:02.116] [WARN ] 10016 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:289 main - Red-Black Tree after insertion:
+[2025-07-31 11:52:02.116] [ERROR] 10016 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:290 main - Red-Black Tree after insertion:
+[2025-07-31 11:52:02.117] [FATAL] 10016 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:291 main - Red-Black Tree after insertion:
+[2025-07-31 11:52:02.226] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:393 main - High priority task running %d writePipe=%s
+[2025-07-31 11:52:02.227] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:02.227] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:02.568] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:02.841] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:02.842] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:02.858] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:03.136] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:03.443] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:03.444] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:03.454] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:03.721] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:04.008] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:04.060] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:04.060] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:04.337] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:04.663] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:04.665] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:04.665] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:04.928] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:05.197] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:05.362] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:05.362] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:05.507] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:05.767] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:05.981] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:05.981] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:06.043] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:06.357] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:06.601] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:06.602] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:06.626] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:06.925] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:07.180] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:07.223] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:07.223] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:11.360] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:11.596] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:11.596] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:11.702] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:11.982] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:12.223] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:12.223] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:12.246] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:12.528] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:12.792] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:12.849] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:12.851] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:13.051] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:13.326] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:13.465] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:13.465] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:13.657] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:13.975] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:14.141] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:14.141] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:14.294] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:14.573] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:14.842] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:14.842] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:14.861] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:15.124] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:15.400] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:15.442] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:15.442] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:15.692] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:16.008] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:16.028] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:16.028] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:16.270] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:16.580] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:16.653] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:16.657] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:16.868] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:17.125] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:17.261] [DEBUG] 34608 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 34608 writePipe=hello nack
+[2025-07-31 11:52:17.289] [DEBUG] 38120 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:424 operator () - High priority task running 38120 readPipe=
+[2025-07-31 11:52:17.391] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:52:17.672] [DEBUG] 10016 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:18.310] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:287 main - Red-Black Tree after insertion:
+[2025-07-31 11:53:18.310] [INFO ] 17896 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:288 main - Red-Black Tree after insertion:
+[2025-07-31 11:53:18.310] [WARN ] 17896 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:289 main - Red-Black Tree after insertion:
+[2025-07-31 11:53:18.310] [ERROR] 17896 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:290 main - Red-Black Tree after insertion:
+[2025-07-31 11:53:18.311] [FATAL] 17896 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:291 main - Red-Black Tree after insertion:
+[2025-07-31 11:53:18.424] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:393 main - High priority task running %d writePipe=%s
+[2025-07-31 11:53:18.426] [DEBUG] 37136 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 37136 readPipe=
+[2025-07-31 11:53:18.426] [DEBUG] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:18.428] [INFO ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:18.429] [WARN ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:18.448] [ERROR] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:18.511] [FATAL] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:18.808] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:19.094] [DEBUG] 37136 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 37136 readPipe=
+[2025-07-31 11:53:19.113] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:19.231] [DEBUG] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:19.256] [INFO ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:19.303] [WARN ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:19.315] [ERROR] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:19.333] [FATAL] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:19.359] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:19.623] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:19.705] [DEBUG] 37136 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 37136 readPipe=
+[2025-07-31 11:53:19.893] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:19.940] [DEBUG] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:19.944] [INFO ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:19.946] [WARN ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:19.949] [ERROR] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:19.952] [FATAL] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:20.165] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:20.378] [DEBUG] 37136 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 37136 readPipe=
+[2025-07-31 11:53:20.425] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:20.623] [DEBUG] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:20.661] [INFO ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:20.661] [WARN ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:20.661] [ERROR] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:20.662] [FATAL] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:20.797] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:21.038] [DEBUG] 37136 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 37136 readPipe=
+[2025-07-31 11:53:21.080] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:21.298] [DEBUG] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:21.305] [INFO ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:21.307] [WARN ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:21.308] [ERROR] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:21.314] [FATAL] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:21.349] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:21.619] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:21.687] [DEBUG] 37136 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 37136 readPipe=
+[2025-07-31 11:53:21.889] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:21.937] [DEBUG] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:21.955] [INFO ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:21.956] [WARN ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:21.957] [ERROR] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:21.958] [FATAL] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:22.168] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:22.280] [DEBUG] 37136 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 37136 readPipe=
+[2025-07-31 11:53:22.434] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:22.588] [DEBUG] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:22.595] [INFO ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:22.596] [WARN ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:22.598] [ERROR] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:22.599] [FATAL] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:22.707] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:22.896] [DEBUG] 37136 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 37136 readPipe=
+[2025-07-31 11:53:22.979] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:23.173] [DEBUG] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:23.425] [DEBUG] 37136 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 37136 readPipe=
+[2025-07-31 11:53:31.311] [INFO ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:31.318] [WARN ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:31.322] [ERROR] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:31.324] [FATAL] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:31.716] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:31.905] [DEBUG] 37136 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 37136 readPipe=
+[2025-07-31 11:53:31.938] [DEBUG] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:32.017] [INFO ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:32.020] [WARN ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:32.020] [ERROR] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:32.023] [FATAL] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:32.026] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:32.321] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:32.551] [DEBUG] 37136 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 37136 readPipe=
+[2025-07-31 11:53:32.611] [DEBUG] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:32.614] [INFO ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:32.615] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:32.616] [WARN ] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:32.617] [ERROR] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:32.620] [FATAL] 29348 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 29348 writePipe=hello nack
+[2025-07-31 11:53:32.992] [DEBUG] 17896 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:33.145] [DEBUG] 37136 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 37136 readPipe=
+[2025-07-31 11:53:44.657] [TRACE] 27420 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:286 main - Red-Black Tree after insertion:
+[2025-07-31 11:53:44.657] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:287 main - Red-Black Tree after insertion:
+[2025-07-31 11:53:44.658] [INFO ] 27420 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:288 main - Red-Black Tree after insertion:
+[2025-07-31 11:53:44.658] [WARN ] 27420 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:289 main - Red-Black Tree after insertion:
+[2025-07-31 11:53:44.658] [ERROR] 27420 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:290 main - Red-Black Tree after insertion:
+[2025-07-31 11:53:44.659] [FATAL] 27420 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:291 main - Red-Black Tree after insertion:
+[2025-07-31 11:53:44.786] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:393 main - High priority task running %d writePipe=%s
+[2025-07-31 11:53:44.807] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:44.807] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:44.817] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:44.822] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:44.831] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:44.839] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:44.862] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:45.209] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:45.499] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:45.506] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:45.510] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:45.511] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:45.514] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:45.515] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:45.517] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:45.518] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:45.793] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:46.090] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:46.129] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:46.128] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:46.149] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:46.164] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:46.174] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:46.189] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:46.276] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:46.342] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:46.605] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:46.732] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:46.857] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:48.260] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:48.260] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:48.260] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:48.260] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:48.260] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:48.595] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:48.852] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:48.852] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:48.871] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:48.877] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:48.881] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:48.884] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:48.884] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:48.888] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:49.156] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:49.422] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:49.485] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:49.469] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:49.490] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:49.493] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:49.502] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:49.504] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:49.505] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:49.740] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:50.013] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:50.081] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:50.101] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:50.105] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:50.108] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:50.110] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:50.112] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:50.114] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:50.312] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:50.564] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:50.733] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:50.733] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:50.737] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:50.738] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:50.739] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:50.740] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:50.740] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:50.841] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:51.106] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:51.337] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:51.337] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:51.341] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:51.342] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:51.346] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:51.347] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:51.348] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:51.363] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:51.631] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:51.906] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:51.944] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:51.951] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:51.956] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:51.960] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:51.963] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:51.972] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:52.019] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:52.190] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:52.478] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:52.577] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:52.622] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:52.624] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:52.627] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:52.632] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:52.660] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:52.735] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:52.743] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:53.048] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:53.173] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:53.322] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:53.326] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:53.326] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:53.327] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:53.327] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:53.327] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:53.329] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:53.620] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:53.827] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:53.920] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:53.922] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:53.923] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:53.923] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:53.925] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:53.926] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:53.927] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:54.220] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:54.437] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:54.516] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:54.524] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:54.525] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:54.526] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:54.526] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:54.527] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:54.528] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:54.804] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:55.035] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:55.065] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:55.154] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:55.158] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:55.158] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:55.161] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:55.179] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:55.182] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:55.342] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:55.599] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:55.691] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:55.871] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:55.911] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:55.912] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:55.913] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:55.913] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:55.914] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:55.914] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:56.191] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:56.308] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:53:56.458] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:56.504] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:53:56.718] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:53:56.913] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:00.489] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:00.490] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:00.493] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:00.494] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:00.495] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:00.852] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:01.079] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:01.079] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:01.095] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:01.103] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:01.109] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:01.109] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:01.110] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:01.116] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:01.377] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:01.652] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:01.729] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:01.729] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:01.732] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:01.733] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:01.734] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:01.736] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:01.737] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:01.935] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:02.231] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:02.318] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:02.323] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:02.326] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:02.329] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:02.332] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:02.334] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:02.335] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:02.494] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:02.752] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:02.919] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:02.923] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:02.927] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:02.935] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:02.945] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:02.956] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:02.982] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:03.012] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:03.281] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:03.502] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:03.547] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:03.631] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:03.637] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:03.683] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:03.685] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:03.687] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:03.688] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:03.868] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:04.113] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:04.134] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:04.282] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:04.294] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:04.299] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:04.300] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:04.301] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:04.303] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:04.390] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:04.656] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:04.780] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:04.928] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:04.930] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:04.931] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:04.931] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:04.932] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:04.933] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:04.937] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:05.208] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:05.449] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:05.503] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:05.546] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:05.550] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:05.555] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:05.557] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:05.584] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:05.589] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:05.753] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:06.007] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:06.197] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:06.266] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:06.344] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:06.346] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:06.347] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:06.347] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:06.348] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:06.350] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:06.602] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:06.814] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:06.871] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:06.967] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:07.041] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:07.048] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:07.053] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:07.054] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:07.055] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:07.159] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:07.459] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:07.464] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:07.688] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:07.694] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:07.700] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:07.702] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:07.703] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:07.703] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:07.740] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:08.026] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:08.051] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:08.300] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:08.307] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:08.308] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:08.310] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:08.311] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:08.311] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:08.314] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:08.573] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:08.717] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:08.849] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:08.919] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:08.936] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:08.978] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:08.985] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:08.991] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:08.993] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:09.122] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:09.359] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:09.391] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:09.579] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:09.619] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:09.631] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:09.632] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:09.632] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:09.634] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:09.642] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:09.932] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:09.988] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:10.196] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:10.239] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:10.248] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:10.250] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:10.251] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:10.258] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:10.300] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:10.468] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:10.689] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:10.724] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:11.021] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:11.023] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:11.024] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:11.024] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:11.025] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:11.025] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:11.027] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:11.284] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:11.299] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:11.562] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:11.687] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:11.720] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:11.726] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:11.728] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:11.732] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:11.733] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:11.852] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:11.887] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:12.135] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:12.388] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:12.394] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:12.464] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:12.484] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:12.486] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:12.487] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:12.491] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:12.540] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:12.759] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:13.029] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:13.106] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:13.152] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:13.154] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:13.156] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:13.157] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:13.158] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:13.272] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:13.317] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:13.602] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:13.739] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:13.771] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:13.775] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:13.778] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:13.782] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:13.789] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:13.880] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:13.881] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:14.154] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:14.423] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:14.426] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:14.427] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:14.427] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:14.427] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:14.428] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:14.433] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:14.474] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:14.718] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:15.036] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:15.055] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:15.056] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:15.056] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:15.057] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:15.058] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:15.062] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:15.093] [DEBUG] 25320 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:429 operator () - High priority task running 25320 readPipe=
+[2025-07-31 11:54:15.327] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:15.608] [DEBUG] 27420 E:\gitRepositoty\PoolSdk\libSdk\mem\Pool_Test.h:106 BenchmarkConcurrentMalloc - bbbbbbbbbbbbb
+[2025-07-31 11:54:15.691] [TRACE] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:408 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:15.710] [DEBUG] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:409 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:15.711] [INFO ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:410 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:15.713] [WARN ] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:411 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:15.715] [ERROR] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:412 operator () - High priority task running 18944 writePipe=hello nack
+[2025-07-31 11:54:15.716] [FATAL] 18944 E:\gitRepositoty\PoolSdk\PoolSdk\PoolSdk.cpp:413 operator () - High priority task running 18944 writePipe=hello nack

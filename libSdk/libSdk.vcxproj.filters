@@ -161,5 +161,8 @@
     <ClInclude Include="Common\FormatString.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Common\PimplMacro.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

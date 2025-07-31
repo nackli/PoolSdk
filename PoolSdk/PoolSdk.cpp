@@ -258,19 +258,19 @@ static void OnPopData(LockQueue<int>* queue)
 int main()
 {
     string str12 = util::Format("111= %d", 123);
-    LockQueue<int> queueTest;
-    for (int i = 0; i < 30; i++)
-    {
-        std::thread tWrite(OnPushData, &queueTest);
-        tWrite.detach();
-    }
+    //LockQueue<int> queueTest;
+    //for (int i = 0; i < 30; i++)
+    //{
+    //    std::thread tWrite(OnPushData, &queueTest);
+    //    tWrite.detach();
+    //}
 
-    Sleep(1000);
-    for (int i = 0; i < 10; i++)
-    {
-        std::thread tRead(OnPopData, &queueTest);
-        tRead.detach();
-    }
+    //Sleep(1000);
+    //for (int i = 0; i < 10; i++)
+    //{
+    //    std::thread tRead(OnPopData, &queueTest);
+    //    tRead.detach();
+    //}
 
     Sleep(1000);
 
@@ -405,7 +405,12 @@ int main()
                 auto threadId = std::this_thread::get_id();
                 const char* szTestPipe = "hello nack";
                 //writePipe(hPipe[OPT_WRITE], szTestPipe,strlen(szTestPipe));
+                LOG_TRACE("High priority task running %d writePipe=%s", threadId, szTestPipe);
                 LOG_DEBUG("High priority task running %d writePipe=%s", threadId, szTestPipe);
+                LOG_INFO("High priority task running %d writePipe=%s", threadId, szTestPipe);
+                LOG_WARNING("High priority task running %d writePipe=%s", threadId, szTestPipe);
+                LOG_ERROR("High priority task running %d writePipe=%s", threadId, szTestPipe);
+                LOG_FATAL("High priority task running %d writePipe=%s", threadId, szTestPipe);
                 //std::cout << " High priority task running " << threadId << std::endl;
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));;
             }
