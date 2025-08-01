@@ -19,7 +19,7 @@ set(CMAKE_CXX_STANDARD 14)
 #set(CMAKE_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build)
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 
-
+include_directories(./libSdk)
 
 
 if(MSVC) 
@@ -64,5 +64,13 @@ endif()
 
 
 file(GLOB_RECURSE DEV_SOURCES_EXE ./libSdk/*.cpp)
+file(GLOB_RECURSE REMOVE_SOURCES ./libSdk/test/*.cpp)
+list(REMOVE_ITEM DEV_SOURCES_EXE ${REMOVE_SOURCES})
 
 add_library(${PROJECT_NAME} ${DEV_SOURCES_EXE})
+
+
+
+add_executable(${PROJECT_NAME}_test ./PoolSdk/PoolSdk.cpp)
+
+target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})

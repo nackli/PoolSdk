@@ -15,11 +15,15 @@ Copyright (c) 2024. All Rights Reserved.
 #ifdef _WIN32
 #define UNUSED_FUN
 #else
-#include<netinet/in.h>
+#include <netinet/in.h>
 #include <sys/types.h>
-#include<sys/socket.h>
+#include <sys/socket.h>
+#include<arpa/inet.h>
+#include <thread>
+#include <unistd.h>
 #define UNUSED_FUN __attribute__((unused))
 #endif
+
 #define FILE_CLOSE(x)					if((x)){if(!fclose((x)))(x) = nullptr;}
 #define OUT_CONSOLE                     0x0
 #define OUT_LOC_FILE                    0x01
@@ -404,7 +408,7 @@ static void OnOutputData(LogLevel &emLevel, const std::string& message)
     cout << message;
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);
 #else
-    const uint8_t *clrIndex[] = { "/033[1;37m","/033[0;37m","/033[0;32;32m", "/033[1;33m","/033[0;32;31m","/033[1;32;31m" };
+    const char *clrIndex[] = { "/033[1;37m","/033[0;37m","/033[0;32;32m", "/033[1;33m","/033[0;32;31m","/033[1;32;31m" };
     printf("%s%s\033[0m", clrIndex[emLevel], message.c_str());
 #endif
 }
@@ -416,9 +420,10 @@ void FileLogger::writeMsg2Net(const std::string& strMsg)
     struct sockaddr_in RecvAddr;
     RecvAddr.sin_family = AF_INET;
     RecvAddr.sin_port = htons(m_iNetPort);
+
     RecvAddr.sin_addr.s_addr = inet_addr(m_strNetIpAdd.c_str());
     sendto(m_hSendSocket,
-        strMsg.c_str(), strMsg.length() , 0, (SOCKADDR*)&RecvAddr, sizeof(RecvAddr));
+        strMsg.c_str(), strMsg.length() , 0, (sockaddr*)&RecvAddr, sizeof(RecvAddr));
 }
 
 void FileLogger::writeMsg2File(const std::string& strMsg)
@@ -656,7 +661,8 @@ void FileLogger::processFileName(const std::string& fileName, std::vector<int>& 
     if (pos != string::npos)
     {
         const std::string numStr = fileName.substr(pos + 1);
-        indices.push_back(std::stoi(numStr));
+        if(!numStr.empty())
+            indices.push_back(std::stoi(numStr));
     }
 #endif
 

@@ -357,7 +357,11 @@ char* replaceOne(const char* strSrc, const char* strOldSub, const char* strNewSu
     }
 
     if (!iOldPos)
+#ifdef WIN32
         return _strdup(strSrc);
+#else
+        return strdup(strSrc);
+#endif
 
     char* result = (char*)malloc(iResultLen);
 
