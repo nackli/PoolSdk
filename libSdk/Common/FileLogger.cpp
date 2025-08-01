@@ -348,7 +348,7 @@ static std::string packageMessage(const string & strLogFormat, const char* szTim
     char *pData = replaceOne(strLogFormat.c_str(), "{level}", szLevel);
     char *pTid = replaceOne(pData, "{tid}", szTid); FREE_MEM(pData);
     char* pLine = replaceOne(pTid, "{line}", szLine); FREE_MEM(pTid);
-    char* pFun = replaceOne(pLine, "{func1}", szFunName); FREE_MEM(pLine);
+    char* pFun = replaceOne(pLine, "{func}", szFunName); FREE_MEM(pLine);
     char* pTime= replaceOne(pFun, "{time}", szTime); FREE_MEM(pFun)
     char* pFile = replaceOne(pTime, "{file}", szFileName); FREE_MEM(pTime);
     char *pMsg = replaceOne(pFile, "{message}", szMessage.c_str()); FREE_MEM(pFile);
@@ -391,7 +391,7 @@ std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, c
         sprintf(szTid, "%05d", uThreadId);//50MS.6W
     }
     char szLineNum[10] = { 0 };
-    sprintf(szTid, "%05d", iLine);//50MS.6W
+    sprintf(szLineNum, "%05d", iLine);//50MS.6W
     return packageMessage(m_strLogFormat, szTimeBuf, strLevel, szTid, szFunName,
         szFileName, szLineNum, strMessage);
 }
