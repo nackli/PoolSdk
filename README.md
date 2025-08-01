@@ -10,3 +10,23 @@ thread cache 其主要思想是为每个线程维护一个本地的内存缓存�
 ## 页缓存(page cache)：
 
 页缓存是在central cache上面的一层缓存，存储的内存是以页为单位存储以及分配的。central cache没有内存时，从page cache分配出一定数量的page，并切割成定长大小的小块内存块，分配给central cache。page cache没有足够的内存时，就会向堆区申请。
+
+# 日志系统FileLogger
+## 引言
+日志系统无论是在嵌入式系统还是在PC端，都是关键的调试和监控手段。所以大家在选择日志系统时，都会进行不同选择。目前流行的几个日志系统，性能以及使用中往往各有千秋。FileLogger目前支持网络输出、文件输出、控制台输出，通过配置文件进行不同的选择。
+## 配置文件说明
+#file_name 日志文件保存目录以及名称前缀，支持绝对路径和相对路径例如
+file_name=./Data/log/logfile.log
+#单个日志文件最大数据量，采用的byte计算
+max_size=52428800
+#最大保存日志文件个数
+max_files=5
+#显示日志级别，不区分大小写，主要支持以下几种[trace、debug、info、warning、error、fatal] 
+log_level=trace
+#日志输出模式，可以控制台，文件，以及网络模式[console、file、netudp]，只有配置了网络模式，netIp才有效
+out_put=netudp
+netIp = 127.0.0.1:9000
+#日志交互模式，可以同步也可以异步[async、sync]
+out_mode = async
+#日志输出格式，包括时间、级别、文件、线程ID，文件行号、文件名称 日志消息[{time} {level} {file} {tid} {line} {func} {message}]
+log_format=[{time}] [{level}] [tid : {tid}] [line : {line}] [{func}] {message}

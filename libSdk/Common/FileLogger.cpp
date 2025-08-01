@@ -388,7 +388,6 @@ std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, c
     if (szTid)
     {
         uint32_t uThreadId = getCurThreadtid(); 
-        //_itoa(uThreadId,szTid, 10);
         sprintf(szTid, "%05d", uThreadId);//50MS.6W
     }
     char szLineNum[10] = { 0 };
