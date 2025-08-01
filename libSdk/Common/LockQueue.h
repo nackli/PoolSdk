@@ -18,12 +18,12 @@ public:
 
     size_t getSpaces() const { return m_uCapSize; }
     void setSpaces(size_t uCap) const { m_uCapSize = uCap; }
-    bool empty()
+    bool empty() const
     {
         return m_queueData.empty();
     }
 
-    size_t size()
+    size_t size() const
     {
         return m_queueData.size();
     }
@@ -74,7 +74,7 @@ public:
         return value;
     }
 
-    void pop()
+    value_type pop()
     {
         {
             lock_type lock(m_mtxLock);
@@ -85,11 +85,39 @@ public:
         m_cvWrite.notify_one();
     }
 
+    value_type pop_front()
+    {
+        value_type value;
+        {
+            lock_type lock(m_mtxLock);
+            while (m_queueData.empty())
+                m_cvRead.wait(lock);
+            value = m_queueData.front();
+            m_queueData.pop();
+        }
+        m_cvWrite.notify_one();
+        return value;
+    }
+
+    void pop_back()
+    {
+        value_type value;
+        {
+            lock_type lock(m_mtxLock);
+            while (m_queueData.empty())
+                m_cvRead.wait(lock);
+            value = m_queueData.back();
+            m_queueData.pop();
+        }
+        m_cvWrite.notify_one();
+        return value;
+    }
+
 private:
     std::queue<value_type> m_queueData;
     std::mutex m_mtxLock;
     std::condition_variable m_cvWrite;
     std::condition_variable m_cvRead;
-    size_t m_uCapSize = 20;
+    size_t m_uCapSize = 50;
 };
 #endif

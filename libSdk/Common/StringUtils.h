@@ -21,10 +21,11 @@ bool endsWith(const std::string strValue, const std::string strEnd, bool case_se
 
 std::pair<std::string, std::string>spiltKv(const std::string strInput,char chDelimiter = '=');
 std::string spiltLast(const std::string strInput, char chDelimiter = '.');
-
+bool findStrExist(const std::string& strSource, const std::string& strFind);
 bool replaceOne(std::string& strDelimiter, const std::string& strFrom, const std::string& strTo);
 void replaceAll(std::string& strSource, const std::string& strFrom, const std::string& strTo);
 bool replaceLast(std::string& strData, const std::string& strFrom, const std::string& strTo);
+void replaceAll(std::string& strSource, const char* szSrc, const char* szDest);
 
 std::string getTypeName2WithDot(const std::string &strTypeName);
 

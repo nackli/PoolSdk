@@ -11,6 +11,7 @@ Copyright (c) 2024. All Rights Reserved.
 #include <iostream>
 #include <wchar.h>
 #include <random>
+#include "CplusplusVer.h"
 
 /**************************************************************************************************************************************/
 static const std::string g_strBase64Chars ="ABCDEFGHIJKLMNOPQRSTUVWXYZ""abcdefghijklmnopqrstuvwxyz""0123456789+/";
@@ -26,6 +27,7 @@ const uint16_t CP_GBK = CP_ACP;
 #elif defined(__linux__) || defined(__GNUC__)
 #include <iconv.h>
 #endif
+#include <optional>
 
 #if defined(__linux__) || defined(__GNUC__)
 int EncodingConvert(const char* charsetSrc, const char* charsetDest, char* inbuf,
@@ -316,6 +318,22 @@ bool str2Bool(std::string strInput)
     return false;
 }
 /**
+ * @brief
+ * @param strSource
+ * @param strFind
+ * @return
+*/
+bool findStrExist(const std::string& strSource, const std::string& strFind)
+{
+    if (strSource.empty() || strSource.empty())
+        return false;
+
+    std::size_t iStartPot = strSource.find(strFind);
+    if (iStartPot == std::string::npos)
+        return false;
+    return true;
+}
+/**
  * @brief 
  * @param strInput 
  * @param strFrom 
@@ -325,7 +343,7 @@ bool str2Bool(std::string strInput)
 bool replaceOne(std::string& strInput, const std::string& strFrom, const std::string& strTo) 
 {
     bool fRet = false;
-    if (strInput.empty() || strFrom.empty() || strTo.empty())
+    if (strInput.empty() || strFrom.empty())
         return false;
 
     std::size_t iStartPot = strInput.find(strFrom);
@@ -336,6 +354,7 @@ bool replaceOne(std::string& strInput, const std::string& strFrom, const std::st
         fRet = true;
     return fRet;
 }
+
 /**
  * @brief 
  * @param strSource 
@@ -344,7 +363,7 @@ bool replaceOne(std::string& strInput, const std::string& strFrom, const std::st
 */
 void replaceAll(std::string& strSource, const std::string& strFrom, const std::string& strTo) 
 {
-    if (strSource.empty() || strFrom.empty() || strTo.empty())
+    if (strSource.empty() || strFrom.empty())
         return;
     std::size_t loc = 0;
     std::size_t lastFound;
@@ -356,6 +375,17 @@ void replaceAll(std::string& strSource, const std::string& strFrom, const std::s
             loc++;
     }
 }
+
+void replaceAll(std::string& strSource, const char* szSrc, const char* szDest)
+{
+    if (strSource.empty() || !szSrc)
+        return;
+
+    if (szDest)
+        replaceAll(strSource, std::string(szSrc), std::string(szDest));
+    else
+        replaceAll(strSource, std::string(szSrc), std::string());
+}
 /**
  * @brief 
  * @param strData 
@@ -365,7 +395,7 @@ void replaceAll(std::string& strSource, const std::string& strFrom, const std::s
 */
 bool replaceLast(std::string& strData, const std::string& strFrom, const std::string& strTo)
 {
-    if (strData.empty() || strFrom.empty() || strTo.empty())
+    if (strData.empty() || strFrom.empty())
         return false;
     size_t start_pos = strData.rfind(strFrom);
     if (start_pos == std::string::npos)
@@ -763,9 +793,67 @@ time_t string2Timer(const std::string strFormat, const std::string strTimer)
  * @param str 
  * @return 
 */
+#if HAS_CPP_17
+inline std::optional<std::u16string> utf8_utf16(std::string_view utf8)
+{
+    const char* first = utf8.data();
+    const char* last = first + utf8.size();
+
+    std::u16string result(utf8.size(), char16_t{ 0 });
+    char16_t* dest = &result[0];
+    char16_t* next = nullptr;
+
+    using codecvt_type = std::codecvt<char16_t, char, std::mbstate_t>;
+
+    codecvt_type* cvt = new codecvt_type;
+
+    // manages reference to codecvt facet to free memory.
+    std::locale loc;
+    loc = std::locale(loc, cvt);
+
+    codecvt_type::state_type state{};
+
+    auto ret = cvt->in(
+        state, first, last, first, dest, dest + result.size(), next);
+    if (ret != codecvt_type::ok)
+        return {};
+
+    result.resize(static_cast<size_t>(next - dest));
+    return result;
+}
+#if 0
+inline std::optional<std::string> utf16_utf8(std::u16string_view utf16)
+{
+    const char16_t* first = &utf16[0];
+    const char16_t* last = first + utf16.size();
+
+    std::string result((utf16.size() + 1) * 6, char{ 0 });
+    wchar_t* dest = result.c_str();
+    wchar_t* next = nullptr;
+
+    using codecvt_type = std::codecvt<char16_t, char8_t, std::mbstate_t>;
+
+    codecvt_type* cvt = new codecvt_type;
+    // manages reference to codecvt facet to free memory.
+    std::locale loc;
+    loc = std::locale(loc, cvt);
+
+    codecvt_type::state_type state{};
+
+    auto ret = cvt->out(
+        state, first, last, first, dest, dest + result.size(), next);
+    if (ret != codecvt_type::ok)
+        return {};
+
+    result.resize(static_cast<size_t>(next - dest));
+    return result;
+}
+#endif
+#endif
 std::wstring UTF8ToUnicode(const std::string str)
 {
     std::wstring ret;
+#if HAS_CPP_03 || HAS_CPP_11 || HAS_CPP_14
     try {
         std::wstring_convert< std::codecvt_utf8<wchar_t> > wcv;
         ret = wcv.from_bytes(str);
@@ -773,6 +861,7 @@ std::wstring UTF8ToUnicode(const std::string str)
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
     }
+#endif
     return ret;
 }
 /**
@@ -783,6 +872,7 @@ std::wstring UTF8ToUnicode(const std::string str)
 std::string UnicodeToUTF8(const std::wstring wstr)
 {
     std::string ret;
+#if HAS_CPP_VER <=14
     try {
         std::wstring_convert< std::codecvt_utf8<wchar_t> > wcv;
         ret = wcv.to_bytes(wstr);
@@ -790,6 +880,7 @@ std::string UnicodeToUTF8(const std::wstring wstr)
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
     }
+#endif
     return ret;
 }
 /**

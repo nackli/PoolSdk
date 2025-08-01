@@ -21,11 +21,18 @@ public:
     AdvancedThreadPool(size_t init_threads, size_t max_threads);
     
     // 提交任务（带优先级）
+
     template<class F, class... Args>
     auto enqueue(Priority priority, F&& f, Args&&... args)
-        -> std::future<typename std::result_of<F(Args...)>::type> {
+#if (HAS_CPP_VER <= 14)
+        -> std::future<typename std::result_of<F(Args...)>::type> 
+    {
         using return_type = typename std::result_of<F(Args...)>::type;
-        
+#else
+        ->std::future<typename std::invoke_result_t<F,Args...>> 
+    {
+        using return_type = typename std::invoke_result_t<F,Args...>;
+#endif      
         if (stop.load())
             throw std::runtime_error("enqueue on stopped ThreadPool");
             
@@ -51,9 +58,10 @@ public:
         }
         
         condition.notify_one();
+
         return res;
     }
-    
+
     // 取消所有未开始的任务
     void cancel_pending() {
         std::unique_lock<std::mutex> lock(queue_mutex);

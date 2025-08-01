@@ -13,6 +13,7 @@
 #include <mutex>
 #include <memory>
 #include "LockQueue.h"
+#include "StringUtils.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -45,18 +46,22 @@ class FileLogger {
 public:
     static FileLogger& getInstance();
     void setLogLevel(LogLevel level);
-    void initLog(const std::string &strCfgName);
+    void initLog(const std::string& strCfgName);
     void setLogFileName(const std::string& strFileName);
 
     template<typename... Args>
-    void log(LogLevel emLevel, const char* szFun,const char *szFileName, const int iLine, const char* format, Args&&... args)
+    void log(LogLevel emLevel, const char* szFun,const char *szFileName, 
+        const int iLine, const char* format, Args&&... args)
     {
         if (emLevel < m_emLogLevel)
             return;
-
         try {           
-            std::string strFormatted = formatMessage(emLevel, szFun, szFileName, iLine, format, std::forward<Args>(args)...);
-                       
+            std::string strFormatted = formatMessage(emLevel, szFun, szFileName, iLine, format,
+                std::forward<Args>(args)...);
+
+            if (strFormatted.empty())
+                return;
+
             if (strFormatted[strFormatted.length() - 1] != '\n')
                 strFormatted += '\n';
 
@@ -76,17 +81,19 @@ private:
     ~FileLogger();
     void parseFileNameComponents();
     template<typename... Args>
-    std::string formatMessage(LogLevel emLevel, const char* szFun, const char* szFileName, const int iLine, const char* format, Args&&... args) {
+    std::string formatMessage(LogLevel emLevel, const char* szFun, const char* szFileName,
+        const int iLine, const char* format, Args&&... args) 
+    {
         std::string strContent = stringFormat(format, std::forward<Args>(args)...);
-
-        return formatMessage(emLevel, szFun, szFileName, iLine,strContent.c_str());
+        return formatMessage(emLevel, szFun, szFileName, iLine,strContent);
     }
 
     std::string stringFormat(const char* format, ...);
 
-    std::string formatMessage(LogLevel emLevel, const char* szFunName, const char* szFileName, const int iLine, const char* szMessage);
+    std::string formatMessage(LogLevel emLevel, const char* szFunName, 
+        const char* szFileName, const int iLine, const string& szMessage);
 
-    void writeToOutPut(LogLevel emLevel,const std::string& message);
+    void writeToOutPut(LogLevel &emLevel,const std::string& message);
     void outPut2File(int iOutMode);
     void writeMsg2File(const std::string& strMsg);
     void writeMsg2Net(const std::string& strMsg);

@@ -81,17 +81,34 @@ static std::map<std::string, std::string> parseConfig(const std::string& path)
     return config;
 }
 
-//static void OnPopData2Output(FileLogger* pLogger)
-//{
-//    if (pLogger)
-//    {
-//        while (1)
-//        {
-//            pLogger->
-//
-//        }
-//    }
-//}
+#ifdef _WIN32
+static SOCKET OnCreateSocket()
+#else
+static int OnCreateSocket()
+#endif
+{
+#ifdef _WIN32
+    WSADATA wsaData;
+    int  iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (iResult != NO_ERROR) {
+        throw std::runtime_error("WSAStartup failed with error\n");
+        return INVALID_SOCKET;
+    }
+    //---------------------------------------------
+    // Create a socket for sending data
+    SOCKET hSendSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (hSendSocket == INVALID_SOCKET) {
+        throw std::runtime_error("socket failed\n");
+        WSACleanup();
+        return INVALID_SOCKET;
+    }
+#else
+    int hSendSocket = socket(AF_INET, SOCK_DGRAM, 0);
+    if (hSendSocket < 0)
+        throw std::runtime_error("socket creation failed");
+#endif
+    return hSendSocket;
+}
 
 static LogLevel OnStringToLevel(const std::string& strLevel) {
     static std::map<std::string, LogLevel> levelMap = {
@@ -221,28 +238,8 @@ void FileLogger::initLog(const std::string &strCfgName)
         }
     }
     if (m_iOutPutFile == OUT_NET_UDP)
-    {
-#ifdef _WIN32
-        WSADATA wsaData;
-        int  iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-        if (iResult != NO_ERROR) {
-            throw std::runtime_error("WSAStartup failed with error\n");
-            return;
-        }
-        //---------------------------------------------
-        // Create a socket for sending data
-        m_hSendSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-        if (m_hSendSocket == INVALID_SOCKET) {
-            throw std::runtime_error("socket failed\n");
-            WSACleanup();
-            return;
-        }
-#else
-        m_hSendSocket = socket(AF_INET, SOCK_DGRAM, 0);
-        if (m_hSendSocket < 0) {
-            throw std::runtime_error("socket creation failed");
-#endif
-    }
+        m_hSendSocket = OnCreateSocket();
+
     if (!m_bSync)
     {
         std::thread tRead(&FileLogger::outPut2File, this, m_iOutPutFile);
@@ -319,15 +316,21 @@ std::string FileLogger::stringFormat(const char* format, ...)
 {
     if (!format)
         return {};
+#if 1
     va_list args;
     va_start(args, format);
 
+    //va_list argsCopy;
+    //va_copy(argsCopy, args);
+    //int neededSize = vsnprintf(nullptr, 0, format, argsCopy) + 1;
+    //va_end(argsCopy);
     int neededSize = vsnprintf(nullptr, 0, format, args) + 1;
 
     if (neededSize <= 0) {
         va_end(args);
         throw std::runtime_error("Error formatting log message");
     }
+
 
     std::unique_ptr<char[]> buf(new char[neededSize]);
     int actualSize = vsnprintf(buf.get(), neededSize, format, args);
@@ -338,25 +341,30 @@ std::string FileLogger::stringFormat(const char* format, ...)
 
 
     return std::string(buf.get(), buf.get() + actualSize);
+#else
+    return std::string("Red-Black Tree after insertion:");
+#endif
 }
 
-static std::string packageMessage(const char* szLogFormat,const char* szTime, const char* szLevel, const char* szTid,
-                                const char* szFunName, const char* szFileName, const char* szLine,const char *szMessage)
+static std::string packageMessage(const string & strLogFormat, const char* szTime, const char* szLevel,
+                                const char* szTid, const char* szFunName, const char* szFileName,
+                                const char* szLine, const string& szMessage)
 {
-    std::string result = szLogFormat;
-    replaceAll(result, "{time}", szTime);
-    replaceAll(result, "{level}", szLevel);
-    replaceAll(result, "{file}", szFileName);
-    replaceAll(result, "{tid}", szTid);
-    replaceAll(result, "{line}", szLine);
-    replaceAll(result, "{func}", szFunName);
-    replaceAll(result, "{message}", szMessage);
+    std::string result = strLogFormat;
+    replaceOne(result, "{level}", szLevel);
+    replaceOne(result, "{tid}", szTid);
+    replaceOne(result, "{line}", szLine);
+    replaceOne(result, "{func}", szFunName);
+    replaceOne(result, "{time}", szTime);
+    replaceOne(result, "{file}", szFileName);
+    replaceOne(result, "{message}", szMessage);
     return result;
 }
 
-std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, const char* szFileName, const int iLine, const char* szMessage)
+std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, const char* szFileName, 
+    const int iLine, const string & strMessage)
 {
-    if (!szMessage)
+    if (strMessage.empty())
         return {};
     char szTimeBuf[32];
 #if defined(_WIN32)
@@ -380,14 +388,19 @@ std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, c
     case EM_LOG_ERROR:   strLevel = "ERROR"; break;
     case EM_LOG_FATAL:   strLevel = "FATAL"; break;
     }
-    uint32_t uThreadId = getCurThreadtid();
     char szTid[10] = { 0 };
-    sprintf(szTid, "%05d", uThreadId);
-    return packageMessage(m_strLogFormat.c_str(), szTimeBuf, strLevel, szTid, szFunName,
-        szFileName, to_string(iLine).c_str(), szMessage);
+    if (szTid)
+    {
+        uint32_t uThreadId = getCurThreadtid();
+        sprintf(szTid, "%05d", uThreadId);
+    }
+    char szLineNum[10] = { 0 };
+    _itoa(iLine, szLineNum, 10);
+    return packageMessage(m_strLogFormat, szTimeBuf, strLevel, szTid, szFunName,
+        szFileName, szLineNum, strMessage);
 }
 
-static void OnOutputData(LogLevel emLevel, const std::string& message)
+static void OnOutputData(LogLevel &emLevel, const std::string& message)
 {
 #ifdef _WIN32
     const uint8_t clrIndex[] = {0x0B,0x07,0x08,0x06,0x04,0x05};
@@ -416,7 +429,7 @@ void FileLogger::writeMsg2File(const std::string& strMsg)
 {
     if (strMsg.empty())
         return;
-    size_t iMsgSize = strMsg.size();
+    size_t iMsgSize = strMsg.length();
 
     if (n_hFile == nullptr)
         openCurrentFile();
@@ -426,7 +439,7 @@ void FileLogger::writeMsg2File(const std::string& strMsg)
 
     if (n_hFile)
     {
-        fwrite(strMsg.c_str(), strMsg.length(), 1, n_hFile);
+        fwrite(strMsg.c_str(), 1, iMsgSize, n_hFile);
         m_iCurrentSize += iMsgSize;
     }
 }
@@ -437,19 +450,18 @@ void FileLogger::outPut2File(int iOutMode)
     {
         while (!m_ctxQueue.empty())
         {
-            std::string strData = m_ctxQueue.front();
+            std::string strData = m_ctxQueue.pop_front();
             if (iOutMode == OUT_NET_UDP)
                 writeMsg2Net(strData);
             else
                 writeMsg2File(strData);
-            m_ctxQueue.pop();
         }
         if(n_hFile)
             fflush(n_hFile);
     }
 }
 
-void FileLogger::writeToOutPut(LogLevel emLevel, const std::string& strMsg)
+void FileLogger::writeToOutPut(LogLevel &emLevel, const std::string& strMsg)
 {
 
     if (m_iOutPutFile == OUT_CONSOLE)
@@ -457,19 +469,22 @@ void FileLogger::writeToOutPut(LogLevel emLevel, const std::string& strMsg)
         std::lock_guard<std::mutex> lock(m_Mutex);
         OnOutputData(emLevel, strMsg);
     }
-    if (!m_bSync)
-        m_ctxQueue.push(strMsg);
     else
     {
-        std::lock_guard<std::mutex> lock(m_Mutex);
-        if (m_iOutPutFile == OUT_LOC_FILE)
+        if (!m_bSync)
+            m_ctxQueue.push(strMsg);
+        else
         {
-            writeMsg2File(strMsg);
-            if (n_hFile)
-                fflush(n_hFile);
+            std::lock_guard<std::mutex> lock(m_Mutex);
+            if (m_iOutPutFile == OUT_LOC_FILE)
+            {
+                writeMsg2File(strMsg);
+                if (n_hFile)
+                    fflush(n_hFile);
+            }
+            else if (m_iOutPutFile == OUT_NET_UDP)
+                writeMsg2Net(strMsg);
         }
-        else if (m_iOutPutFile == OUT_NET_UDP)
-            writeMsg2Net(strMsg);
     }
 }
 

@@ -255,6 +255,7 @@ static void OnPopData(LockQueue<int>* queue)
     }
 }
 
+
 int main()
 {
     string str12 = util::Format("111= %d", 123);
@@ -283,12 +284,21 @@ int main()
     }
     printf("\n");
     FileLogger::getInstance().initLog("./logCfg.cfg");
-    LOG_TRACE("Red-Black Tree after insertion:");
-    LOG_DEBUG("Red-Black Tree after insertion:");
-    LOG_INFO("Red-Black Tree after insertion:");
-    LOG_WARNING("Red-Black Tree after insertion:");
-    LOG_ERROR("Red-Black Tree after insertion:");
-    LOG_FATAL("Red-Black Tree after insertion:");
+    while (1)
+    {
+        DWORD dwTest = ::GetTickCount();
+        for (int i = 1; i < 10000; i++)
+        {
+            LOG_TRACE("Red-Black Tree after insertion:");
+            LOG_DEBUG("Red-Black Tree after insertion:");
+            LOG_INFO("Red-Black Tree after insertion:");
+            LOG_WARNING("Red-Black Tree after insertion:");
+            LOG_ERROR("Red-Black Tree after insertion:");
+            LOG_FATAL("Red-Black Tree after insertion:");
+        }
+
+        cout << "diff = " << ::GetTickCount() - dwTest << endl;
+    }
 
     uint32_t uHash = ELFhash("abfadfaeirtwejginfiqhvbcvmfkr hvqa");
     RedBlackTree<int> rbTree;
@@ -414,6 +424,7 @@ int main()
                 //std::cout << " High priority task running " << threadId << std::endl;
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));;
             }
+     
 
         }
     );
@@ -430,7 +441,6 @@ int main()
                 //std::cout << " High priority task running " << threadId << std::endl;
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));;
             }
-
         }
     );
 
