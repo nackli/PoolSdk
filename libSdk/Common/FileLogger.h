@@ -84,7 +84,7 @@ private:
     std::string formatMessage(LogLevel emLevel, const char* szFun, const char* szFileName,
         const int iLine, const char* format, Args&&... args) 
     {
-        std::string strContent = stringFormat(format, std::forward<Args>(args)...);
+        std::string strContent = stringFormat(format, std::forward<Args>(args)...);//200m/6w
         return formatMessage(emLevel, szFun, szFileName, iLine,strContent);
     }
 

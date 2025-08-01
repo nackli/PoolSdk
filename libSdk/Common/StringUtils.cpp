@@ -333,6 +333,57 @@ bool findStrExist(const std::string& strSource, const std::string& strFind)
         return false;
     return true;
 }
+
+char* replaceOne(const char* strSrc, const char* strOldSub, const char* strNewSub)
+{
+    if (!strSrc || !strOldSub || !strNewSub)
+        return nullptr;
+    int iSrcLen = strlen(strSrc);
+    int iOldLen = strlen(strOldSub);
+    int iNewLen = strlen(strNewSub);
+
+    int iResultLen = iSrcLen + 1;
+    int iOldPos = 0;
+
+    for (int i = 0; i < iSrcLen; i++)
+    {
+        if (strncmp(&strSrc[i], strOldSub, iOldLen) == 0)
+        {
+            iResultLen -= iOldLen;
+            iResultLen += iNewLen;
+            iOldPos = i;
+            break;
+        }
+    }
+
+    if (!iOldPos)
+        return _strdup(strSrc);
+
+    char* result = (char*)malloc(iResultLen);
+
+    if (result == NULL)
+    {
+        perror("Memory allocation failed");
+        return NULL;
+    }
+
+    memcpy(result, strSrc, iOldPos);
+    int j = iOldPos;
+    for (int i = iOldPos; i < iSrcLen; i++)
+    {
+        if (strncmp(&strSrc[i], strOldSub, iOldLen) == 0)
+        {
+            strcpy(&result[j], strNewSub);
+            j += iNewLen;
+            i += iOldLen - 1;
+        }
+        else
+            result[j++] = strSrc[i];
+    }
+    result[j] = '\0';
+
+    return result;
+}
 /**
  * @brief 
  * @param strInput 

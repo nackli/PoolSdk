@@ -29,6 +29,7 @@ Copyright (c) 2024. All Rights Reserved.
 #define INVALID_SOCKET                  0x0
 #endif
 
+#define FREE_MEM(x)                 if((x)) {free((x)); (x)=nullptr;}
 FileLogger FileLogger::m_sFileLogger;
 #ifdef _WIN32
 #pragma comment(lib,"Ws2_32.lib")
@@ -316,14 +317,10 @@ std::string FileLogger::stringFormat(const char* format, ...)
 {
     if (!format)
         return {};
-#if 1
+
     va_list args;
     va_start(args, format);
 
-    //va_list argsCopy;
-    //va_copy(argsCopy, args);
-    //int neededSize = vsnprintf(nullptr, 0, format, argsCopy) + 1;
-    //va_end(argsCopy);
     int neededSize = vsnprintf(nullptr, 0, format, args) + 1;
 
     if (neededSize <= 0) {
@@ -341,23 +338,22 @@ std::string FileLogger::stringFormat(const char* format, ...)
 
 
     return std::string(buf.get(), buf.get() + actualSize);
-#else
-    return std::string("Red-Black Tree after insertion:");
-#endif
 }
 
 static std::string packageMessage(const string & strLogFormat, const char* szTime, const char* szLevel,
                                 const char* szTid, const char* szFunName, const char* szFileName,
                                 const char* szLine, const string& szMessage)
 {
-    std::string result = strLogFormat;
-    replaceOne(result, "{level}", szLevel);
-    replaceOne(result, "{tid}", szTid);
-    replaceOne(result, "{line}", szLine);
-    replaceOne(result, "{func}", szFunName);
-    replaceOne(result, "{time}", szTime);
-    replaceOne(result, "{file}", szFileName);
-    replaceOne(result, "{message}", szMessage);
+
+    char *pData = replaceOne(strLogFormat.c_str(), "{level}", szLevel);
+    char *pTid = replaceOne(pData, "{tid}", szTid); FREE_MEM(pData);
+    char* pLine = replaceOne(pTid, "{line}", szLine); FREE_MEM(pTid);
+    char* pFun = replaceOne(pLine, "{func1}", szFunName); FREE_MEM(pLine);
+    char* pTime= replaceOne(pFun, "{time}", szTime); FREE_MEM(pFun)
+    char* pFile = replaceOne(pTime, "{file}", szFileName); FREE_MEM(pTime);
+    char *pMsg = replaceOne(pFile, "{message}", szMessage.c_str()); FREE_MEM(pFile);
+    std::string result(pMsg);
+    FREE_MEM(pMsg);
     return result;
 }
 
@@ -370,7 +366,7 @@ std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, c
 #if defined(_WIN32)
     SYSTEMTIME t;
     GetLocalTime(&t);
-    snprintf(szTimeBuf, sizeof(szTimeBuf), "%04hu-%02hu-%02hu %02hu:%02hu:%02hu.%03hu", t.wYear, t.wMonth, t.wDay, t.wHour, t.wMinute, t.wSecond, t.wMilliseconds);
+    snprintf(szTimeBuf,sizeof(szTimeBuf),"%04hu-%02hu-%02hu %02hu:%02hu:%02hu.%03hu", t.wYear, t.wMonth, t.wDay, t.wHour, t.wMinute, t.wSecond, t.wMilliseconds);//50ms/6W
 #else
     struct tm t;
     struct timeval tv;
@@ -391,11 +387,12 @@ std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, c
     char szTid[10] = { 0 };
     if (szTid)
     {
-        uint32_t uThreadId = getCurThreadtid();
-        sprintf(szTid, "%05d", uThreadId);
+        uint32_t uThreadId = getCurThreadtid(); 
+        //_itoa(uThreadId,szTid, 10);
+        sprintf(szTid, "%05d", uThreadId);//50MS.6W
     }
     char szLineNum[10] = { 0 };
-    _itoa(iLine, szLineNum, 10);
+    sprintf(szTid, "%05d", iLine);//50MS.6W
     return packageMessage(m_strLogFormat, szTimeBuf, strLevel, szTid, szFunName,
         szFileName, szLineNum, strMessage);
 }

@@ -9,6 +9,7 @@ using namespace std;
 // ntimes 一轮申请和释放内存的次数
 // rounds 轮次
 // nworks 并发线程量
+#pragma comment(lib,"libSdk.lib")
 void BenchmarkMalloc(size_t ntimes, size_t nworks, size_t rounds)
 {
     std::vector<std::thread> vthread(nworks);

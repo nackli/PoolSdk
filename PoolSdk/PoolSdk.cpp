@@ -5,7 +5,6 @@
 #include <thread>
 #include <string>
 #include "thread/AdvancedThreadPool.h"
-#include "mem/Pool_Test.h"
 #include "Common/FileLogger.h"
 #include "Common/LockFreeCircularQue.h"
 #include "Common/LockQueue.h"
@@ -20,117 +19,6 @@
 #pragma comment(lib, "winmm.lib")
 #include <stdio.h>
 
-
-void GetDiskPerformance(const std::string& drive_path) {
-    HANDLE hDisk = CreateFileA(drive_path.c_str(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr);
-    if (hDisk == INVALID_HANDLE_VALUE) {
-        std::cerr << "Failed to open disk " << drive_path << ". Error code: " << GetLastError() << std::endl;
-        return;
-    }
-
-    DISK_PERFORMANCE disk_performance = {};
-    DWORD bytes_returned = 0;
-    if (!DeviceIoControl(hDisk, IOCTL_DISK_PERFORMANCE, nullptr, 0, &disk_performance, sizeof(disk_performance), &bytes_returned, nullptr)) {
-        std::cerr << "Failed to get performance data for " << drive_path << ". Error code: " << GetLastError() << std::endl;
-        CloseHandle(hDisk);
-        return;
-    }
-
-    std::cout << "Drive " << drive_path << " performance:" << std::endl;
-    std::cout << "    BytesRead: " << disk_performance.BytesRead.QuadPart << std::endl;
-    std::cout << "    BytesWritten: " << disk_performance.BytesWritten.QuadPart << std::endl;
-    std::cout << "    ReadCount: " << disk_performance.ReadCount << std::endl;
-    std::cout << "    WriteCount: " << disk_performance.WriteCount << std::endl;
-    std::cout << "    ReadTime: " << disk_performance.ReadTime.QuadPart << " ns" << std::endl;
-    std::cout << "    WriteTime: " << disk_performance.WriteTime.QuadPart << " ns" << std::endl;
-    std::cout << "    IdleTime: " << disk_performance.IdleTime.QuadPart << " ns" << std::endl;
-    std::cout << "    ReadBytesPerSec: " << disk_performance.BytesRead.QuadPart * 10000000.0 / disk_performance.ReadTime.QuadPart << " B/s" << std::endl;
-    std::cout << "    WriteBytesPerSec: " << disk_performance.BytesWritten.QuadPart * 10000000.0 / disk_performance.WriteTime.QuadPart << " B/s" << std::endl;
-    std::cout << "    ReadCountPerSec: " << disk_performance.ReadCount * 10000000.0 / disk_performance.ReadTime.QuadPart << " IO/s" << std::endl;
-    std::cout << "    WriteCountPerSec: " << disk_performance.WriteCount * 10000000.0 / disk_performance.WriteTime.QuadPart << " IO/s" << std::endl;
-
-    /* STORAGE_PROPERTY_QUERY query = {};
-     query.PropertyId = StorageDeviceProperty;
-     query.QueryType = PropertyStandardQuery;
-
-     STORAGE_DESCRIPTOR_HEADER device_descriptor = {};
-     if (!DeviceIoControl(hDisk, IOCTL_STORAGE_QUERY_PROPERTY, &query, sizeof(query), &device_descriptor, sizeof(device_descriptor), &bytes_returned, nullptr)) {
-         std::cerr << "Failed to get device descriptor for " << drive_path << ". Error code: " << GetLastError() << std::endl;
-         CloseHandle(hDisk);
-         return;
-     }
-
-
-     if (device_descriptor.BusType == BusTypeSata) {
-         ATA_PASS_THROUGH_DIRECT ata_command = {};
-         ata_command.Length = sizeof(ATA_PASS_THROUGH_DIRECT);
-         ata_command.AtaFlags = ATA_FLAGS_DATA_IN;
-         ata_command.DataTransferLength = sizeof(IDENTIFY_DEVICE_DATA);
-         ata_command.TimeOutValue = 10;
-         ata_command.DataBuffer = new UCHAR[sizeof(IDENTIFY_DEVICE_DATA)];
-         memset(ata_command.DataBuffer, 0, sizeof(IDENTIFY_DEVICE_DATA));
-
-         ATA_IDENTIFY_DEVICE& identify_device = *(ATA_IDENTIFY_DEVICE*)ata_command.DataBuffer;
-         identify_device.CommandCode = ATA_IDENTIFY_DEVICE;
-         if (!DeviceIoControl(hDisk, IOCTL_ATA_PASS_THROUGH_DIRECT, &ata_command, sizeof(ata_command), &ata_command, sizeof(ata_command), &bytes_returned, nullptr) ||
-             bytes_returned != sizeof(ata_command)) {
-             std::cerr << "Failed to get ATA IDENTIFY DEVICE data for " << drive_path << ". Error code: " << GetLastError() << std::endl;
-             delete[] ata_command.DataBuffer;
-             CloseHandle(hDisk);
-             return;
-         }
-
-         IDENTIFY_DEVICE_DATA& identify_data = *(IDENTIFY_DEVICE_DATA*)ata_command.DataBuffer;
-         char model_number[41] = {};
-         memcpy(model_number, identify_data.ModelNumber, sizeof(identify_data.ModelNumber));
-         std::cout << "    ModelNumber: " << model_number << std::endl;
-
-         delete[] ata_command.DataBuffer;*/
-         //}
-         //else {
-         //    STORAGE_PROPERTY_QUERY query = {};
-         //    query.PropertyId = StorageDeviceProperty;
-         //    query.QueryType = PropertyStandardQuery;
-
-         //    STORAGE_DEVICE_DESCRIPTOR device_descriptor = {};
-         //    if (!DeviceIoControl(hDisk, IOCTL_STORAGE_QUERY_PROPERTY, &query, sizeof(query), &device_descriptor, sizeof(device_descriptor), &bytes_returned, nullptr)) {
-         //        std::cerr << "Failed to get device descriptor for " << drive_path << ". Error code: " << GetLastError() << std::endl;
-         //        CloseHandle(hDisk);
-         //        return;
-         //    }
-
-         //    char vendor_id[9] = {};
-         //    memcpy(vendor_id, device_descriptor.VendorIdOffset + (char*)&device_descriptor, device_descriptor.VendorIdOffset ? 8 : 0);
-         //    std::cout << "    VendorId: " << vendor_id << std::endl;
-
-         //    char product_id[17] = {};
-         //    memcpy(product_id, device_descriptor.ProductIdOffset + (char*)&device_descriptor, device_descriptor.ProductIdOffset ? 16 : 0);
-         //    std::cout << "    ProductId: " << product_id << std::endl;
-         //}
-
-    CloseHandle(hDisk);
-}
-//void* operator new(std::size_t szMem) {
-//    if (szMem == 0)
-//        szMem = 1;
-//    void* ptrData = ConcurrentAllocate(szMem);
-//    if (void* ptr = ConcurrentAllocate(szMem))
-//        return ptr;
-//    throw std::bad_alloc{};
-//    return nullptr;
-//}
-//
-//void* operator new[](size_t size) noexcept(false) {
-//    std::printf("call:%s %zu\n", __func__, size);
-//
-//    if (size == 0) {
-//        size = 1;
-//    }
-//    if (void* ptr = std::malloc(size)) {
-//        return ptr;
-//    }
-//    throw std::bad_alloc{};
-//}
 
 #include <windows.h>
 #include <winioctl.h>
@@ -215,81 +103,15 @@ std::wstring GetPhysicalDriveFromLogicalDrive(const wchar_t* logicalDrive) {
     return result;
 }
 
-
-#include <windows.h>
-#include <iostream>
-#include <thread>
-#include "Common/SkipList.h"
-#include "Common/RBTree.h"
-#include "Common/hashAlg.h"
-#include "Common/FormatString.h"
-#include "Common/LockQueue.h"
-
-
-static void OnPushData(LockQueue<int>* queue)
-{
-    for (int i = 0; i < 11; i++)
-    {
-        queue->push(i);
-    }
-    std::atomic<int> iIndex = 0;
-    while (1)
-    {
-        queue->push(iIndex++);
-       // Sleep(1000);
-    }
-   
-
-}
-
-static void OnPopData(LockQueue<int>* queue)
-{
-    while(1)
-    {
-        while (!queue->empty())
-        {
-            printf("%d  ------->", queue->front());
-            queue->pop();
-        }
-
-    }
-}
-
-
 int main()
 {
-    string str12 = util::Format("111= %d", 123);
-    //LockQueue<int> queueTest;
-    //for (int i = 0; i < 30; i++)
-    //{
-    //    std::thread tWrite(OnPushData, &queueTest);
-    //    tWrite.detach();
-    //}
-
-    //Sleep(1000);
-    //for (int i = 0; i < 10; i++)
-    //{
-    //    std::thread tRead(OnPopData, &queueTest);
-    //    tRead.detach();
-    //}
-
-    Sleep(1000);
-
-    for (int i = 1; i < 0xff; i++)
-    {
-        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), i);
-        printf("%02d", i);
-        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);//设置颜色，没有添加颜色，故为原色
-        printf(" ");
-    }
-    printf("\n");
     FileLogger::getInstance().initLog("./logCfg.cfg");
     while (1)
     {
         DWORD dwTest = ::GetTickCount();
-        for (int i = 1; i < 10000; i++)
+        for (int i = 1; i < 7000; i++)
         {
-            LOG_TRACE("Red-Black Tree after insertion:");
+            LOG_TRACE("Red-Black Tree after insertion: %i",i);
             LOG_DEBUG("Red-Black Tree after insertion:");
             LOG_INFO("Red-Black Tree after insertion:");
             LOG_WARNING("Red-Black Tree after insertion:");
@@ -299,63 +121,6 @@ int main()
 
         cout << "diff = " << ::GetTickCount() - dwTest << endl;
     }
-
-    uint32_t uHash = ELFhash("abfadfaeirtwejginfiqhvbcvmfkr hvqa");
-    RedBlackTree<int> rbTree;
-
-    rbTree.insert(7);
-    rbTree.insert(3);
-    rbTree.insert(18);
-    rbTree.insert(10);
-    rbTree.insert(22);
-    rbTree.insert(8);
-    rbTree.insert(11);
-    rbTree.insert(26);
-
-    cout << "Red-Black Tree after insertion:" << endl;
-    rbTree.printTree();
-
-    cout << "\nDeleting 18..." << endl;
-    rbTree.remove(18);
-    rbTree.printTree();
-
-    cout << "\nSearching for 11: ";
-    auto result = rbTree.search(11);
-    if (result) {
-        cout << "Found (" << result->data << ")" << endl;
-    }
-    else {
-        cout << "Not found" << endl;
-    }
-
-    MemTable memtable;
-
-    memtable.Put("key1", "value1");
-    memtable.Put("key2", "value2");
-    memtable.Put("key3", "value3");
-    SkipList<int> skipList;
-    for (int i = 0; i < 300; i++)
-        skipList.insert(20 + i);
-
-    bool b = skipList.find(25);
-    bool c = skipList.find(35);
-
-    skipList.printHelper();
-
-    std::string value;
-    if (memtable.Get("key2", value)) {
-        std::cout << "Found key2: " << value << std::endl;
-    }
-    memtable.Put("key2", "value212314124");
-    if (memtable.Get("key2", value)) {
-        std::cout << "1111 Found key2: " << value << std::endl;
-    }
-    memtable.Delete("key2");
-
-    std::cout << "MemTable size: " << memtable.getItemCount() << std::endl;
-    std::cout << "Memory usage: " << memtable.ApproximateMemoryUsage() << " bytes" << std::endl;
-
-
 
 
     std::wstring physicalDrive = GetPhysicalDriveFromLogicalDrive(L"C:");
@@ -393,8 +158,6 @@ int main()
     double duration = double(end.QuadPart - start.QuadPart) / double(frequency.QuadPart);
     std::cout << "I/O operation took " << duration << " seconds." << std::endl;
 
-
-    ConcurrentAllocate(100);
     void *ptr = new int;
 
     AdvancedThreadPool pool(2, 4);
@@ -444,31 +207,6 @@ int main()
         }
     );
 
-    while (1)
-    {
-        size_t n = 1000;
-        cout << "==========================================================" << endl;
-        //std::vector<void*> v;
-        //for (size_t i = 0; i < n; i++)
-        //{
-        //    //v.push_back(ConcurrentAlloc(16));
-        //    v.push_back(ConcurrentAllocate((16 + i) % 8192 + 1));
-        //}
-        //size_t end1 = clock();
-
-        //size_t begin2 = clock();
-        //for (size_t i = 0; i < n; i++)
-        //{
-        //    ConcurrentFree(v[i]);
-        //}
-        //cout << endl << endl;
-
-        BenchmarkConcurrentMalloc(n, 100, 100);
-        //BenchmarkMalloc(n, 100, 100);
-        //cout << "==========================================================" << endl;
-    }
-
- //   BenchmarkConcurrentMalloc(1, 1, 1);
     system("pause");
     std::cout << "Hello World!\n";
 }
