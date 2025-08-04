@@ -20,13 +20,13 @@ public:
     void setSpaces(size_t uCap) const { m_uCapSize = uCap; }
     bool empty()
     {
-        //lock_type lock(m_mtxLock);
+        lock_type lock(m_mtxLock);
         return m_queueData.empty();
     }
 
     size_t size() const
     {
-        //lock_type lock(m_mtxLock);
+        lock_type lock(m_mtxLock);
         return m_queueData.size();
     }
 
