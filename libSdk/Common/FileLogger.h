@@ -29,7 +29,7 @@ enum LogLevel{
     EM_LOG_TRACE = 0,
     EM_LOG_DEBUG,
     EM_LOG_INFO,
-    EM_LOG_WARNING,
+    EM_LOG_WARN,
     EM_LOG_ERROR,
     EM_LOG_FATAL
 };
@@ -37,7 +37,7 @@ enum LogLevel{
 #define LOG_TRACE(format, ...)          LOG_BASE(EM_LOG_TRACE, format, ##__VA_ARGS__)
 #define LOG_DEBUG(format, ...)          LOG_BASE(EM_LOG_DEBUG, format, ##__VA_ARGS__)
 #define LOG_INFO(format, ...)           LOG_BASE(EM_LOG_INFO, format, ##__VA_ARGS__)
-#define LOG_WARNING(format, ...)        LOG_BASE(EM_LOG_WARNING, format, ##__VA_ARGS__)
+#define LOG_WARN(format, ...)           LOG_BASE(EM_LOG_WARN, format, ##__VA_ARGS__)
 #define LOG_ERROR(format, ...)          LOG_BASE(EM_LOG_ERROR, format, ##__VA_ARGS__)
 #define LOG_FATAL(format, ...)          LOG_BASE(EM_LOG_FATAL, format, ##__VA_ARGS__)
 

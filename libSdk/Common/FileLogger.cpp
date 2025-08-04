@@ -12,6 +12,7 @@ Copyright (c) 2024. All Rights Reserved.
 #include "FileSystem.h"
 #include "StringUtils.h"
 #include "LockQueue.h"
+#include "../mem/ConcurrentMem.h"
 #ifdef _WIN32
 #define UNUSED_FUN
 #else
@@ -33,7 +34,7 @@ Copyright (c) 2024. All Rights Reserved.
 #define INVALID_SOCKET                  0x0
 #endif
 
-#define FREE_MEM(x)                 if((x)) {free((x)); (x)=nullptr;}
+#define FREE_MEM(x)                 if((x)) {PM_FREE((x)); (x)=nullptr;}
 FileLogger FileLogger::m_sFileLogger;
 #ifdef _WIN32
 #pragma comment(lib,"Ws2_32.lib")
@@ -86,6 +87,38 @@ static std::map<std::string, std::string> parseConfig(const std::string& path)
     return config;
 }
 
+
+static inline std::string packageMessage(const string& strLogFormat, const char* szTime, const char* szLevel,
+    const char* szTid, const char* szFunName, const char* szFileName,
+    const char* szLine, const string& szMessage)
+{
+
+    char* pData = replaceOne(strLogFormat.c_str(), "{level}", szLevel);
+    char* pTid = replaceOne(pData, "{tid}", szTid); FREE_MEM(pData);
+    char* pLine = replaceOne(pTid, "{line}", szLine); FREE_MEM(pTid);
+    char* pFun = replaceOne(pLine, "{func}", szFunName); FREE_MEM(pLine);
+    char* pTime = replaceOne(pFun, "{time}", szTime); FREE_MEM(pFun)
+        char* pFile = replaceOne(pTime, "{file}", szFileName); FREE_MEM(pTime);
+    char* pMsg = replaceOne(pFile, "{message}", szMessage.c_str()); FREE_MEM(pFile);
+    std::string result(pMsg);
+    FREE_MEM(pMsg);
+    return result;
+}
+
+
+static void inline OnOutputData(LogLevel& emLevel, const std::string& message)
+{
+#ifdef _WIN32
+    const uint8_t clrIndex[] = { 0x0B,0x07,0x08,0x06,0x04,0x05 };
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), clrIndex[emLevel]);
+    cout << message;
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);
+#else
+    const char* clrIndex[] = { "/033[1;37m","/033[0;37m","/033[0;32;32m", "/033[1;33m","/033[0;32;31m","/033[1;32;31m" };
+    printf("%s%s\033[0m", clrIndex[emLevel], message.c_str());
+#endif
+}
+
 #ifdef _WIN32
 static SOCKET OnCreateSocket()
 #else
@@ -120,7 +153,7 @@ static LogLevel OnStringToLevel(const std::string& strLevel) {
         {"TRACE", LogLevel::EM_LOG_TRACE},
         {"DEBUG", LogLevel::EM_LOG_DEBUG},
         {"INFO", LogLevel::EM_LOG_INFO},
-        {"WARNING", LogLevel::EM_LOG_WARNING},
+        {"WARN", LogLevel::EM_LOG_WARN},
         {"ERROR", LogLevel::EM_LOG_ERROR},
         {"FATAL", LogLevel::EM_LOG_FATAL}
     };
@@ -334,33 +367,18 @@ std::string FileLogger::stringFormat(const char* format, ...)
         throw std::runtime_error("Error formatting log message");
     }
 
+    char* szData = (char*)PM_MALLOC(neededSize);
 
-    std::unique_ptr<char[]> buf(new char[neededSize]);
-    int actualSize = vsnprintf(buf.get(), neededSize, format, args);
+    //std::unique_ptr<char[]> buf(new char[neededSize]);
+    int actualSize = vsnprintf(szData, neededSize, format, args);
     va_end(args);
 
     if (actualSize < 0)
         throw std::runtime_error("Error formatting log message");
 
-
-    return std::string(buf.get(), buf.get() + actualSize);
-}
-
-static std::string packageMessage(const string & strLogFormat, const char* szTime, const char* szLevel,
-                                const char* szTid, const char* szFunName, const char* szFileName,
-                                const char* szLine, const string& szMessage)
-{
-
-    char *pData = replaceOne(strLogFormat.c_str(), "{level}", szLevel);
-    char *pTid = replaceOne(pData, "{tid}", szTid); FREE_MEM(pData);
-    char* pLine = replaceOne(pTid, "{line}", szLine); FREE_MEM(pTid);
-    char* pFun = replaceOne(pLine, "{func}", szFunName); FREE_MEM(pLine);
-    char* pTime= replaceOne(pFun, "{time}", szTime); FREE_MEM(pFun)
-    char* pFile = replaceOne(pTime, "{file}", szFileName); FREE_MEM(pTime);
-    char *pMsg = replaceOne(pFile, "{message}", szMessage.c_str()); FREE_MEM(pFile);
-    std::string result(pMsg);
-    FREE_MEM(pMsg);
-    return result;
+    std::string strRes = std::string(szData, szData + neededSize);
+    PM_FREE(szData);
+    return strRes;
 }
 
 std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, const char* szFileName, 
@@ -386,7 +404,7 @@ std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, c
     case EM_LOG_TRACE:   strLevel = "TRACE"; break;
     case EM_LOG_DEBUG:   strLevel = "DEBUG"; break;
     case EM_LOG_INFO:    strLevel = "INFO ";  break;
-    case EM_LOG_WARNING: strLevel = "WARN ";  break;
+    case EM_LOG_WARN:    strLevel = "WARN ";  break;
     case EM_LOG_ERROR:   strLevel = "ERROR"; break;
     case EM_LOG_FATAL:   strLevel = "FATAL"; break;
     }
@@ -400,19 +418,6 @@ std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, c
     sprintf(szLineNum, "%05d", iLine);//50MS.6W
     return packageMessage(m_strLogFormat, szTimeBuf, strLevel, szTid, szFunName,
         szFileName, szLineNum, strMessage);
-}
-
-static void OnOutputData(LogLevel &emLevel, const std::string& message)
-{
-#ifdef _WIN32
-    const uint8_t clrIndex[] = {0x0B,0x07,0x08,0x06,0x04,0x05};
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), clrIndex[emLevel]);
-    cout << message;
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);
-#else
-    const char *clrIndex[] = { "/033[1;37m","/033[0;37m","/033[0;32;32m", "/033[1;33m","/033[0;32;31m","/033[1;32;31m" };
-    printf("%s%s\033[0m", clrIndex[emLevel], message.c_str());
-#endif
 }
 
 void FileLogger::writeMsg2Net(const std::string& strMsg)

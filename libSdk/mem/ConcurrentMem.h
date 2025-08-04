@@ -1,4 +1,15 @@
 #pragma once
+#ifdef MEM_POOL_OPEN
+#define PM_MALLOC 		ConcurrentAllocate
+#define PM_FREE 		ConcurrentFree
+#else
+#define PM_MALLOC 		malloc
+#define PM_FREE 		free	
+#endif
+
+#ifndef _CONCURRENT_MEM_H_
+#define _CONCURRENT_MEM_H_
 void ConcurrentFree(void* ptr);
 void* ConcurrentAllocate(size_t size);
-//void* operator new(size_t szMem, char emCold = 0)noexcept(false);
+#endif
+

@@ -12,6 +12,7 @@ Copyright (c) 2024. All Rights Reserved.
 #include <wchar.h>
 #include <random>
 #include "CplusplusVer.h"
+#include "../mem/ConcurrentMem.h"
 
 /**************************************************************************************************************************************/
 static const std::string g_strBase64Chars ="ABCDEFGHIJKLMNOPQRSTUVWXYZ""abcdefghijklmnopqrstuvwxyz""0123456789+/";
@@ -363,7 +364,7 @@ char* replaceOne(const char* strSrc, const char* strOldSub, const char* strNewSu
         return strdup(strSrc);
 #endif
 
-    char* result = (char*)malloc(iResultLen);
+    char* result = (char*)PM_MALLOC(iResultLen);
 
     if (result == NULL)
     {
