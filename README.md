@@ -26,11 +26,18 @@ log_level=trace
 | WARNING | 潜在的问题情况，不影响系统继续运行 |
 | ERROR | 错误事件，影响系统功能但系统仍可继续运行 |
 | FATAL | 严重错误，导致系统无法继续运行 |
+
 #日志输出模式，可以控制台，文件，以及网络模式[console、file、netudp]，只有配置了网络模式，netIp才有效
 ```
 out_put=netudp
 netIp = 127.0.0.1:9000
 ```
+| 日志输出模式 | 说明| 
+|:----:|------|
+| console | 通过控制台输出日志，目前采用不同的颜色表示不同的日志级别，控制台输出，不存在同步异步模式 |
+| file | 通过文件方式输出日志，可以配置同步异步方式 | 
+| netudp | 通过UDP方式进行网络日志输出，可以通过配置同步和异步模式|  
+
 #日志交互模式，可以同步也可以异步[async、sync]
 ```
 out_mode = async
@@ -39,6 +46,15 @@ out_mode = async
 ```
 log_format=[{time}] [{level}] [tid : {tid}] [line : {line}] [{func}] {message}
 ```
+| 输出格式 | 说明| 样式|
+|:----:|------|
+| {time} | 日志输出时间点，目前精确到毫秒 |2025-08-04 16:25:41.854|
+| {level} | 日志输出级别 | TRACE|
+| {tid} | 当前线程ID ，按照5位对齐方式输出| 22336| 
+| {line} | 当前所在文件行号，按照5位数据对齐 | 00153|
+| {func} | 函数名称 | main|
+| {file} | 文件名称，按照全路径输出 |  E:\test\PoolSdk.cpp|
+| {message} | 日志消息体 | Red-Black Tree after insertion: 11147|
 
 # [内存池主要由3个部分组成](#section1) 
 
