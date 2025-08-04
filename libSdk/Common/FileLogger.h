@@ -23,7 +23,7 @@
 #include <dirent.h>
 #include <pthread.h>
 #include <sys/time.h>
-#define getCurThreadtid() pthread_self()
+#define getCurThreadtid() gettid()
 #endif
 enum LogLevel{
     EM_LOG_TRACE = 0,
@@ -61,7 +61,7 @@ public:
 
             if (strFormatted.empty())
                 return;
-
+        
             if (strFormatted[strFormatted.length() - 1] != '\n')
                 strFormatted += '\n';
 

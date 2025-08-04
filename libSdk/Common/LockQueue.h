@@ -18,13 +18,15 @@ public:
 
     size_t getSpaces() const { return m_uCapSize; }
     void setSpaces(size_t uCap) const { m_uCapSize = uCap; }
-    bool empty() const
+    bool empty()
     {
+        //lock_type lock(m_mtxLock);
         return m_queueData.empty();
     }
 
     size_t size() const
     {
+        //lock_type lock(m_mtxLock);
         return m_queueData.size();
     }
 
@@ -32,7 +34,7 @@ public:
     {
         {
             lock_type lock(m_mtxLock);
-            while (size() == m_uCapSize)
+            while (m_queueData.size() == m_uCapSize)
                 m_cvWrite.wait(lock);
             m_queueData.emplace(value);
         }
@@ -43,7 +45,7 @@ public:
     {
         {
             lock_type lock(m_mtxLock);
-            while (size() == m_uCapSize)
+            while (m_queueData.size() == m_uCapSize)
                 m_cvWrite.wait(lock);
             m_queueData.emplace(value);
         }

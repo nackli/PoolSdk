@@ -241,7 +241,8 @@ static bool OnCreateDirectoryRecursive(std::string& path)
  #else
     std::string strSubPath;
     size_t iPos = 0;
-
+	if(path.empty())
+		return true;
 
     while ((iPos = path.find('/', iPos)) != std::string::npos) 
     {

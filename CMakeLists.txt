@@ -70,7 +70,6 @@ list(REMOVE_ITEM DEV_SOURCES_EXE ${REMOVE_SOURCES})
 add_library(${PROJECT_NAME} ${DEV_SOURCES_EXE})
 
 
-
 add_executable(${PROJECT_NAME}_test ./PoolSdk/PoolSdk.cpp)
 
 target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})

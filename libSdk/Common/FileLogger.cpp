@@ -242,14 +242,16 @@ void FileLogger::initLog(const std::string &strCfgName)
             m_iCurrentIndex = findMaxFileIndex();
         }
     }
-    if (m_iOutPutFile == OUT_NET_UDP)
-        m_hSendSocket = OnCreateSocket();
 
     if (!m_bSync)
     {
         std::thread tRead(&FileLogger::outPut2File, this, m_iOutPutFile);
         tRead.detach();
     }
+
+    if (m_iOutPutFile == OUT_NET_UDP)
+        m_hSendSocket = OnCreateSocket();
+
 }
 
 void FileLogger::setLogFileName(const std::string& strFileName)
@@ -448,15 +450,17 @@ void FileLogger::writeMsg2File(const std::string& strMsg)
 void FileLogger::outPut2File(int iOutMode)
 {
     while (1)
-    {
-        while (!m_ctxQueue.empty())
+    {     
+        do 
         {
             std::string strData = m_ctxQueue.pop_front();
             if (iOutMode == OUT_NET_UDP)
                 writeMsg2Net(strData);
             else
                 writeMsg2File(strData);
-        }
+           
+        }while(!m_ctxQueue.empty());
+
         if(n_hFile)
             fflush(n_hFile);
     }
@@ -543,7 +547,8 @@ void FileLogger::purgeOldFiles()
 #else
     string strDir = getDirFromFilePath(m_strBaseName);
     //printf("ext length:%d\n",m_ext.length());
- 
+    if(strDir.empty())
+        strDir="./";
   
     DIR *dir = opendir(strDir.c_str());
     if ( dir == NULL )
@@ -562,23 +567,25 @@ void FileLogger::purgeOldFiles()
  
             if ( d_ent->d_type != DT_DIR)
             {
-                string d_name(d_ent->d_name);
-                //printf("%s\n",d_ent->d_name);
-                if (strcmp(d_name.c_str () + d_name.length () - m_strFileExt.length(), m_strFileExt.c_str ()) == 0)
+                //string d_name(d_ent->d_name);
+               
+                if (strcmp(d_ent->d_name + strlen(d_ent->d_name) - m_strFileExt.length(), m_strFileExt.c_str ()) == 0)
                 {
                     struct stat statbuf;
-                    if (stat(d_name.c_str(), &statbuf) != 0) {
-                        return; // 
-                    }
-
-                    uint64_t uTime = (static_cast<uint64_t>(statbuf.st_mtim.tv_nsec));
-      
+                     
                     string strAbsolutePath;
                     //string absolutePath = directory + string("/") + string(d_ent->d_name);
                     if (strDir[strDir.length()-1] == '/')
                        strAbsolutePath = strDir + string(d_ent->d_name);  
                     else
-                        strAbsolutePath = strDir + "/" + string(d_ent->d_name);                    
+                        strAbsolutePath = strDir + "/" + string(d_ent->d_name);    
+
+
+                    if (stat(strAbsolutePath.c_str(), &statbuf) != 0) {
+                        continue; // 
+                    }
+
+                    uint64_t uTime = (static_cast<uint64_t>(statbuf.st_mtim.tv_sec * 1000 + statbuf.st_mtim.tv_nsec /1000000));
                     mapFilePath[uTime] = strAbsolutePath;
                 }
             }
@@ -618,9 +625,10 @@ int FileLogger::findMaxFileIndex() {
         FindClose(hFind);
     }
 #else
-    DIR* dir = opendir(".");
+    string strDir = getDirFromFilePath(m_strBaseName);
+    DIR* dir = opendir(strDir.c_str());
     if (dir) {
-        struct dirent* ent;
+        struct dirent* ent = nullptr;
         while ((ent = readdir(dir)) != nullptr) {
             if (ent->d_type == DT_REG) {
                 processFileName(ent->d_name, vecIndices);
