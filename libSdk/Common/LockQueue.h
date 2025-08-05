@@ -17,7 +17,7 @@ public:
     LockQueue& operator = (LockQueue&&) = delete;
 
     size_t getSpaces() const { return m_uCapSize; }
-    void setSpaces(size_t uCap) const { m_uCapSize = uCap; }
+    void setSpaces(size_t uCap) { m_uCapSize = uCap; }
     bool empty()
     {
         lock_type lock(m_mtxLock);
