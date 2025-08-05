@@ -312,9 +312,10 @@ FileLogger::FileLogger(const char* strBase, size_t maxSize, int maxFiles, LogLev
     m_iOutPutFile(OUT_LOC_FILE),
     m_bSync(false),
     m_strLogFormat("[{time}] [{level}] [{tid}] [{func}] {message}"),
-    m_hSendSocket(INVALID_SOCKET),
     m_strNetIpAdd(),
-    m_iNetPort(0)
+    m_iNetPort(0),
+    m_hSendSocket(INVALID_SOCKET)
+
 {
 }
 

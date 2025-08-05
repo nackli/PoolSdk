@@ -19,7 +19,7 @@ bool MemTable::Get(const std::string& key, std::string& value) {
 }
 
 void MemTable::Delete(const std::string& key) {
-    Put(key, "");  // 使用空字符串作为墓碑标记
+    Put(key, ""); 
 }
 
 size_t MemTable::ApproximateMemoryUsage() {

@@ -63,7 +63,7 @@ void RwLock::writeLock()
     m_iWritCnt++;
     m_bWriteActive = true;
 #else
-    std::unique_lock lock(m_mutex);  // 独占锁，写入时独占
+    std::unique_lock lock(m_mutex);  
 #endif
 #else
     pthread_rwlock_wrlock(&m_rwlock);

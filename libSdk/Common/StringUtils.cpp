@@ -514,7 +514,7 @@ std::string hexString2Ascii(const std::string& strInput)
 {
     if(strInput.empty())
         return std::string();
-    std::string strHex = std::move(strInput.substr(2));//DEL HEAR 0X
+    std::string strHex = strInput.substr(2);//DEL HEAR 0X
     std::stringstream ss;
     do 
     {
@@ -525,7 +525,7 @@ std::string hexString2Ascii(const std::string& strInput)
             strHex = strHex.substr(strHex.length());
     } while (!strHex.empty());
 
-    return std::move(ss.str());
+    return ss.str();
 }
 /**
  * @brief 
@@ -1041,7 +1041,7 @@ std::string generateUUID()
 
     std::ostringstream oss;
     oss << /*std::uppercase <<*/ std::hex << part1 << part2;
-    std::string strResult = str2UUIDFomat(std::move(oss.str()));
+    std::string strResult = str2UUIDFomat(oss.str());
     return strResult.substr(0, 36); 
 }
 
