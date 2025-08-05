@@ -339,7 +339,7 @@ static inline char* strDup(const char *szSrc)
 {
     if (!szSrc)
         return nullptr;
-    int iLen = strlen(szSrc) + 1;
+    size_t iLen = strlen(szSrc) + 1;
     char *pDest = (char*)PM_MALLOC(iLen);
     if(pDest)
         strcpy(pDest, szSrc);
@@ -350,14 +350,14 @@ char* replaceOne(const char* strSrc, const char* strOldSub, const char* strNewSu
 {
     if (!strSrc || !strOldSub || !strNewSub)
         return nullptr;
-    int iSrcLen = strlen(strSrc);
-    int iOldLen = strlen(strOldSub);
-    int iNewLen = strlen(strNewSub);
+    size_t iSrcLen = strlen(strSrc);
+    size_t iOldLen = strlen(strOldSub);
+    size_t iNewLen = strlen(strNewSub);
 
-    int iResultLen = iSrcLen + 1;
-    int iOldPos = 0;
+    size_t iResultLen = iSrcLen + 1;
+    size_t iOldPos = 0;
 
-    for (int i = 0; i < iSrcLen; i++)
+    for (size_t i = 0; i < iSrcLen; i++)
     {
         if (strncmp(&strSrc[i], strOldSub, iOldLen) == 0)
         {
@@ -381,8 +381,8 @@ char* replaceOne(const char* strSrc, const char* strOldSub, const char* strNewSu
     }
 
     memcpy(result, strSrc, iOldPos);
-    int j = iOldPos;
-    for (int i = iOldPos; i < iSrcLen; i++)
+    size_t j = iOldPos;
+    for (size_t i = iOldPos; i < iSrcLen; i++)
     {
         if (strncmp(&strSrc[i], strOldSub, iOldLen) == 0)
         {

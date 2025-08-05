@@ -139,7 +139,7 @@ public:
 // 源地址散列调度 (Source IP Hash)
 class SourceHashBalancer : public DestinationHashBalancer {
 public:
-    ServerNode& selectServer(const std::string& source);
+    ServerNode& selectServer(const std::string& source) override;
 };
 
 // 带复制的基于局部性最少链接调度 (Locality-Based Least Connections with Replication)
