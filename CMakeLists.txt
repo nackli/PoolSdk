@@ -33,10 +33,12 @@ else()
 	 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 -fPIC")
 endif()	
 
+add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+
 # default user option
 option(ENABLE_POOL_SDK_TEST "Enable test" OFF)
 if(ENABLE_POOL_SDK_TEST)
-  add_definitions(-DENABLE_POOL_SDK_TEST -D_CRT_SECURE_NO_WARNINGS)
+  add_definitions(-DENABLE_POOL_SDK_TEST)
 endif()
 
 # set msvc info
@@ -59,7 +61,7 @@ endmacro()
 
 
 if(MSVC)
-  set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "netWorkBroad")
+  set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 endif()
 
 
