@@ -163,7 +163,7 @@ static void InstallUnexceptedExceptionHandler()
 
 static void DisableSetUnhandlerExcptionFilter()
 {
-	HMODULE hKernel = LoadLibrary(L"kernel32.dll");
+	HMODULE hKernel = LoadLibraryA("kernel32.dll");
 	if (!hKernel)
 		return;
 	void* addr = (void*)GetProcAddress(hKernel, "SetUnhandledExceptionFilter");

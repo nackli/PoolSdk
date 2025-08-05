@@ -26,12 +26,12 @@ typedef int FHANDLE;
 
 FHANDLE openDevice(const char* szName, int iFlags);
 void closeDevice(FHANDLE& hFile);
-// 写入数据
+
 bool writeDevice(FHANDLE hWrite, const void* data, size_t size);
-// 读取数据
+
 bool readDevice(FHANDLE hRead, void* buffer, size_t size);
 
-// 读取数据
+
 bool seekDevice(FHANDLE hFile, size_t iPos, int iMoveMethod); 
 bool delDevice(const char* szFileName);
 bool snapshotLink(const char* szOldFileName, const char* szNewFileName);

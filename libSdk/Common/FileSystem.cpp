@@ -10,6 +10,7 @@ Copyright (c) 2024. All Rights Reserved.
 #else
 #include <dirent.h>
 #include <sys/stat.h>
+#include <cstdint>
 #endif
 #include <algorithm>
 #include <cstring>

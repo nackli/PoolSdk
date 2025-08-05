@@ -26,26 +26,26 @@ static bool OnIsValidPipeName(const std::string& strPipe)
         return false;
     }
 
-    // ���Ʋ�����֤
+
     std::string strPipePart = strPipe.substr(prefix.size());
     if (strPipePart.empty() || strPipePart.size() > 256)
         return false;
 
-    // �������ַ�: ��ĸ���֡��»��ߡ����ַ�����
+
     std::regex nameRegex(R"(^[a-zA-Z0-9_.-]+$)");
     return std::regex_match(strPipePart, nameRegex);
 #else
-    // Unix�����ܵ�ͨ��Ϊ�ļ�ϵͳ·��
+
     if (strPipe.empty() || strPipe.size() > 4096)
         return false;
 
-    // ����·����֤
+
     std::regex pathRegex(R"(^(/|(/[a-zA-Z0-9_.-]+)+)$)");
     if (!std::regex_match(strPipe, pathRegex)) {
         return false;
     }
 
-    // ��ֹ�����ַ�
+
     const std::string forbidden = " *?<>|&;!$(){}[]'\"\\";
     return strPipe.find_first_of(forbidden) == std::string::npos;
 #endif
@@ -90,12 +90,12 @@ PIPE_HANDLE createNamePipe(const char* szPipeName)
 #endif
 }
 
-// д������
+
 bool writePipe(PIPE_HANDLE hWrite, const void* data, size_t size) {
     return writeDevice(hWrite, data, size);
 }
 
-// ��ȡ����
+
 bool readPipe(PIPE_HANDLE hRead, void* buffer, size_t size) {
     return readDevice(hRead, buffer, size);
 }

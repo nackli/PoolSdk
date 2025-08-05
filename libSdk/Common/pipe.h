@@ -27,9 +27,7 @@ enum PIPE_OPT
 int createPipe(PIPE_HANDLE hPipe[OPT_MAX]);
 PIPE_HANDLE openNamePipe(const char* szFifo);
 PIPE_HANDLE createNamePipe(const char* szPipeName);
-// 写入数据
 bool writePipe(PIPE_HANDLE hWrite, const void* data, size_t size);
-// 读取数据
 bool readPipe(PIPE_HANDLE hRead, void* buffer, size_t size);
 void closePipe(PIPE_HANDLE hPipe, const char* szPipeName = nullptr);
 bool waitConnNamePipe(PIPE_HANDLE hPipe);
