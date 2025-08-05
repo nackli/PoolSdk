@@ -83,7 +83,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name:  ${{ matrix.c_compiler }}-${{ github.ref }}
+        tag_name:  ${{ matrix.run_env }}-${{ github.ref }}
         release_name: Release ${{ github.ref }}
         body: ${{ matrix.run_env }} environment running package.
         draft: false
@@ -96,5 +96,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ${{ steps.strings.outputs.build-output-dir }}/libSdk.zip
-        asset_name: /libSdk.zip-${{ matrix.run_env }}-${{ github.ref }}.zip
+        asset_name: /libSdk-${{ matrix.run_env }}-${{ github.ref }}.zip
         asset_content_type: application/zip
