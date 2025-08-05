@@ -66,10 +66,42 @@ jobs:
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}  --target package
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
+
+
+
+    - name: Create inc
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: XCopy ${{env.BUILD_INCLUDE_SRC}} ${{env.BUILD_INCLUDE_OUT}} /S /C /I /R /Y
+      
+    - name: Package
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: Compress-Archive -Path .\${{env.BUILD_CONFIGURATION}},${{env.BUILD_CONFIGURATION_DEBUG}},${{env.BUILD_INCLUDE_OUT}} -Destination ${{env.PACKAGE_NAME}}-${{env.BUILD_PLATFORM}}.zip
+  
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name:  ${{ matrix.c_compiler }}-${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: Todo New Release.
+        draft: false
+        prerelease: false
+        
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ steps.strings.outputs.build-output-dir }}/libSdk.zip
+        asset_name: /libSdk.zip-${{ matrix.c_compiler }}-${{ github.ref }}.zip
+        asset_content_type: application/zip
