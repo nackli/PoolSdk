@@ -24,7 +24,7 @@ public:
         return m_queueData.empty();
     }
 
-    size_t size() const
+    size_t size()
     {
         lock_type lock(m_mtxLock);
         return m_queueData.size();
