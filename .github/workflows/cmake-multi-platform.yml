@@ -85,7 +85,7 @@ jobs:
       with:
         tag_name:  ${{ matrix.c_compiler }}-${{ github.ref }}
         release_name: Release ${{ github.ref }}
-        body: ${{ matrix.run_env }} 环境运行包.
+        body: ${{ matrix.run_env }} environment running package.
         draft: false
         prerelease: false
         
