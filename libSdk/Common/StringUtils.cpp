@@ -335,6 +335,17 @@ bool findStrExist(const std::string& strSource, const std::string& strFind)
     return true;
 }
 
+static inline char* strDup(const char *szSrc)
+{
+    if (!szSrc)
+        return nullptr;
+    int iLen = strlen(szSrc) + 1;
+    char *pDest = (char*)PM_MALLOC(iLen);
+    if(pDest)
+        strcpy(pDest, szSrc);
+    return pDest;
+}
+
 char* replaceOne(const char* strSrc, const char* strOldSub, const char* strNewSub)
 {
     if (!strSrc || !strOldSub || !strNewSub)
@@ -358,11 +369,8 @@ char* replaceOne(const char* strSrc, const char* strOldSub, const char* strNewSu
     }
 
     if (!iOldPos)
-#ifdef WIN32
-        return _strdup(strSrc);
-#else
-        return strdup(strSrc);
-#endif
+        return strDup(strSrc);
+
 
     char* result = (char*)PM_MALLOC(iResultLen);
 

@@ -1,10 +1,10 @@
 #pragma once
 #ifdef MEM_POOL_OPEN
-#define PM_MALLOC 		ConcurrentAllocate
-#define PM_FREE 		ConcurrentFree
+#define PM_MALLOC 			ConcurrentAllocate
+#define PM_FREE 			ConcurrentFree
 #else
-#define PM_MALLOC 		malloc
-#define PM_FREE 		free	
+#define PM_MALLOC 			malloc
+#define PM_FREE 			free	
 #endif
 
 #ifndef _CONCURRENT_MEM_H_

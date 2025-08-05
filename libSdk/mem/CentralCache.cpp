@@ -166,6 +166,8 @@ void CentralCache::ReleaseLargeMem(void* ptr)
 {
 	//PAGE_ID id = (PAGE_ID)ptr >> PAGE_SHIFT;
 	Span* span = PageCache::GetInstance()->MapObjToSpan(ptr);
+	if (!span)
+		return;
 	size_t size = span->m_nObjSize;
 	if (size > MAX_BYTES)
 	{
@@ -183,6 +185,8 @@ void CentralCache::ReleaseListToSpans(void* begin, size_t size)
 	{
 		void* next = NextObj(begin);
 		Span* span = PageCache::GetInstance()->MapObjToSpan(begin);
+		if (!span)
+			continue;
 		NextObj(begin) = span->m_freeList;
 		span->m_freeList = begin;
 		span->m_nUseCount--;

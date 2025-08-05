@@ -291,6 +291,7 @@ void FileLogger::setLogFileName(const std::string& strFileName)
 {
     if (!strFileName.empty())
     {
+        std::lock_guard<std::mutex> lock(m_Mutex);
         m_strBaseName = strFileName;
         parseFileNameComponents();
         m_iCurrentIndex = findMaxFileIndex();
