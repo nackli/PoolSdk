@@ -16,7 +16,7 @@
 #include <vector>
 #include <thread>
 #include <string>
-#include "Common/FileLogger.h"
+#include "FileLogger/FileLogger.h"
 #ifdef _WIN32
 #pragma comment(lib,"libSdk.lib")
 #endif

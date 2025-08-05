@@ -9,9 +9,9 @@ Copyright (c) 2024. All Rights Reserved.
 #include <set>
 #include <algorithm>
 #include <cctype>
-#include "FileSystem.h"
-#include "StringUtils.h"
-#include "LockQueue.h"
+#include "../Common/FileSystem.h"
+#include "../Common/StringUtils.h"
+#include "../Common/LockQueue.h"
 #include "../mem/ConcurrentMem.h"
 #ifdef _WIN32
 #define UNUSED_FUN

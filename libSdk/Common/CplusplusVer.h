@@ -11,7 +11,7 @@
 #elif CPP_STANDARD >= 201402L
 #define HAS_CPP_VER 14
 #elif CPP_STANDARD >= 201103L
-#defined HAS_CPP_VER 11
+#define HAS_CPP_VER 11
 #elif CPP_STANDARD >= 199711L
-#defined HAS_CPP_VER 09
+#define HAS_CPP_VER 09
 #endif

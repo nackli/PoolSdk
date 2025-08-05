@@ -12,8 +12,8 @@
 #include <ctime>
 #include <mutex>
 #include <memory>
-#include "LockQueue.h"
-#include "StringUtils.h"
+#include "../Common/LockQueue.h"
+#include "../Common/StringUtils.h"
 
 #ifdef _WIN32
 #include <windows.h>
