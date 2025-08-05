@@ -411,11 +411,9 @@ std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, c
     case EM_LOG_FATAL:   strLevel = "FATAL"; break;
     }
     char szTid[10] = { 0 };
-    if (szTid)
-    {
-        uint32_t uThreadId = getCurThreadtid(); 
-        sprintf(szTid, "%05d", uThreadId);//50MS.6W
-    }
+    uint32_t uThreadId = getCurThreadtid(); 
+    sprintf(szTid, "%05d", uThreadId);//50MS.6W
+
     char szLineNum[10] = { 0 };
     sprintf(szLineNum, "%05d", iLine);//50MS.6W
     return packageMessage(m_strLogFormat, szTimeBuf, strLevel, szTid, szFunName,
