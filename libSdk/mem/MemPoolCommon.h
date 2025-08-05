@@ -6,6 +6,7 @@
 #pragma warning(disable:4334)
 #else
 #include <sys/mman.h>
+#include <exception>
 #endif
 
 static const size_t MAX_BYTES = 256 * 1024;

@@ -171,8 +171,8 @@ template < typename T>
 T getEnv(const char* name, T defaultVal)
 {
 	char* szValue = nullptr;
+#ifdef Win32	
 	size_t sz = 0;
-#ifdef Win32		
 	if (_dupenv_s(&szValue, &sz, name) != 0 || !szValue)
 #else
 	szValue = getenv(name);

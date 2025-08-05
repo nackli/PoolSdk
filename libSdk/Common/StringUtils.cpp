@@ -87,7 +87,7 @@ static std::string OnDigit2String(T tData, int iBase, unsigned char uWidth = 0, 
     else if (typeid(tData) == typeid(float) || typeid(tData) == typeid(double))
         ss <</* std::setiosflags(std::ios::uppercase) <<*/ std::fixed << std::setprecision(iPrecision);
     ss << tData;
-    return std::move(ss.str());
+    return ss.str();
 }
 /**
  * @brief 
