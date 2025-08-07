@@ -120,6 +120,6 @@ private:
     std::mutex m_mtxLock;
     std::condition_variable m_cvWrite;
     std::condition_variable m_cvRead;
-    size_t m_uCapSize = 50;
+    size_t m_uCapSize = 100;
 };
 #endif

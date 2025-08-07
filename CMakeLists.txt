@@ -10,6 +10,10 @@ project(libSdk VERSION 2.5.0)
 set(PACKAGE_VERSION ${CMAKE_PROJECT_VERSION})
 set(PACKAGE_STRING "${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_VERSION}")
 
+option(ENABLE_POOL_SDK_TEST "Enable test" OFF)
+option(ENABLE_MEM_POOL "mem pool enable" ON)
+
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # set C++ standard
@@ -36,23 +40,27 @@ endif()
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
 # default user option
-option(ENABLE_POOL_SDK_TEST "Enable test" OFF)
 if(ENABLE_POOL_SDK_TEST)
   add_definitions(-DENABLE_POOL_SDK_TEST)
+endif()
+
+if(ENABLE_MEM_POOL)
+  add_definitions(-DMEM_POOL_OPEN)
 endif()
 
 # set msvc info
 macro(add_msvc_options target)
   if(MSVC)
     target_compile_options(${target} PRIVATE
-    /W4                # 设置警告级别为 4
-    /WX                # 将警告视为错误
-    /MP                # 启用多处理器编译
-    /permissive-       # 禁用不严格的语言 conformance
-    /Zc:__cplusplus    # 启用正确的 __cplusplus 宏值
-    /Zc:inline         # 移除未使用的函数
-    /Gm-               # 禁用最小生成（minimal rebuild）
-    #/EHsc              # 指定异常处理模型
+    /W3					# 设置警告级别为 3
+    #/WX               	# 将警告视为错误
+    /MP                	# 启用多处理器编译
+    /permissive-       	# 禁用不严格的语言 conformance
+    /Zc:__cplusplus    	# 启用正确的 __cplusplus 宏值
+    /Zc:inline         	# 移除未使用的函数
+    #/Gm-               # 已弃用。 启用最小重新生成。
+	/Gy				   	# 启用函数级链接。
+	/sdl				# 启用更多安全功能和警告。
     )
   endif()
 endmacro()
@@ -70,9 +78,10 @@ file(GLOB_RECURSE REMOVE_SOURCES ./libSdk/test/*.cpp)
 list(REMOVE_ITEM DEV_SOURCES_EXE ${REMOVE_SOURCES})
 
 add_library(${PROJECT_NAME} ${DEV_SOURCES_EXE})
-
+add_msvc_options(${PROJECT_NAME})
 
 add_executable(${PROJECT_NAME}_test ./PoolSdk/PoolSdk.cpp)
+
 
 target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
 

@@ -5,7 +5,6 @@
 # @Created: 2025-03-20
 #
 function(use_pack_fun PACKAGE_NAME PAGE_TYPE)
-    message("build page = ${PACKAGE_NAME}, ${CMAKE_CURRENT_SOURCE_DIR}, ${CMAKE_SOURCE_DIR}")
     include(InstallRequiredSystemLibraries)
     if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
         install(TARGETS ${PROJECT_NAME} DESTINATION lib)

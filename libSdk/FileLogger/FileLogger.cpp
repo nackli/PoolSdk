@@ -98,7 +98,7 @@ static inline std::string packageMessage(const string& strLogFormat, const char*
     char* pLine = replaceOne(pTid, "{line}", szLine); FREE_MEM(pTid);
     char* pFun = replaceOne(pLine, "{func}", szFunName); FREE_MEM(pLine);
     char* pTime = replaceOne(pFun, "{time}", szTime); FREE_MEM(pFun)
-        char* pFile = replaceOne(pTime, "{file}", szFileName); FREE_MEM(pTime);
+    char* pFile = replaceOne(pTime, "{file}", szFileName); FREE_MEM(pTime);
     char* pMsg = replaceOne(pFile, "{message}", szMessage.c_str()); FREE_MEM(pFile);
     std::string result(pMsg);
     FREE_MEM(pMsg);
@@ -269,11 +269,12 @@ void FileLogger::initLog(const std::string &strCfgName)
                     m_iOutPutFile = OUT_LOC_FILE;
             }
         }
-        if (m_iOutPutFile == OUT_LOC_FILE)
-        {
-            parseFileNameComponents();
-            m_iCurrentIndex = findMaxFileIndex();
-        }
+    }
+
+    if (m_iOutPutFile == OUT_LOC_FILE)
+    {
+        parseFileNameComponents();
+        m_iCurrentIndex = findMaxFileIndex();
     }
 
     if (!m_bSync)
@@ -523,7 +524,6 @@ void FileLogger::purgeOldFiles()
         return;
     map<uint64_t,string> mapFilePath;
 #ifdef _WIN32
-
     WIN32_FIND_DATAA findData;
     string strDir = getDirFromFilePath(m_strBaseName);
     HANDLE hFind = FindFirstFileA((m_strFilePrefix + "_*" + m_strFileExt).c_str(), &findData);

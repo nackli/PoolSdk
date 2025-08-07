@@ -61,6 +61,8 @@ void ThreadCache::Deallocate(void* ptr)
 {
 	//PAGE_ID id = (PAGE_ID)ptr >> PAGE_SHIFT;
 	Span* span = PageCache::GetInstance()->MapObjToSpan(ptr);
+	if (!span)
+		return;
 	size_t size = span->m_nObjSize;
 	assert(size > 0);
 

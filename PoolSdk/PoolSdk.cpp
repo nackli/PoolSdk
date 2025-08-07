@@ -32,23 +32,34 @@ unsigned long GetTickCount()
 }
 #endif
 
-int main()
+
+static void OnTestThread()
 {
-    FileLogger::getInstance().initLog("./logCfg.cfg");
     while (1)
-    {  
-        unsigned long dwTest = ::GetTickCount();    
-        for (int i = 1; i < 45000; i++)
+    {
+        unsigned long dwTest = ::GetTickCount();
+        for (int i = 0; i < 45000; i++)
         {
-            LOG_TRACE("Red-Black Tree after insertion: %i",i);
+            LOG_TRACE("Red-Black Tree after insertion: %i", i);
             LOG_DEBUG("Red-Black Tree after insertion:");
             LOG_INFO("Red-Black Tree after insertion:");
             LOG_WARN("Red-Black Tree after insertion:");
             LOG_ERROR("Red-Black Tree after insertion:");
             LOG_FATAL("Red-Black Tree after insertion:");
         }
-        cout << "diff = " << ::GetTickCount() - dwTest << endl;
+        cout << "diff = "<< ::GetCurrentThreadId() << " " << ::GetTickCount() - dwTest << endl;
     }
-    system("pause");
+}
+
+int main()
+{
+    FileLogger::getInstance().initLog("./logCfg.cfg");
+    for (int i = 0; i < 10; i++)
+    {
+        thread td(OnTestThread);
+        td.detach();
+    }
+    while (1)
+        ::Sleep(10000000);
     std::cout << "Hello World!\n";
 }
