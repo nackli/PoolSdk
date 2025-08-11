@@ -14,7 +14,7 @@
 #include <memory>
 #include "../Common/LockQueue.h"
 #include "../Common/StringUtils.h"
-
+#include "fmt/printf.h"
 #ifdef _WIN32
 #include <windows.h>
 #define getCurThreadtid() GetCurrentThreadId()
@@ -33,14 +33,22 @@ enum LogLevel{
     EM_LOG_ERROR,
     EM_LOG_FATAL
 };
-#define LOG_BASE(Level,format, ...)     FileLogger::getInstance().log(Level,__func__,__FILE__, __LINE__, format, ##__VA_ARGS__)
-#define LOG_TRACE(format, ...)          LOG_BASE(EM_LOG_TRACE, format, ##__VA_ARGS__)
-#define LOG_DEBUG(format, ...)          LOG_BASE(EM_LOG_DEBUG, format, ##__VA_ARGS__)
-#define LOG_INFO(format, ...)           LOG_BASE(EM_LOG_INFO, format, ##__VA_ARGS__)
-#define LOG_WARN(format, ...)           LOG_BASE(EM_LOG_WARN, format, ##__VA_ARGS__)
-#define LOG_ERROR(format, ...)          LOG_BASE(EM_LOG_ERROR, format, ##__VA_ARGS__)
-#define LOG_FATAL(format, ...)          LOG_BASE(EM_LOG_FATAL, format, ##__VA_ARGS__)
+#define LOG_BASE(Level,format, ...)         FileLogger::getInstance().log(true,Level,__func__,__FILE__, __LINE__, format, ##__VA_ARGS__)
+#define LOG_TRACE(format, ...)              LOG_BASE(EM_LOG_TRACE, format, ##__VA_ARGS__)
+#define LOG_DEBUG(format, ...)              LOG_BASE(EM_LOG_DEBUG, format, ##__VA_ARGS__)
+#define LOG_INFO(format, ...)               LOG_BASE(EM_LOG_INFO, format, ##__VA_ARGS__)
+#define LOG_WARN(format, ...)               LOG_BASE(EM_LOG_WARN, format, ##__VA_ARGS__)
+#define LOG_ERROR(format, ...)              LOG_BASE(EM_LOG_ERROR, format, ##__VA_ARGS__)
+#define LOG_FATAL(format, ...)              LOG_BASE(EM_LOG_FATAL, format, ##__VA_ARGS__)
+#define LOG_BASE_S(Level,format, ...)       FileLogger::getInstance().log(false,Level,__func__,__FILE__, __LINE__, format, ##__VA_ARGS__)
+#define LOG_TRACE_S(format, ...)            LOG_BASE_S(EM_LOG_TRACE, format, ##__VA_ARGS__)
+#define LOG_DEBUG_S(format, ...)            LOG_BASE_S(EM_LOG_DEBUG, format, ##__VA_ARGS__)
+#define LOG_INFO_S(format, ...)             LOG_BASE_S(EM_LOG_INFO, format, ##__VA_ARGS__)
+#define LOG_WARN_S(format, ...)             LOG_BASE_S(EM_LOG_WARN, format, ##__VA_ARGS__)
+#define LOG_ERROR_S(format, ...)            LOG_BASE_S(EM_LOG_ERROR, format, ##__VA_ARGS__)
+#define LOG_FATAL_S(format, ...)            LOG_BASE_S(EM_LOG_FATAL, format, ##__VA_ARGS__)
 
+//using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
 using namespace std;
 class FileLogger {
 public:
@@ -50,13 +58,13 @@ public:
     void setLogFileName(const std::string& strFileName);
 
     template<typename... Args>
-    void log(LogLevel emLevel, const char* szFun,const char *szFileName, 
+    void log(bool bFormat,LogLevel emLevel, const char* szFun,const char *szFileName, 
         const int iLine, const char* format, Args&&... args)
     {
         if (emLevel < m_emLogLevel)
             return;
         try {           
-            std::string strFormatted = formatMessage(emLevel, szFun, szFileName, iLine, format,
+            std::string strFormatted = formatMessage(bFormat,emLevel, szFun, szFileName, iLine, format,
                 std::forward<Args>(args)...);
 
             if (strFormatted.empty())
@@ -72,6 +80,7 @@ public:
             std::cerr << "Log formatting error: " << e.what() << std::endl;
         }
     }
+
 private:
     FileLogger(const char *strBase = "./log/log.log",
         size_t maxSize = 20 * 1024 * 1024,
@@ -80,15 +89,18 @@ private:
 
     ~FileLogger();
     void parseFileNameComponents();
+
     template<typename... Args>
-    std::string formatMessage(LogLevel emLevel, const char* szFun, const char* szFileName,
+    std::string formatMessage(bool bFormat,LogLevel emLevel, const char* szFun, const char* szFileName,
         const int iLine, const char* format, Args&&... args) 
     {
-        std::string strContent = stringFormat(format, std::forward<Args>(args)...);//200m/6w
-        return formatMessage(emLevel, szFun, szFileName, iLine,strContent);
+        std::string strContent;
+        if(bFormat)
+            strContent = fmt::sprintf(format, std::forward<Args>(args)...); 
+        else
+            strContent = fmt::format(format, std::forward<Args>(args)...);
+        return formatMessage(emLevel, szFun, szFileName, iLine, strContent);
     }
-
-    std::string stringFormat(const char* format, ...);
 
     std::string formatMessage(LogLevel emLevel, const char* szFunName, 
         const char* szFileName, const int iLine, const string& szMessage);

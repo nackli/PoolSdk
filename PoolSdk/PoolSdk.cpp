@@ -16,7 +16,9 @@
 #include <vector>
 #include <thread>
 #include <string>
+#include <vector>
 #include "FileLogger/FileLogger.h"
+#include "Common/StringUtils.h"
 #ifdef _WIN32
 #pragma comment(lib,"libSdk.lib")
 #endif
@@ -40,13 +42,24 @@ static void OnTestThread()
         unsigned long dwTest = ::GetTickCount();
         for (int i = 0; i < 45000; i++)
         {
-            LOG_TRACE("Red-Black Tree after insertion: %i", i);
+#if 0
+            LOG_TRACE("Red-Black Tree after insertion: %d", i);
             LOG_DEBUG("Red-Black Tree after insertion:");
             LOG_INFO("Red-Black Tree after insertion:");
             LOG_WARN("Red-Black Tree after insertion:");
             LOG_ERROR("Red-Black Tree after insertion:");
             LOG_FATAL("Red-Black Tree after insertion:");
+#else
+            LOG_TRACE_S("Red-Black Tree after insertion: {}", i);
+            LOG_DEBUG_S("Red-Black Tree after insertion:");
+            LOG_INFO_S("Red-Black Tree after insertion:");
+            LOG_WARN_S("Red-Black Tree after insertion:");
+            LOG_ERROR_S("Red-Black Tree after insertion:");
+            LOG_FATAL_S("Red-Black Tree after insertion:");
+#endif
         }
+
+
         cout << "diff = "<< ::GetCurrentThreadId() << " " << ::GetTickCount() - dwTest << endl;
     }
 }
@@ -54,11 +67,10 @@ static void OnTestThread()
 int main()
 {
     FileLogger::getInstance().initLog("./logCfg.cfg");
-    for (int i = 0; i < 10; i++)
-    {
-        thread td(OnTestThread);
-        td.detach();
-    }
+    OnTestThread();
+
+
+
     while (1)
         ::Sleep(10000000);
     std::cout << "Hello World!\n";

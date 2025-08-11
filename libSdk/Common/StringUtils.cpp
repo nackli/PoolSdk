@@ -202,6 +202,29 @@ bool equals(const char * szLeft, const char *szRight,bool bCaseSensitive)
     return false;
 }
 /**
+ * @brief
+ * @param szLeft
+ * @param szRight
+ * @param bCaseSensitive
+ * @return
+*/
+bool equals(const char* szLeft, const char* szRight, size_t iMaxCnt, bool bCaseSensitive)
+{
+    if (bCaseSensitive)
+#ifdef WIN32    
+        return std::strncmp(szLeft, szRight, iMaxCnt) == 0;
+#else
+        return strncmp(szLeft, szRight, iMaxCnt) == 0;
+#endif
+    else
+#ifdef WIN32    
+        return _strnicmp(szLeft, szRight, iMaxCnt) == 0;
+#else
+        return strncasecmp(szLeft, szRight, iMaxCnt) == 0;
+#endif 
+    return false;
+}
+/**
  * @brief 
  * @param strLeft 
  * @param strRight 
@@ -211,6 +234,17 @@ bool equals(const char * szLeft, const char *szRight,bool bCaseSensitive)
 bool equals(const std::string& strLeft, const std::string& strRight, bool bCaseSensitive)
 {
     return equals(strLeft.c_str(), strRight.c_str(), bCaseSensitive);
+}
+/**
+ * @brief
+ * @param strLeft
+ * @param strRight
+ * @param bCaseSensitive
+ * @return
+*/
+bool equals(const std::string& strLeft, const std::string& strRight, size_t iMaxCnt, bool bCaseSensitive)
+{
+    return equals(strLeft.c_str(), strRight.c_str(), iMaxCnt,bCaseSensitive);
 }
 /**
  * @brief 

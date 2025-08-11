@@ -13,7 +13,9 @@ std::string& subRight(std::string& strInput, const std::string strTrim = " ");
 std::string &trim(std::string& strInput, const std::string strTrim = " ");
 	
 bool equals(const char* szLeft, const char* szRight, bool bCaseSensitive = true);
+bool equals(const char* szLeft, const char* szRight, size_t iMaxCnt, bool bCaseSensitive = true);
 bool equals(const std::string& strLeft, const std::string& strRight, bool bCaseSensitive = true);
+bool equals(const std::string& strLeft, const std::string& strRight, size_t iMaxCnt, bool bCaseSensitive = true);
 bool toLower(std::string &str);
 bool toUpper(std::string &str);
 bool startsWith(const std::string strValue, const std::string strStart, bool case_sensitive = true);
@@ -242,7 +244,7 @@ std::vector<T> split(const std::string& strInput, const std::string& strDelimite
 }
 
 template < typename T>
-std::vector<T> split(const std::string& strInput, char chDelimiter)
+std::vector<T> split(const std::string &strInput, char chDelimiter)
 {
 	return splitTransformed<T>(strInput, chDelimiter, &transFomat<T>);
 }

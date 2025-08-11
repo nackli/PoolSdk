@@ -13,6 +13,8 @@ Copyright (c) 2024. All Rights Reserved.
 #include "../Common/StringUtils.h"
 #include "../Common/LockQueue.h"
 #include "../mem/ConcurrentMem.h"
+
+
 #ifdef _WIN32
 #define UNUSED_FUN
 #else
@@ -213,6 +215,17 @@ UNUSED_FUN static int dir_list(const char* szDir, int (CallFunFileList)(void* pa
 #endif
 }
 
+static inline void OnFormatLoger(string &strLogger)
+{
+    replaceOne(strLogger, "{time}", "{0}");
+    replaceOne(strLogger, "{level}", "{1}");
+    replaceOne(strLogger, "{tid}", "{2}");
+    replaceOne(strLogger, "{func}", "{3}");
+    replaceOne(strLogger, "{file}", "{4}");
+    replaceOne(strLogger, "{line}", "{5}");
+    replaceOne(strLogger, "{message}", "{6}");
+}
+
 FileLogger& FileLogger::getInstance() {
     return m_sFileLogger;
 }
@@ -271,6 +284,7 @@ void FileLogger::initLog(const std::string &strCfgName)
         }
     }
 
+    OnFormatLoger(m_strLogFormat);
     if (m_iOutPutFile == OUT_LOC_FILE)
     {
         parseFileNameComponents();
@@ -355,33 +369,22 @@ void FileLogger::parseFileNameComponents()
     }
 }
 
-std::string FileLogger::stringFormat(const char* format, ...)
+static inline string OnGetLocalTimer()
 {
-    if (!format)
-        return {};
-
-    va_list args;
-    va_start(args, format);
-
-    int neededSize = vsnprintf(nullptr, 0, format, args) + 1;
-
-    if (neededSize <= 0) {
-        va_end(args);
-        throw std::runtime_error("Error formatting log message");
-    }
-
-    char* szData = (char*)PM_MALLOC(neededSize);
-
-    //std::unique_ptr<char[]> buf(new char[neededSize]);
-    int actualSize = vsnprintf(szData, neededSize, format, args);
-    va_end(args);
-
-    if (actualSize < 0)
-        throw std::runtime_error("Error formatting log message");
-
-    std::string strRes = std::string(szData, szData + neededSize);
-    PM_FREE(szData);
-    return strRes;
+#if defined(_WIN32)
+    SYSTEMTIME t;
+    GetLocalTime(&t);
+    return fmt::sprintf("%04hu-%02hu-%02hu %02hu:%02hu:%02hu.%03hu", 
+        t.wYear, t.wMonth, t.wDay, t.wHour, t.wMinute, t.wSecond, t.wMilliseconds);
+#else
+    struct tm t;
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    localtime_r(&tv.tv_sec, &t);
+    return fmt::sprintf("%04d-%02d-%02d %02d:%02d:%02d.%03d",
+        (int)t.tm_year + 1900, (int)t.tm_mon + 1, (int)t.tm_mday,
+        (int)t.tm_hour, (int)t.tm_min, (int)t.tm_sec, (int)(tv.tv_usec / 1000) % 1000);
+#endif
 }
 
 std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, const char* szFileName, 
@@ -389,19 +392,6 @@ std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, c
 {
     if (strMessage.empty())
         return {};
-    char szTimeBuf[32];
-#if defined(_WIN32)
-    SYSTEMTIME t;
-    GetLocalTime(&t);
-    snprintf(szTimeBuf,sizeof(szTimeBuf),"%04hu-%02hu-%02hu %02hu:%02hu:%02hu.%03hu", t.wYear, t.wMonth, t.wDay, t.wHour, t.wMinute, t.wSecond, t.wMilliseconds);//50ms/6W
-#else
-    struct tm t;
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    localtime_r(&tv.tv_sec, &t);
-    snprintf(szTimeBuf, sizeof(szTimeBuf), "%04d-%02d-%02d %02d:%02d:%02d.%03d", (int)t.tm_year + 1900, (int)t.tm_mon + 1, (int)t.tm_mday, (int)t.tm_hour, (int)t.tm_min, (int)t.tm_sec, (int)(tv.tv_usec / 1000) % 1000);
-#endif
-
     const char* strLevel = nullptr;
     switch (emLevel) {
     case EM_LOG_TRACE:   strLevel = "TRACE"; break;
@@ -410,15 +400,9 @@ std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, c
     case EM_LOG_WARN:    strLevel = "WARN ";  break;
     case EM_LOG_ERROR:   strLevel = "ERROR"; break;
     case EM_LOG_FATAL:   strLevel = "FATAL"; break;
+    default: strLevel = "DEBUG";break;
     }
-    char szTid[10] = { 0 };
-    uint32_t uThreadId = getCurThreadtid(); 
-    sprintf(szTid, "%05d", uThreadId);//50MS.6W
-
-    char szLineNum[10] = { 0 };
-    sprintf(szLineNum, "%05d", iLine);//50MS.6W
-    return packageMessage(m_strLogFormat, szTimeBuf, strLevel, szTid, szFunName,
-        szFileName, szLineNum, strMessage);
+    return fmt::format(m_strLogFormat, OnGetLocalTimer(), strLevel, getCurThreadtid(), szFunName, szFileName, iLine, strMessage);
 }
 
 void FileLogger::writeMsg2Net(const std::string& strMsg)
