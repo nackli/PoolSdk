@@ -60,7 +60,7 @@ static void OnTestThread()
         }
 
 
-        cout << "diff = "<< ::GetCurrentThreadId() << " " << ::GetTickCount() - dwTest << endl;
+        cout << "diff = " << " " << ::GetTickCount() - dwTest << endl;
     }
 }
 
