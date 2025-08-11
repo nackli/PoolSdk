@@ -51,6 +51,7 @@ endif()
 
 if(USE_LIBFMT_FORMAT)
   add_definitions(-DENABLE_LIB_FMT)
+  add_definitions(-DFMT_UNICODE=0)
 endif()
 
 # set msvc info
