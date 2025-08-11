@@ -72,6 +72,11 @@ int main()
 
 
     while (1)
+#ifdef _WIN32
         ::Sleep(10000000);
+#else
+        sleep(10000000);
+#endif
+
     std::cout << "Hello World!\n";
 }
