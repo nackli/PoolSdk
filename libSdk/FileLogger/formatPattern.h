@@ -1,0 +1,364 @@
+#pragma once
+#include <memory>
+#include <ctime>
+#include <cassert>
+#include <vector>
+#include "fmt/format.h"
+#include "LoggerLevel.h"
+ 
+
+using memory_buf_t = fmt::memory_buffer;
+using string_view_t = fmt::basic_string_view<char>;
+
+static inline void append_int(uint64_t n, memory_buf_t& bufDest)
+{
+    fmt::format_int iData(n);
+    bufDest.append(iData.data(), iData.data() + iData.size());
+}
+
+static inline void append_string_view(string_view_t view, memory_buf_t& bufDest)
+{
+    auto* buf_ptr = view.data();
+    bufDest.append(view.data(), buf_ptr + view.size());
+}
+
+static inline string_view_t to_string_view(const memory_buf_t& buf)
+{
+    return string_view_t{ buf.data(), buf.size() };
+}
+
+
+struct LogMessage {
+#ifdef _WIN32
+    SYSTEMTIME tmCreate;// creation time
+#else
+    struct tm tmCreate;
+#endif
+    int iLevLog;// log level
+    std::thread::id iThreadId;// process id
+    const char * szFileName;// source file name
+    size_t iLineNo;// source line number
+    const char *szMsgCtx;// log message
+    const char * strLogName;// logger name
+    const char* szFunName;// logger name
+    LogMessage(int level, const char* szFile, size_t iLine, const char* szMsg,  const char* szFunName)
+        : iLevLog(level), iThreadId(std::this_thread::get_id()), szFunName(szFunName),
+        szFileName(szFile), iLineNo(iLine), szMsgCtx(szMsg)
+    {
+#ifdef _WIN32
+        GetLocalTime(&tmCreate);
+#else
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+        localtime_r(&tv.tv_sec, &tmCreate);
+#endif
+    }
+};
+
+class Format
+{
+public:
+    using ptr = std::unique_ptr<Format>;
+    virtual void format(const LogMessage& msg, memory_buf_t & dest) = 0;
+};
+ 
+// 具体的日志格式
+class MsgFormat : public Format
+{
+public:
+    void format(const LogMessage& msg, memory_buf_t & bufDest) override
+    {
+        append_string_view(msg.szMsgCtx, bufDest);
+    }
+};
+ 
+class LevelFormat : public Format
+{
+public:
+    void format(const LogMessage& msg, memory_buf_t& dest) override
+    {
+        append_string_view(::getLoggerLevelName(msg.iLevLog) , dest);
+    }
+};
+
+class LevelShortFormat : public Format
+{
+public:
+    void format(const LogMessage& msg, memory_buf_t& dest) override
+    {
+        append_string_view(::getLoggerLevelShortName(msg.iLevLog), dest);
+    }
+};
+
+class TimeFormat : public Format
+{
+public:
+    TimeFormat(const std::string &format = "%H:%M:%S") : formatTime(format)
+    {
+    }
+    void format(const LogMessage &msg, memory_buf_t& dest) override
+    {
+        string strTimer = fmt::format("{}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}.{:03d}",
+            msg.tmCreate.wYear, msg.tmCreate.wMonth, msg.tmCreate.wDay, 
+            msg.tmCreate.wHour, msg.tmCreate.wMinute, msg.tmCreate.wSecond, msg.tmCreate.wMilliseconds);
+        append_string_view(strTimer, dest);
+    }
+ 
+private:
+    std::string formatTime;
+};
+class FunctionFormat : public Format
+{
+public:
+    FunctionFormat()
+    {
+    }
+    void format(const LogMessage& msg, memory_buf_t& dest) override
+    {
+        append_string_view(msg.szFunName, dest);
+    }
+};
+class FileFormat : public Format
+{
+public:
+    void format(const LogMessage &msg, memory_buf_t& bufDest) override
+    {
+        append_string_view(msg.szFileName, bufDest);
+    }
+};
+class LineFormat : public Format
+{
+public:
+    void format(const LogMessage &msg, memory_buf_t &bufDest) override
+    {
+        append_int(msg.iLineNo, bufDest);
+    }
+};
+
+class FileNameAndLineFormat : public Format
+{
+public:
+    void format(const LogMessage& msg, memory_buf_t& bufDest) override
+    {
+        append_string_view(msg.szFileName, bufDest);
+        bufDest.push_back(':');
+        append_int(msg.iLineNo, bufDest);
+    }
+};
+
+class ThreadIdFormat : public Format
+{
+public:
+    void format(const LogMessage &msg, memory_buf_t & bufDest) override
+    {
+        append_int(static_cast<int>(reinterpret_cast<uintptr_t>(&msg.iThreadId)), bufDest);
+    }
+};
+class TableFormat : public Format
+{
+public:
+    void format(const LogMessage &msg, memory_buf_t & bufDest) override
+    {
+        append_string_view("\t", bufDest);
+    }
+};
+class NewLineFormat : public Format
+{
+public:
+    void format(const LogMessage &msg, memory_buf_t & bufDest) override
+    {
+        append_string_view("\n", bufDest);
+    }
+};
+class CharFormat final : public Format
+{
+public:
+    explicit CharFormat(char ch)
+        : m_chData(ch)
+    {}
+
+    void format(const LogMessage& msg, memory_buf_t& bufDest) override
+    {
+        bufDest.push_back(m_chData);
+    }
+
+private:
+    char m_chData;
+};
+
+class OtherFormat : public Format
+{
+public:
+    OtherFormat(const std::string &other = "") : other(other)
+    {
+    }
+    void format(const LogMessage &msg, memory_buf_t & bufDest) override
+    {
+        append_string_view(other, bufDest);
+    }
+ 
+private:
+    std::string other;
+};
+/*
+%Y %D %t：Indicates the date
+%t：Indicates the thread ID
+%@：Indicate the absolute path and line number of the source code
+%l：Indicates the log level
+%v：Indicate log content
+%T：Indicate tab indentation
+%g：Indicate file name
+%n：Indicate line break
+%!：Indicate function name
+%#：Indicate line numbers
+*/
+class FormatterBuilder // Log format constructor
+{
+public:
+    FormatterBuilder(const std::string &pattern = "[%D] [tid:%t] [%l] [%@]  %v%n%T") : m_strPattern(pattern)
+    {
+        parsePattern();
+    }
+
+    void format(memory_buf_t &bufDest, const LogMessage &msg)
+    {
+        for (auto &f : m_vFormatsPtr)
+        {
+            f->format(msg, bufDest);
+        }
+    }
+
+    std::string format(const LogMessage &msg)
+    {
+        memory_buf_t bufDest;
+        format(bufDest, msg);
+        return std::string(bufDest.data(), bufDest.size());
+    }
+        
+    void updatePattern(const std::string& strPattern)
+    {
+        if (strPattern.empty())
+            return;
+        m_vFormatsPtr.clear();
+        m_strPattern = strPattern;
+        parsePattern();
+    }
+private:
+    bool parsePattern()
+    {
+        size_t pos = 0;                                         // Indicate the processed location
+        char key;                                               // Indicate formatting keywords
+        std::string value;                                      // Representing formatted values
+        std::vector<std::pair<char, std::string>> items;        // Representing formatting items
+        while (pos < m_strPattern.size())
+        {
+            // 1. If it's not%, it means it's a regular character
+            while (pos < m_strPattern.size() && m_strPattern[pos] != '%')
+            {
+                value += m_strPattern[pos];
+                pos++;
+            }
+            // 2.If it is%, it means it is a formatted character
+            if (pos + 1 < m_strPattern.size() && m_strPattern[pos + 1] == '%')
+            {
+                // 2.1  If it is%%, it means it is%
+                value += m_strPattern[pos];
+                pos += 2;
+            }
+            if (!value.empty())
+            {
+                items.emplace_back(std::make_pair(' ', value));
+                value.clear();
+                continue;
+            }
+            // 3. If it is a formatted character
+            if (pos < m_strPattern.size() && m_strPattern[pos] == '%')
+            {
+                pos++; // skip %
+                // Merge check: skip '%' and perform a unified check to see if it exceeds the string range
+                if (pos >= m_strPattern.size())
+                {
+                    std::cerr << "Error: Unexpected end of pattern after % at position " << pos << "." << std::endl;
+                    return false;
+                }
+                key = m_strPattern[pos];
+                pos++;
+                if (pos < m_strPattern.size() && m_strPattern[pos] == '{')
+                {
+                    pos++;
+                    // 3.1 If it is {, it means it is a sub format
+                    while (pos < m_strPattern.size() && m_strPattern[pos] != '}')
+                    {
+                        value += m_strPattern[pos];
+                        pos++;
+                    }
+                    if (pos >= m_strPattern.size() || m_strPattern[pos] != '}')
+                    {
+                        std::cerr << "Error: Missing closing brace for sub - pattern starting at position " << pos - value.length() - 1 << "." << std::endl;
+                        return false;
+                    }
+                    pos++; 
+                }
+ 
+                //// Check if it is an unfamiliar formatted keyword
+                //static const std::unordered_set<char> validKeys = {'D','Y','y' ,'#','t', 'g', 'l', '!', 'T', 'v', '%', 'n','@','%'};
+                //if (validKeys.find(key) == validKeys.end())
+                //{
+                //    std::cerr << "Error: Unknown format keyword '" << key << "' at position " << pos - sizeof(char) - 1 << "." << std::endl;
+                //    return false;
+                //}
+ 
+                items.emplace_back(std::make_pair(key, value));
+                value.clear();
+            }
+        }
+        // 4. Create formatted object
+        for (auto &item : items)
+        {
+            m_vFormatsPtr.push_back(createItem(item.first, item.second));
+        }
+        return true;
+    }
+ 
+    // 创建格式化对象
+    Format::ptr createItem(const char &key, const std::string &value)
+    {
+        switch (key)
+        {
+        case ('Y'):
+        case ('y'):
+        case ('D'):
+            return std::make_unique <TimeFormat>(value);
+        case ('t'):
+            return std::make_unique <ThreadIdFormat>();
+            break;
+        case ('!'):
+            return std::make_unique <FunctionFormat>();
+        case ('g'):
+                return std::make_unique <FileFormat>();
+        case ('#'):
+            return std::make_unique <LineFormat>();
+        case ('l'):
+            return std::make_unique <LevelFormat>();
+        case ('L'):
+            return std::make_unique <LevelShortFormat>();
+        case ('T'):
+            return std::make_unique <TableFormat>();
+        case ('v'):
+            return std::make_unique <MsgFormat>();
+        case ('n'):
+            return std::make_unique <NewLineFormat>();
+        case ('@'):
+            return std::make_unique <FileNameAndLineFormat>();
+        case ('%'):
+            return std::make_unique <CharFormat>('%');
+
+        default:
+            return std::make_unique <OtherFormat>(value);
+        } 
+    }
+ 
+private:
+    std::string m_strPattern; // 格式化字符串
+    std::vector<Format::ptr> m_vFormatsPtr;
+};

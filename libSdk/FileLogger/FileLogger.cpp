@@ -13,6 +13,7 @@ Copyright (c) 2024. All Rights Reserved.
 #include "../Common/StringUtils.h"
 #include "../Common/LockQueue.h"
 #include "../mem/ConcurrentMem.h"
+#include "formatPattern.h"
 
 
 #ifdef _WIN32
@@ -90,22 +91,22 @@ static std::map<std::string, std::string> parseConfig(const std::string& path)
 }
 
 
-static inline std::string packageMessage(const string& strLogFormat, const char* szTime, const char* szLevel,
-    const char* szTid, const char* szFunName, const char* szFileName,
-    const char* szLine, const string& szMessage)
-{
-
-    char* pData = replaceOne(strLogFormat.c_str(), "{level}", szLevel);
-    char* pTid = replaceOne(pData, "{tid}", szTid); FREE_MEM(pData);
-    char* pLine = replaceOne(pTid, "{line}", szLine); FREE_MEM(pTid);
-    char* pFun = replaceOne(pLine, "{func}", szFunName); FREE_MEM(pLine);
-    char* pTime = replaceOne(pFun, "{time}", szTime); FREE_MEM(pFun)
-    char* pFile = replaceOne(pTime, "{file}", szFileName); FREE_MEM(pTime);
-    char* pMsg = replaceOne(pFile, "{message}", szMessage.c_str()); FREE_MEM(pFile);
-    std::string result(pMsg);
-    FREE_MEM(pMsg);
-    return result;
-}
+//static inline std::string packageMessage(const string& strLogFormat, const char* szTime, const char* szLevel,
+//    const char* szTid, const char* szFunName, const char* szFileName,
+//    const char* szLine, const string& szMessage)
+//{
+//
+//    char* pData = replaceOne(strLogFormat.c_str(), "{level}", szLevel);
+//    char* pTid = replaceOne(pData, "{tid}", szTid); FREE_MEM(pData);
+//    char* pLine = replaceOne(pTid, "{line}", szLine); FREE_MEM(pTid);
+//    char* pFun = replaceOne(pLine, "{func}", szFunName); FREE_MEM(pLine);
+//    char* pTime = replaceOne(pFun, "{time}", szTime); FREE_MEM(pFun)
+//    char* pFile = replaceOne(pTime, "{file}", szFileName); FREE_MEM(pTime);
+//    char* pMsg = replaceOne(pFile, "{message}", szMessage.c_str()); FREE_MEM(pFile);
+//    std::string result(pMsg);
+//    FREE_MEM(pMsg);
+//    return result;
+//}
 
 
 static void inline OnOutputData(LogLevel& emLevel, const std::string& message)
@@ -150,19 +151,19 @@ static int OnCreateSocket()
     return hSendSocket;
 }
 
-static LogLevel OnStringToLevel(const std::string& strLevel) {
-    static std::map<std::string, LogLevel> levelMap = {
-        {"TRACE", LogLevel::EM_LOG_TRACE},
-        {"DEBUG", LogLevel::EM_LOG_DEBUG},
-        {"INFO", LogLevel::EM_LOG_INFO},
-        {"WARN", LogLevel::EM_LOG_WARN},
-        {"ERROR", LogLevel::EM_LOG_ERROR},
-        {"FATAL", LogLevel::EM_LOG_FATAL}
-    };
-    string strLev = strLevel;
-    toUpper(strLev);
-    return levelMap.at(strLev);
-}
+//static LogLevel OnStringToLevel(const std::string& strLevel) {
+//    static std::map<std::string, LogLevel> levelMap = {
+//        {"TRACE", LogLevel::EM_LOG_TRACE},
+//        {"DEBUG", LogLevel::EM_LOG_DEBUG},
+//        {"INFO", LogLevel::EM_LOG_INFO},
+//        {"WARN", LogLevel::EM_LOG_WARN},
+//        {"ERROR", LogLevel::EM_LOG_ERROR},
+//        {"FATAL", LogLevel::EM_LOG_FATAL}
+//    };
+//    string strLev = strLevel;
+//    toUpper(strLev);
+//    return levelMap.at(strLev);
+//}
 
 UNUSED_FUN static int dir_list(const char* szDir, int (CallFunFileList)(void* param, const char* name, int isdir), void* param)
 {
@@ -215,16 +216,16 @@ UNUSED_FUN static int dir_list(const char* szDir, int (CallFunFileList)(void* pa
 #endif
 }
 
-static inline void OnFormatLoger(string &strLogger)
-{
-    replaceOne(strLogger, "{time}", "{0}");
-    replaceOne(strLogger, "{level}", "{1}");
-    replaceOne(strLogger, "{tid}", "{2}");
-    replaceOne(strLogger, "{func}", "{3}");
-    replaceOne(strLogger, "{file}", "{4}");
-    replaceOne(strLogger, "{line}", "{5}");
-    replaceOne(strLogger, "{message}", "{6}");
-}
+//static inline void OnFormatLoger(string &strLogger)
+//{
+//    replaceOne(strLogger, "{time}", "{0}");
+//    replaceOne(strLogger, "{level}", "{1}");
+//    replaceOne(strLogger, "{tid}", "{2}");
+//    replaceOne(strLogger, "{func}", "{3}");
+//    replaceOne(strLogger, "{file}", "{4}");
+//    replaceOne(strLogger, "{line}", "{5}");
+//    replaceOne(strLogger, "{message}", "{6}");
+//}
 
 FileLogger& FileLogger::getInstance() {
     return m_sFileLogger;
@@ -262,8 +263,8 @@ void FileLogger::initLog(const std::string &strCfgName)
             }
             if (!mapCfg["out_mode"].empty())
                 m_bSync = equals(mapCfg["out_mode"].c_str(), "sync", false);
-            if (!mapCfg["log_format"].empty())
-                m_strLogFormat = mapCfg["log_format"];
+            if (!mapCfg["log_pattern"].empty())
+                m_strLogFormat = mapCfg["log_pattern"];
 
             if (m_iOutPutFile == OUT_NET_UDP)
             {
@@ -283,14 +284,16 @@ void FileLogger::initLog(const std::string &strCfgName)
             }
         }
     }
-
-    OnFormatLoger(m_strLogFormat);
+    if(m_pPatternFmt && !m_strLogFormat.empty())
+        m_pPatternFmt->updatePattern(m_strLogFormat);
+    //FormatterBuilder myTest("[%D] [tid:%t] [%l] [%@] %v%n%T");
+    //OnFormatLoger(m_strLogFormat);
     if (m_iOutPutFile == OUT_LOC_FILE)
     {
         parseFileNameComponents();
         m_iCurrentIndex = findMaxFileIndex();
-    }
 
+    }
     if (!m_bSync)
     {
         std::thread tRead(&FileLogger::outPut2File, this, m_iOutPutFile);
@@ -326,12 +329,13 @@ FileLogger::FileLogger(const char* strBase, size_t maxSize, int maxFiles, LogLev
     m_iCurrentIndex(0),
     m_iOutPutFile(OUT_LOC_FILE),
     m_bSync(false),
-    m_strLogFormat("[{time}] [{level}] [{tid}] [{func}] {message}"),
+    m_strLogFormat("[%D] [%l] [tid:%t] [%!] %v%n"),
     m_strNetIpAdd(),
     m_iNetPort(0),
     m_hSendSocket(INVALID_SOCKET)
-
+    
 {
+    m_pPatternFmt = new FormatterBuilder(m_strLogFormat);
 }
 
 FileLogger::~FileLogger() 
@@ -369,40 +373,44 @@ void FileLogger::parseFileNameComponents()
     }
 }
 
-static inline string OnGetLocalTimer()
-{
-#if defined(_WIN32)
-    SYSTEMTIME t;
-    GetLocalTime(&t);
-    return fmt::sprintf("%04hu-%02hu-%02hu %02hu:%02hu:%02hu.%03hu", 
-        t.wYear, t.wMonth, t.wDay, t.wHour, t.wMinute, t.wSecond, t.wMilliseconds);
-#else
-    struct tm t;
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    localtime_r(&tv.tv_sec, &t);
-    return fmt::sprintf("%04d-%02d-%02d %02d:%02d:%02d.%03d",
-        (int)t.tm_year + 1900, (int)t.tm_mon + 1, (int)t.tm_mday,
-        (int)t.tm_hour, (int)t.tm_min, (int)t.tm_sec, (int)(tv.tv_usec / 1000) % 1000);
-#endif
-}
+//static inline string OnGetLocalTimer()
+//{
+//#if defined(_WIN32)
+//    SYSTEMTIME t;
+//    GetLocalTime(&t);
+//    return fmt::sprintf("%04hu-%02hu-%02hu %02hu:%02hu:%02hu.%03hu", 
+//        t.wYear, t.wMonth, t.wDay, t.wHour, t.wMinute, t.wSecond, t.wMilliseconds);
+//#else
+//    struct tm t;
+//    struct timeval tv;
+//    gettimeofday(&tv, NULL);
+//    localtime_r(&tv.tv_sec, &t);
+//    return fmt::sprintf("%04d-%02d-%02d %02d:%02d:%02d.%03d",
+//        (int)t.tm_year + 1900, (int)t.tm_mon + 1, (int)t.tm_mday,
+//        (int)t.tm_hour, (int)t.tm_min, (int)t.tm_sec, (int)(tv.tv_usec / 1000) % 1000);
+//#endif
+//}
 
 std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, const char* szFileName, 
     const int iLine, const string & strMessage)
 {
     if (strMessage.empty())
         return {};
-    const char* strLevel = nullptr;
-    switch (emLevel) {
-    case EM_LOG_TRACE:   strLevel = "TRACE"; break;
-    case EM_LOG_DEBUG:   strLevel = "DEBUG"; break;
-    case EM_LOG_INFO:    strLevel = "INFO ";  break;
-    case EM_LOG_WARN:    strLevel = "WARN ";  break;
-    case EM_LOG_ERROR:   strLevel = "ERROR"; break;
-    case EM_LOG_FATAL:   strLevel = "FATAL"; break;
-    default: strLevel = "DEBUG";break;
-    }
-    return fmt::format(m_strLogFormat, OnGetLocalTimer(), strLevel, getCurThreadtid(), szFunName, szFileName, iLine, strMessage);
+
+    //const char* strLevel = nullptr;
+    //switch (emLevel) {
+    //case EM_LOG_TRACE:   strLevel = "TRACE"; break;
+    //case EM_LOG_DEBUG:   strLevel = "DEBUG"; break;
+    //case EM_LOG_INFO:    strLevel = "INFO ";  break;
+    //case EM_LOG_WARN:    strLevel = "WARN ";  break;
+    //case EM_LOG_ERROR:   strLevel = "ERROR"; break;
+    //case EM_LOG_FATAL:   strLevel = "FATAL"; break;
+    //default: strLevel = "DEBUG";break;
+    //}
+    //return fmt::format(m_strLogFormat, OnGetLocalTimer(), strLevel, getCurThreadtid(), szFunName, szFileName, iLine, strMessage);
+    LogMessage logMsg(emLevel, szFileName, iLine, strMessage.c_str(), szFunName);
+    
+    return m_pPatternFmt->format(logMsg);
 }
 
 void FileLogger::writeMsg2Net(const std::string& strMsg)
@@ -423,7 +431,6 @@ void FileLogger::writeMsg2File(const std::string& strMsg)
     if (strMsg.empty())
         return;
     size_t iMsgSize = strMsg.length();
-
     if (n_hFile == nullptr)
         openCurrentFile();
 

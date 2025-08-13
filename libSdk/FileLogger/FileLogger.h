@@ -15,6 +15,7 @@
 #include "../Common/LockQueue.h"
 #include "../Common/StringUtils.h"
 #include "fmt/printf.h"
+#include "LoggerLevel.h"
 #ifdef _WIN32
 #include <windows.h>
 #define getCurThreadtid() GetCurrentThreadId()
@@ -25,14 +26,14 @@
 #include <sys/time.h>
 #define getCurThreadtid() gettid()
 #endif
-enum LogLevel{
-    EM_LOG_TRACE = 0,
-    EM_LOG_DEBUG,
-    EM_LOG_INFO,
-    EM_LOG_WARN,
-    EM_LOG_ERROR,
-    EM_LOG_FATAL
-};
+//enum LogLevel{
+//    EM_LOG_TRACE = 0,
+//    EM_LOG_DEBUG,
+//    EM_LOG_INFO,
+//    EM_LOG_WARN,
+//    EM_LOG_ERROR,
+//    EM_LOG_FATAL
+//};
 #define LOG_BASE(Level,format, ...)         FileLogger::getInstance().log(true,Level,__func__,__FILE__, __LINE__, format, ##__VA_ARGS__)
 #define LOG_TRACE(format, ...)              LOG_BASE(EM_LOG_TRACE, format, ##__VA_ARGS__)
 #define LOG_DEBUG(format, ...)              LOG_BASE(EM_LOG_DEBUG, format, ##__VA_ARGS__)
@@ -48,6 +49,7 @@ enum LogLevel{
 #define LOG_ERROR_S(format, ...)            LOG_BASE_S(EM_LOG_ERROR, format, ##__VA_ARGS__)
 #define LOG_FATAL_S(format, ...)            LOG_BASE_S(EM_LOG_FATAL, format, ##__VA_ARGS__)
 
+class FormatterBuilder;
 //using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
 using namespace std;
 class FileLogger {
@@ -66,7 +68,6 @@ public:
         try {           
             std::string strFormatted = formatMessage(bFormat,emLevel, szFun, szFileName, iLine, format,
                 std::forward<Args>(args)...);
-
             if (strFormatted.empty())
                 return;
         
@@ -98,7 +99,7 @@ private:
         if(bFormat)
             strContent = fmt::sprintf(format, std::forward<Args>(args)...); 
         else
-            strContent = fmt::format(format, std::forward<Args>(args)...);
+            strContent = fmt::format(format, std::forward<Args>(args)...);    
         return formatMessage(emLevel, szFun, szFileName, iLine, strContent);
     }
 
@@ -146,5 +147,6 @@ private:
 #else
     int m_hSendSocket;
 #endif
+    FormatterBuilder* m_pPatternFmt;
 };
 #endif
