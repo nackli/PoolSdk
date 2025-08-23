@@ -4,6 +4,7 @@
 #include <cassert>
 #include <vector>
 #include "fmt/format.h"
+#include "fmt/base.h"
 #include "LoggerLevel.h"
  
 
@@ -16,10 +17,37 @@ static inline void append_int(uint64_t n, memory_buf_t& bufDest)
     bufDest.append(iData.data(), iData.data() + iData.size());
 }
 
+static inline void append_int_100(int n, memory_buf_t& bufDest)
+{
+    if (n >= 0 && n < 100) // 0-99
+    {
+        bufDest.push_back(static_cast<char>('0' + n / 10));
+        bufDest.push_back(static_cast<char>('0' + n % 10));
+    }
+    else // unlikely, but just in case, let fmt deal with it
+    {
+        fmt::format_to(bufDest.begin(), "{:02}", n);
+    }
+}
+
+static inline void append_int_1000(int n, memory_buf_t& bufDest)
+{
+    if (n < 1000)
+    {
+        bufDest.push_back(static_cast<char>(n / 100 + '0'));
+        n = n % 100;
+        bufDest.push_back(static_cast<char>((n / 10) + '0'));
+        bufDest.push_back(static_cast<char>((n % 10) + '0'));
+    }
+    else
+    {
+        append_int(n, bufDest);
+    }
+}
+
 static inline void append_string_view(string_view_t view, memory_buf_t& bufDest)
 {
-    auto* buf_ptr = view.data();
-    bufDest.append(view.data(), buf_ptr + view.size());
+    bufDest.append(view.data(), view.data() + view.size());
 }
 
 static inline string_view_t to_string_view(const memory_buf_t& buf)
@@ -35,7 +63,7 @@ struct LogMessage {
     struct tm tmCreate;
 #endif
     int iLevLog;// log level
-    std::thread::id iThreadId;// process id
+    std::thread::id iThreadId;// thread id
     const char * szFileName;// source file name
     size_t iLineNo;// source line number
     const char *szMsgCtx;// log message
@@ -43,7 +71,7 @@ struct LogMessage {
     const char* szFunName;// logger name
     LogMessage(int level, const char* szFile, size_t iLine, const char* szMsg,  const char* szFunName)
         : iLevLog(level), iThreadId(std::this_thread::get_id()), szFunName(szFunName),
-        szFileName(szFile), iLineNo(iLine), szMsgCtx(szMsg)
+        szFileName(szFile), iLineNo(iLine), szMsgCtx(szMsg), strLogName(nullptr)
     {
 #ifdef _WIN32
         GetLocalTime(&tmCreate);
@@ -63,16 +91,16 @@ public:
 };
  
 // 具体的日志格式
-class MsgFormat : public Format
+class MsgFormat final : public Format
 {
 public:
-    void format(const LogMessage& msg, memory_buf_t & bufDest) override
+    void format(const LogMessage& msg, memory_buf_t & bufDest) 
     {
         append_string_view(msg.szMsgCtx, bufDest);
     }
 };
  
-class LevelFormat : public Format
+class LevelFormat final : public Format
 {
 public:
     void format(const LogMessage& msg, memory_buf_t& dest) override
@@ -81,7 +109,7 @@ public:
     }
 };
 
-class LevelShortFormat : public Format
+class LevelShortFormat final : public Format
 {
 public:
     void format(const LogMessage& msg, memory_buf_t& dest) override
@@ -90,7 +118,7 @@ public:
     }
 };
 
-class TimeFormat : public Format
+class TimeFormat final: public Format
 {
 public:
     TimeFormat(const std::string &format = "%H:%M:%S") : formatTime(format)
@@ -98,16 +126,38 @@ public:
     }
     void format(const LogMessage &msg, memory_buf_t& dest) override
     {
+#if 1
+        append_int(msg.tmCreate.wYear, dest);
+        dest.push_back('-');
+
+        append_int_100(msg.tmCreate.wMonth, dest);
+        dest.push_back('-');
+
+        append_int_100(msg.tmCreate.wDay, dest);
+        dest.push_back(' ');
+
+        append_int_100(msg.tmCreate.wHour, dest);
+        dest.push_back(':');
+
+        append_int_100(msg.tmCreate.wMinute, dest);
+        dest.push_back(':');
+
+        append_int_100(msg.tmCreate.wSecond, dest);
+        dest.push_back('.');
+  
+        append_int_1000(msg.tmCreate.wMilliseconds, dest);
+#else
         string strTimer = fmt::format("{}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}.{:03d}",
             msg.tmCreate.wYear, msg.tmCreate.wMonth, msg.tmCreate.wDay, 
             msg.tmCreate.wHour, msg.tmCreate.wMinute, msg.tmCreate.wSecond, msg.tmCreate.wMilliseconds);
         append_string_view(strTimer, dest);
+#endif
     }
  
 private:
     std::string formatTime;
 };
-class FunctionFormat : public Format
+class FunctionFormat final: public Format
 {
 public:
     FunctionFormat()
@@ -118,7 +168,7 @@ public:
         append_string_view(msg.szFunName, dest);
     }
 };
-class FileFormat : public Format
+class FileFormat final: public Format
 {
 public:
     void format(const LogMessage &msg, memory_buf_t& bufDest) override
@@ -126,7 +176,7 @@ public:
         append_string_view(msg.szFileName, bufDest);
     }
 };
-class LineFormat : public Format
+class LineFormat final: public Format
 {
 public:
     void format(const LogMessage &msg, memory_buf_t &bufDest) override
@@ -135,7 +185,7 @@ public:
     }
 };
 
-class FileNameAndLineFormat : public Format
+class FileNameAndLineFormat final : public Format
 {
 public:
     void format(const LogMessage& msg, memory_buf_t& bufDest) override
@@ -146,7 +196,7 @@ public:
     }
 };
 
-class ThreadIdFormat : public Format
+class ThreadIdFormat final : public Format
 {
 public:
     void format(const LogMessage &msg, memory_buf_t & bufDest) override
@@ -154,20 +204,22 @@ public:
         append_int(static_cast<int>(reinterpret_cast<uintptr_t>(&msg.iThreadId)), bufDest);
     }
 };
-class TableFormat : public Format
+class TableFormat final : public Format
 {
 public:
     void format(const LogMessage &msg, memory_buf_t & bufDest) override
     {
-        append_string_view("\t", bufDest);
+        bufDest.push_back('\t');
+        //append_string_view("\t", bufDest);
     }
 };
-class NewLineFormat : public Format
+class NewLineFormat final : public Format
 {
 public:
     void format(const LogMessage &msg, memory_buf_t & bufDest) override
     {
-        append_string_view("\n", bufDest);
+        bufDest.push_back('\n');
+        //append_string_view("\n", bufDest);
     }
 };
 class CharFormat final : public Format
@@ -186,7 +238,7 @@ private:
     char m_chData;
 };
 
-class OtherFormat : public Format
+class OtherFormat final : public Format
 {
 public:
     OtherFormat(const std::string &other = "") : other(other)

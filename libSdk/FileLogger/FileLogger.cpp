@@ -28,7 +28,7 @@ Copyright (c) 2024. All Rights Reserved.
 #define UNUSED_FUN __attribute__((unused))
 #endif
 
-#define FILE_CLOSE(x)					if((x)){if(!fclose((x)))(x) = nullptr;}
+#define FILE_CLOSE(x)					if((x)){if(!FileSystem::closeFile((x)))(x) = nullptr;}
 #define OUT_CONSOLE                     0x0
 #define OUT_LOC_FILE                    0x01
 #define OUT_NET_UDP                     0x02
@@ -63,9 +63,9 @@ UNUSED_FUN static void memory_dump(const void* ptr, unsigned int len)
 
 static void OnCreateDirFromFilePath(const string strFilePath)
 {
-    string strCfgDir = getDirFromFilePath(strFilePath);
-    if (!IsDirectoryExists(strCfgDir))
-        createDirectoryRecursive(strCfgDir);
+    string strCfgDir = FileSystem::getDirFromFilePath(strFilePath);
+    if (!FileSystem::IsDirectoryExists(strCfgDir))
+        FileSystem::createDirectoryRecursive(strCfgDir);
 }
 
 
@@ -335,6 +335,7 @@ FileLogger::FileLogger(const char* strBase, size_t maxSize, int maxFiles, LogLev
     m_hSendSocket(INVALID_SOCKET)
     
 {
+    m_ctxQueue.setSpaces(200);
     m_pPatternFmt = new FormatterBuilder(m_strLogFormat);
 }
 
@@ -437,11 +438,8 @@ void FileLogger::writeMsg2File(const std::string& strMsg)
     if (m_iCurrentSize + iMsgSize > m_iMaxSize)
         rotateFiles();
 
-    if (n_hFile)
-    {
-        fwrite(strMsg.c_str(), 1, iMsgSize, n_hFile);
+    if(FileSystem::writeFile(n_hFile, (void*)strMsg.c_str(), iMsgSize))
         m_iCurrentSize += iMsgSize;
-    }
 }
 
 void FileLogger::outPut2File(int iOutMode)
@@ -457,9 +455,7 @@ void FileLogger::outPut2File(int iOutMode)
                 writeMsg2File(strData);
            
         }while(!m_ctxQueue.empty());
-
-        if(n_hFile)
-            fflush(n_hFile);
+        FileSystem::flushFile(n_hFile);
     }
 }
 
@@ -481,8 +477,7 @@ void FileLogger::writeToOutPut(LogLevel &emLevel, const std::string& strMsg)
             if (m_iOutPutFile == OUT_LOC_FILE)
             {
                 writeMsg2File(strMsg);
-                if (n_hFile)
-                    fflush(n_hFile);
+                FileSystem::flushFile(n_hFile);
             }
             else if (m_iOutPutFile == OUT_NET_UDP)
                 writeMsg2Net(strMsg);
@@ -495,10 +490,10 @@ void FileLogger::openCurrentFile() {
     FILE_CLOSE(n_hFile);
     OnCreateDirFromFilePath(m_strBaseName);
     m_strCurrentFile = generateFileName(m_iCurrentIndex);
-    n_hFile = fopen(m_strCurrentFile.c_str(), "a");
+    n_hFile = FileSystem::openOrCreateFile(m_strCurrentFile, "a");
 
-    fseek(n_hFile, 0, SEEK_END);
-    m_iCurrentSize = ftell(n_hFile);
+    FileSystem::fseekFile(n_hFile, 0, SEEK_END);
+    m_iCurrentSize = FileSystem::getFileCurPos(n_hFile);
 }
 
 void FileLogger::rotateFiles() {
@@ -516,7 +511,7 @@ void FileLogger::purgeOldFiles()
     map<uint64_t,string> mapFilePath;
 #ifdef _WIN32
     WIN32_FIND_DATAA findData;
-    string strDir = getDirFromFilePath(m_strBaseName);
+    string strDir = FileSystem::getDirFromFilePath(m_strBaseName);
     HANDLE hFind = FindFirstFileA((m_strFilePrefix + "_*" + m_strFileExt).c_str(), &findData);
     if (hFind != INVALID_HANDLE_VALUE) {
         do {

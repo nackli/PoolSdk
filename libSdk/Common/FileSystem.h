@@ -6,6 +6,8 @@
 #ifdef _WIN32
 #include <Windows.h>
 #endif
+namespace FileSystem
+{
 using namespace std;
 
 #ifdef _WIN32		
@@ -25,13 +27,30 @@ using namespace std;
 		uint32_t uFlagsAndAttributes, uint32_t uShartMode = 0);
 	bool setFilePoint(HANDLE hFile, uint32_t uPoint, uint8_t uMoveMethod);
 	bool writeFile(HANDLE hFile, void* pData, uint32_t uSize);
-	bool flushFile(HANDLE hFile);
-	bool closeFile(HANDLE);
 	bool readFile(HANDLE, void* pData, uint32_t uSize);
-	bool delFile(const string& strFilePath);
+	bool flushFile(HANDLE hFile);
+	size_t getFileSize(HANDLE hFile);
+	bool closeFile(HANDLE);
+	bool winDelFile(const string& strFilePath);
+	bool winMoveFile(const string& strOldFilePath, const string& strNewFilePath);
 #endif
+	FILE* openOrCreateFile(const string& strFilePath, const char *szFlags = "ab+");
+	FILE* openOrCreateFile(const char * szFilePath, const char* szFlags = "ab+");
+	FILE* reopenOrCreateFile(const char* szFilePath, FILE* hFile, const char* szFlags = "ab+");
+	bool writeFile(FILE* hFile, void* pData, uint32_t uSize);
+	bool readFile(FILE* hFile, void* pData, uint32_t uSize);
+	bool flushFile(FILE* hFile);
+	bool fseekFile(FILE* hFile,int iPos,int origin);
+	long getFileCurPos(FILE* hFile);
+	void rewindFile(FILE* hFile);
+	size_t getFileSize(FILE* hFile);
+	bool fgetsFile(FILE* hFile, char* szData, size_t uSize);
 
+	bool IsEofFile(FILE* hFile);
+	bool closeFile(FILE *);
+	bool moveFile(const char* szOldFile, const char* szNewFile);
+	bool delFile(const char* szFilePath);
 	bool IsAbsolutePath(const std::string& strPath);
 	string relative2AbsolutePath(const std::string& strRelaPath);	
 #endif
-
+}

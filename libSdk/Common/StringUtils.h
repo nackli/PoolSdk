@@ -69,10 +69,14 @@ std::string ANSIToUTF8(const std::string& str);//setlocale(LC_ALL, "zh_cn")
 std::string GbkToUtf8(const std::string& str);
 std::string Utf8ToGbk(const std::string& str);
 bool OnIsExistGBK(const std::string & strInPut);
-
-
 std::string generateUUID();
 std::string randomString(size_t length);
+
+#ifdef NLOHMANN_JSON
+bool isJsonString(const std::string& str);
+std::string randomJsonString(const int iMaxKey, const int iMaxValue);
+#endif
+
 int randomInt(int min, int max);
 double random_double(double min, double max);
 

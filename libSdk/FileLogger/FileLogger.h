@@ -59,9 +59,9 @@ public:
     void initLog(const std::string& strCfgName);
     void setLogFileName(const std::string& strFileName);
 
-    template<typename... Args>
+    template<typename FormatStr,typename... Args>
     void log(bool bFormat,LogLevel emLevel, const char* szFun,const char *szFileName, 
-        const int iLine, const char* format, Args&&... args)
+        const int iLine, FormatStr& format, Args&&... args)
     {
         if (emLevel < m_emLogLevel)
             return;
@@ -91,15 +91,19 @@ private:
     ~FileLogger();
     void parseFileNameComponents();
 
-    template<typename... Args>
+    template<typename FormatStr,typename... Args>
     std::string formatMessage(bool bFormat,LogLevel emLevel, const char* szFun, const char* szFileName,
-        const int iLine, const char* format, Args&&... args) 
+        const int iLine, FormatStr& format, Args&&... args)
     {
         std::string strContent;
         if(bFormat)
-            strContent = fmt::sprintf(format, std::forward<Args>(args)...); 
+            strContent = fmt::sprintf(format, /*std::forward<Args>*/(args)...); 
         else
-            strContent = fmt::format(format, std::forward<Args>(args)...);    
+        {
+            fmt::memory_buffer outBuf;
+            fmt::format_to(fmt::appender(outBuf), format, std::forward<Args>(args)...);
+            strContent = std::string(outBuf.data(), outBuf.size());
+        }
         return formatMessage(emLevel, szFun, szFileName, iLine, strContent);
     }
 

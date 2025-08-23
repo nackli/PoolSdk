@@ -13,6 +13,9 @@ Copyright (c) 2024. All Rights Reserved.
 #include <random>
 #include "CplusplusVer.h"
 #include "../mem/ConcurrentMem.h"
+#ifdef NLOHMANN_JSON
+#include "json.hpp"
+#endif
 
 /**************************************************************************************************************************************/
 static const std::string g_strBase64Chars ="ABCDEFGHIJKLMNOPQRSTUVWXYZ""abcdefghijklmnopqrstuvwxyz""0123456789+/";
@@ -1238,3 +1241,37 @@ std::string Utf8ToGbk(const std::string& str)
 #endif
 }
 
+#ifdef NLOHMANN_JSON
+bool isJsonString(const std::string& str) {
+    try {
+        nlohmann::json::parse(str);
+        return true;
+    }
+    catch (const nlohmann::json::parse_error&) {
+        return false;
+    }
+}
+
+std::string randomJsonString(const int iMaxKey,const int iMaxValue)
+{
+    nlohmann::json jData;
+    const int iKeyMin = 1;
+    // base
+    jData[randomString(rand() % iMaxKey + iKeyMin)] = randomString(rand() % iMaxValue + 1);
+    jData[randomString(rand() % iMaxKey + iKeyMin)] = randomInt(18, 999);
+    jData[randomString(rand() % iMaxKey + iKeyMin)] = (randomInt(0, 1) == 1);
+
+    //arr
+    nlohmann::json scores;
+    for (int i = 0; i < 3; ++i) {
+        scores.push_back(random_double(0.0, 1000.0));
+    }
+    jData[randomString(rand() % iMaxKey + iKeyMin)] = scores;
+
+    nlohmann::json address;
+    address[randomString(rand() % iMaxKey + iKeyMin)] = randomString(rand() % iMaxValue + 1) + " Street";
+    address[randomString(rand() % iMaxKey + iKeyMin)] = randomString(rand() % iMaxValue + 1) + " City";
+    jData[randomString(rand() % iMaxKey + iKeyMin)] = address;
+    return jData.dump();
+}
+#endif

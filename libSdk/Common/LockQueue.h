@@ -76,7 +76,7 @@ public:
         return value;
     }
 
-    value_type pop()
+    void pop()
     {
         {
             lock_type lock(m_mtxLock);

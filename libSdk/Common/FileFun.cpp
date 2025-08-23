@@ -131,7 +131,7 @@ int getFileSize(const char* szFileName)
 #ifdef _WIN32
     HANDLE fileHandle = openDevice(szFileName, ACCESS_READ | ACCESS_SHART);
     if (fileHandle == INVALID_HANDLE_VALUE) {
-        return -1;  // ����-1��ʾ��ȡ�ļ���Сʧ��
+        return -1;  
     }
     int fileSize = GetFileSize(fileHandle, NULL);
     closeDevice(fileHandle);
