@@ -5,6 +5,8 @@
 #include <vector>
 #ifdef _WIN32
 #include <Windows.h>
+#else
+#include <stdint.h>
 #endif
 namespace FileSystem
 {
