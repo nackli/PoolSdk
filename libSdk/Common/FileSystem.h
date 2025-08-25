@@ -14,6 +14,8 @@ typedef struct FILEINFO
 	string strFileName;
 #ifdef _WIN32
 	FILETIME lastWriteTime;
+#else
+	uint64_t lastWriteTime;
 #endif
 }FILEINFO,*LP_FILEINFO;
 using FileInfoVec = vector<FILEINFO>;

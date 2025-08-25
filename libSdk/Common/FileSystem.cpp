@@ -154,13 +154,17 @@ namespace FileSystem
 							tagFileInfo.strFileName = strFileDir + string(d_ent->d_name);
 						else
 							tagFileInfo.strFileName = strFileDir + "/" + string(d_ent->d_name);
+
+						struct stat fileStat;
+						if (stat(tagFileInfo.strFileName.c_str(), &fileStat) != 0)
+							tagFileInfo.lastWriteTime = fileStat.st_mtime;
 						files.emplace_back(tagFileInfo);
 					}
 				}
 			}
 		}
 		// sort the returned files
-		sort(files.begin(), files.end(), [](const FILEINFO& tagLeft, const FILEINFO& tagRight){return tagLeft.strFileName < tagRight.strFileName;});
+		sort(files.begin(), files.end(), [](const FILEINFO& tagLeft, const FILEINFO& tagRight){return tagLeft.lastWriteTime < tagRight.lastWriteTime;});
 
 		closedir(dir);
 #endif		
