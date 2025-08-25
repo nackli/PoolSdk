@@ -90,25 +90,6 @@ static std::map<std::string, std::string> parseConfig(const std::string& path)
     return config;
 }
 
-
-//static inline std::string packageMessage(const string& strLogFormat, const char* szTime, const char* szLevel,
-//    const char* szTid, const char* szFunName, const char* szFileName,
-//    const char* szLine, const string& szMessage)
-//{
-//
-//    char* pData = replaceOne(strLogFormat.c_str(), "{level}", szLevel);
-//    char* pTid = replaceOne(pData, "{tid}", szTid); FREE_MEM(pData);
-//    char* pLine = replaceOne(pTid, "{line}", szLine); FREE_MEM(pTid);
-//    char* pFun = replaceOne(pLine, "{func}", szFunName); FREE_MEM(pLine);
-//    char* pTime = replaceOne(pFun, "{time}", szTime); FREE_MEM(pFun)
-//    char* pFile = replaceOne(pTime, "{file}", szFileName); FREE_MEM(pTime);
-//    char* pMsg = replaceOne(pFile, "{message}", szMessage.c_str()); FREE_MEM(pFile);
-//    std::string result(pMsg);
-//    FREE_MEM(pMsg);
-//    return result;
-//}
-
-
 static void inline OnOutputData(LogLevel& emLevel, const std::string& message)
 {
 #ifdef _WIN32

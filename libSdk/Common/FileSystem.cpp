@@ -87,12 +87,12 @@ namespace FileSystem
 	}
 #endif
 
-	vector<string> getFilesInDirectory(const string& strFileDir, const char* szExt)
+	FileInfoVec getFilesInDirectory(const string& strFileDir, const char* szExt)
 	{
 		if (strFileDir.empty())
-			return std::vector<string>();
+			return FileInfoVec();
 
-		std::vector<string> files;
+		FileInfoVec files;
 #ifdef _WIN32	
 		WIN32_FIND_DATAA findData;
 		string strDir = strFileDir;
@@ -104,32 +104,27 @@ namespace FileSystem
 
 		if (hFind == INVALID_HANDLE_VALUE) {
 			//LOG_ERROR("Open dir fiall: %d", GetLastError());
-			return std::vector<string>();
+			return FileInfoVec();
 		}
 		do {
 			if (!(findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{
-				string strFileName = findData.cFileName;
-				//if (all_of(strFileName.begin(), strFileName.end() - strlen(szExt), [](const char cChar) {
-				//	if (isdigit(cChar) || cChar == '_')
-				//		return true;
-				//	return false; }))
-				{
-					string strDir = strFileDir;
-					string strPath;
-					if (strDir[strDir.length() - 1] == '/' ||
-						strDir[strDir.length() - 1] == '\\')
-						strPath = strDir + findData.cFileName;
-					else
-						strPath = strFileDir + "\\" + findData.cFileName;
-					files.emplace_back(strPath);
-				}
+				FILEINFO tagFileInfo;
+				string strDir = strFileDir;
+				tagFileInfo.lastWriteTime = findData.ftLastWriteTime;
+				if (strDir[strDir.length() - 1] == '/' ||
+					strDir[strDir.length() - 1] == '\\')
+					tagFileInfo.strFileName = strDir + findData.cFileName;
+				else
+					tagFileInfo.strFileName = strDir + "\\" + findData.cFileName;
+
+				files.emplace_back(tagFileInfo);
 			}
 		} while (FindNextFileA(hFind, &findData));
 
 		FindClose(hFind);
 		std::sort(files.begin(), files.end(),
-			[](const string& strLeft, const string& strRight) {return strLeft < strRight; });
+			[](const FILEINFO& tagLeft, const FILEINFO& tagRight) {return CompareFileTime(&tagLeft.lastWriteTime, &tagRight.lastWriteTime) < 0; });
 #else
 		//printf("ext length:%d\n",m_ext.length());
 
@@ -154,12 +149,12 @@ namespace FileSystem
 					//printf("%s\n",d_ent->d_name);
 					if (strcmp(d_name.c_str() + d_name.length() - strlen(szExt), szExt) == 0)
 					{
-						string strAbsolutePath;
+						FileInfoVec files;
 						if (strFileDir[strFileDir.length() - 1] == '/')
-							strAbsolutePath = strFileDir + string(d_ent->d_name);
+							files.strFileName = strFileDir + string(d_ent->d_name);
 						else
-							strAbsolutePath = strFileDir + "/" + string(d_ent->d_name);
-						files.emplace_back(strAbsolutePath);
+							files.strFileName = strFileDir + "/" + string(d_ent->d_name);
+						files.emplace_back(files);
 					}
 				}
 			}
@@ -169,7 +164,7 @@ namespace FileSystem
 
 		closedir(dir);
 #endif		
-		return 	std::vector<string>(files.begin(), files.end());
+		return 	files;
 	}
 
 	bool IsDirectoryExists(const std::string& strDir)

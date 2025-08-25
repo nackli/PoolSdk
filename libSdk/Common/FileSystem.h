@@ -9,13 +9,20 @@
 namespace FileSystem
 {
 using namespace std;
-
+typedef struct FILEINFO
+{
+	string strFileName;
+#ifdef _WIN32
+	FILETIME lastWriteTime;
+#endif
+}FILEINFO,*LP_FILEINFO;
+using FileInfoVec = vector<FILEINFO>;
 #ifdef _WIN32		
 	string DosPathToNtPath(const string& strPath);
 	string NtPathToDosPath(const string& strPath);
 #endif	
 	std::string getDirFromFilePath(const std::string& filepath);
-	vector<string> getFilesInDirectory(const string& strDir, const char* szExt);
+	FileInfoVec getFilesInDirectory(const string& strDir, const char* szExt);
 	bool IsDirectoryExists(const string& strDir);
 	bool IsFileExists(const string& strDir);
 	bool createDirectoryRecursive(string& strDir);
