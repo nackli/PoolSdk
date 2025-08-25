@@ -86,7 +86,8 @@ list(REMOVE_ITEM DEV_SOURCES_EXE ${REMOVE_SOURCES})
 add_library(${PROJECT_NAME} ${DEV_SOURCES_EXE})
 add_msvc_options(${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}_test ./PoolSdk/PoolSdk.cpp)
+
+add_executable(${PROJECT_NAME}_test .//libSdk/test/log_Test.cpp)
 
 
 target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})

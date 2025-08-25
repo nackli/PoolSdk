@@ -133,7 +133,7 @@ namespace FileSystem
 		if (dir == NULL)
 		{
 			printf("[ERROR] %s is not a directory or not exist!", strFileDir.c_str());
-			return std::vector<string>();
+			return FileInfoVec();
 		}
 
 		struct dirent* d_ent = NULL;
@@ -149,18 +149,18 @@ namespace FileSystem
 					//printf("%s\n",d_ent->d_name);
 					if (strcmp(d_name.c_str() + d_name.length() - strlen(szExt), szExt) == 0)
 					{
-						FileInfoVec files;
+						FILEINFO tagFileInfo;
 						if (strFileDir[strFileDir.length() - 1] == '/')
-							files.strFileName = strFileDir + string(d_ent->d_name);
+							tagFileInfo.strFileName = strFileDir + string(d_ent->d_name);
 						else
-							files.strFileName = strFileDir + "/" + string(d_ent->d_name);
-						files.emplace_back(files);
+							tagFileInfo.strFileName = strFileDir + "/" + string(d_ent->d_name);
+						files.emplace_back(tagFileInfo);
 					}
 				}
 			}
 		}
 		// sort the returned files
-		sort(files.begin(), files.end());
+		sort(files.begin(), files.end(), [](const FILEINFO& tagLeft, const FILEINFO& tagRight){return tagLeft.strFileName < tagRight.strFileName;});
 
 		closedir(dir);
 #endif		

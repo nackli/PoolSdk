@@ -3,6 +3,7 @@
 #include <ctime>
 #include <cassert>
 #include <vector>
+#include <thread>
 #include "fmt/format.h"
 #include "fmt/base.h"
 #include "LoggerLevel.h"
@@ -60,7 +61,12 @@ struct LogMessage {
 #ifdef _WIN32
     SYSTEMTIME tmCreate;// creation time
 #else
-    struct tm tmCreate;
+    struct tm_milli
+    {
+        struct tm tmTime;
+        uint16_t milli;
+    };
+    tm_milli tmCreate;
 #endif
     int iLevLog;// log level
     std::thread::id iThreadId;// thread id
@@ -69,8 +75,8 @@ struct LogMessage {
     const char *szMsgCtx;// log message
     const char * strLogName;// logger name
     const char* szFunName;// logger name
-    LogMessage(int level, const char* szFile, size_t iLine, const char* szMsg,  const char* szFunName)
-        : iLevLog(level), iThreadId(std::this_thread::get_id()), szFunName(szFunName),
+    LogMessage(int level, const char* szFile, size_t iLine, const char* szMsg,  const char* szFName)
+        : iLevLog(level), iThreadId(std::this_thread::get_id()), szFunName(szFName),
         szFileName(szFile), iLineNo(iLine), szMsgCtx(szMsg), strLogName(nullptr)
     {
 #ifdef _WIN32
@@ -78,7 +84,8 @@ struct LogMessage {
 #else
         struct timeval tv;
         gettimeofday(&tv, NULL);
-        localtime_r(&tv.tv_sec, &tmCreate);
+        localtime_r(&tv.tv_sec, &tmCreate.tmTime);
+        tmCreate.milli = tv.tv_usec / 1000;
 #endif
     }
 };
@@ -126,7 +133,7 @@ public:
     }
     void format(const LogMessage &msg, memory_buf_t& dest) override
     {
-#if 1
+#if _WIN32
         append_int(msg.tmCreate.wYear, dest);
         dest.push_back('-');
 
@@ -147,10 +154,25 @@ public:
   
         append_int_1000(msg.tmCreate.wMilliseconds, dest);
 #else
-        string strTimer = fmt::format("{}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}.{:03d}",
-            msg.tmCreate.wYear, msg.tmCreate.wMonth, msg.tmCreate.wDay, 
-            msg.tmCreate.wHour, msg.tmCreate.wMinute, msg.tmCreate.wSecond, msg.tmCreate.wMilliseconds);
-        append_string_view(strTimer, dest);
+        append_int(msg.tmCreate.tmTime.tm_year + 1900, dest);
+        dest.push_back('-');
+
+        append_int_100(msg.tmCreate.tmTime.tm_mon + 1, dest);
+        dest.push_back('-');
+
+        append_int_100(msg.tmCreate.tmTime.tm_mday, dest);
+        dest.push_back(' ');
+
+        append_int_100(msg.tmCreate.tmTime.tm_hour, dest);
+        dest.push_back(':');
+
+        append_int_100(msg.tmCreate.tmTime.tm_min, dest);
+        dest.push_back(':');
+
+        append_int_100(msg.tmCreate.tmTime.tm_sec, dest);
+        dest.push_back('.');
+  
+        append_int_1000(msg.tmCreate.milli, dest);
 #endif
     }
  

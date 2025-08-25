@@ -517,7 +517,7 @@ void FileLogger::purgeOldFiles()
             break;
     }
 #else
-    string strDir = getDirFromFilePath(m_strBaseName);
+    string strDir = FileSystem::getDirFromFilePath(m_strBaseName);
     //printf("ext length:%d\n",m_ext.length());
     if(strDir.empty())
         strDir="./";
@@ -597,7 +597,7 @@ int FileLogger::findMaxFileIndex() {
         FindClose(hFind);
     }
 #else
-    string strDir = getDirFromFilePath(m_strBaseName);
+    string strDir = FileSystem::getDirFromFilePath(m_strBaseName);
     DIR* dir = opendir(strDir.c_str());
     if (dir) {
         struct dirent* ent = nullptr;

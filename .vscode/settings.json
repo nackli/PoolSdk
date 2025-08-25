@@ -63,6 +63,14 @@
         "thread": "cpp",
         "typeinfo": "cpp",
         "cassert": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "any": "cpp",
+        "complex": "cpp",
+        "forward_list": "cpp",
+        "list": "cpp",
+        "source_location": "cpp",
+        "ranges": "cpp",
+        "valarray": "cpp",
+        "variant": "cpp"
     }
 }
