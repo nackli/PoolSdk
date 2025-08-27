@@ -50,6 +50,7 @@
 #define LOG_FATAL_S(format, ...)            LOG_BASE_S(EM_LOG_FATAL, format, ##__VA_ARGS__)
 
 class FormatterBuilder;
+class OutPutMode;
 //using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
 using namespace std;
 class FileLogger {
@@ -66,16 +67,8 @@ public:
         if (emLevel < m_emLogLevel)
             return;
         try {           
-            std::string strFormatted = formatMessage(bFormat,emLevel, szFun, szFileName, iLine, format,
+            formatMessage(bFormat,emLevel, szFun, szFileName, iLine, format,
                 std::forward<Args>(args)...);
-            if (strFormatted.empty())
-                return;
-        
-            if (strFormatted[strFormatted.length() - 1] != '\n')
-                strFormatted += '\n';
-
-            writeToOutPut(emLevel,strFormatted);
-    
         }
         catch (const std::exception& e) {
             std::cerr << "Log formatting error: " << e.what() << std::endl;
@@ -92,7 +85,7 @@ private:
     void parseFileNameComponents();
 
     template<typename FormatStr,typename... Args>
-    std::string formatMessage(bool bFormat,LogLevel emLevel, const char* szFun, const char* szFileName,
+    void formatMessage(bool bFormat,LogLevel emLevel, const char* szFun, const char* szFileName,
         const int iLine, FormatStr& format, Args&&... args)
     {
         std::string strContent;
@@ -104,10 +97,10 @@ private:
             fmt::format_to(fmt::appender(outBuf), format, std::forward<Args>(args)...);
             strContent = std::string(outBuf.data(), outBuf.size());
         }
-        return formatMessage(emLevel, szFun, szFileName, iLine, strContent);
+        formatMessage(emLevel, szFun, szFileName, iLine, strContent);
     }
 
-    std::string formatMessage(LogLevel emLevel, const char* szFunName, 
+    void formatMessage(LogLevel emLevel, const char* szFunName, 
         const char* szFileName, const int iLine, const string& szMessage);
 
     void writeToOutPut(LogLevel &emLevel,const std::string& message);
@@ -142,7 +135,9 @@ private:
     bool m_bSync;
     std::mutex m_Mutex;
     LockQueue<std::string> m_ctxQueue;
-    string m_strLogFormat;
+    std::string m_strLogFormat;
+    std::condition_variable m_cvSwitchFile;
+    std::mutex m_mtxSwitchLock;
 //net log
     string m_strNetIpAdd;
     int m_iNetPort;
@@ -151,6 +146,7 @@ private:
 #else
     int m_hSendSocket;
 #endif
+    OutPutMode* m_pOutputMode;
     FormatterBuilder* m_pPatternFmt;
 };
 #endif

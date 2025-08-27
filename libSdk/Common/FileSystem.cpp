@@ -87,12 +87,12 @@ namespace FileSystem
 	}
 #endif
 
-	FileInfoVec getFilesInDirectory(const string& strFileDir, const char* szExt)
+	FileInfoList getFilesInDirectory(const string& strFileDir, const char* szExt)
 	{
 		if (strFileDir.empty())
-			return FileInfoVec();
+			return FileInfoList();
 
-		FileInfoVec files;
+		FileInfoList files;
 #ifdef _WIN32	
 		WIN32_FIND_DATAA findData;
 		string strDir = strFileDir;
@@ -104,7 +104,7 @@ namespace FileSystem
 
 		if (hFind == INVALID_HANDLE_VALUE) {
 			//LOG_ERROR("Open dir fiall: %d", GetLastError());
-			return FileInfoVec();
+			return FileInfoList();
 		}
 		do {
 			if (!(findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
@@ -123,8 +123,7 @@ namespace FileSystem
 		} while (FindNextFileA(hFind, &findData));
 
 		FindClose(hFind);
-		std::sort(files.begin(), files.end(),
-			[](const FILEINFO& tagLeft, const FILEINFO& tagRight) {return CompareFileTime(&tagLeft.lastWriteTime, &tagRight.lastWriteTime) < 0; });
+		files.sort([](const FILEINFO& tagLeft, const FILEINFO& tagRight) {return CompareFileTime(&tagLeft.lastWriteTime, &tagRight.lastWriteTime) < 0; });
 #else
 		//printf("ext length:%d\n",m_ext.length());
 
@@ -164,7 +163,7 @@ namespace FileSystem
 			}
 		}
 		// sort the returned files
-		sort(files.begin(), files.end(), [](const FILEINFO& tagLeft, const FILEINFO& tagRight){return tagLeft.lastWriteTime < tagRight.lastWriteTime;});
+		files.sort([](const FILEINFO& tagLeft, const FILEINFO& tagRight) {return CompareFileTime(&tagLeft.lastWriteTime, &tagRight.lastWriteTime) < 0; })
 
 		closedir(dir);
 #endif		

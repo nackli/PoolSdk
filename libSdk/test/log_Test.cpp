@@ -36,6 +36,7 @@
 				LOG_WARN_S("Welcome to nack log space::");
 				LOG_ERROR_S("Welcome to nack log space::");
 				LOG_FATAL_S("Welcome to nack log space::");
+				//LOG_ERROR_S("Create file mapping fail: {}", 6851);
 	#endif
 			}
 

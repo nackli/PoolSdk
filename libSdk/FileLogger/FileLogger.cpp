@@ -132,20 +132,6 @@ static int OnCreateSocket()
     return hSendSocket;
 }
 
-//static LogLevel OnStringToLevel(const std::string& strLevel) {
-//    static std::map<std::string, LogLevel> levelMap = {
-//        {"TRACE", LogLevel::EM_LOG_TRACE},
-//        {"DEBUG", LogLevel::EM_LOG_DEBUG},
-//        {"INFO", LogLevel::EM_LOG_INFO},
-//        {"WARN", LogLevel::EM_LOG_WARN},
-//        {"ERROR", LogLevel::EM_LOG_ERROR},
-//        {"FATAL", LogLevel::EM_LOG_FATAL}
-//    };
-//    string strLev = strLevel;
-//    toUpper(strLev);
-//    return levelMap.at(strLev);
-//}
-
 UNUSED_FUN static int dir_list(const char* szDir, int (CallFunFileList)(void* param, const char* name, int isdir), void* param)
 {
     int r;
@@ -196,17 +182,6 @@ UNUSED_FUN static int dir_list(const char* szDir, int (CallFunFileList)(void* pa
     return r;
 #endif
 }
-
-//static inline void OnFormatLoger(string &strLogger)
-//{
-//    replaceOne(strLogger, "{time}", "{0}");
-//    replaceOne(strLogger, "{level}", "{1}");
-//    replaceOne(strLogger, "{tid}", "{2}");
-//    replaceOne(strLogger, "{func}", "{3}");
-//    replaceOne(strLogger, "{file}", "{4}");
-//    replaceOne(strLogger, "{line}", "{5}");
-//    replaceOne(strLogger, "{message}", "{6}");
-//}
 
 FileLogger& FileLogger::getInstance() {
     return m_sFileLogger;
@@ -284,6 +259,12 @@ void FileLogger::initLog(const std::string &strCfgName)
     if (m_iOutPutFile == OUT_NET_UDP)
         m_hSendSocket = OnCreateSocket();
 
+    if (m_iOutPutFile == OUT_LOC_FILE)
+    {
+        std::thread tdSwitchFile(&FileLogger::purgeOldFiles, this);
+        tdSwitchFile.detach();
+    }
+
 }
 
 void FileLogger::setLogFileName(const std::string& strFileName)
@@ -313,6 +294,7 @@ FileLogger::FileLogger(const char* strBase, size_t maxSize, int maxFiles, LogLev
     m_strLogFormat("[%D] [%l] [tid:%t] [%!] %v%n"),
     m_strNetIpAdd(),
     m_iNetPort(0),
+    m_pOutputMode(nullptr),
     m_hSendSocket(INVALID_SOCKET)
     
 {
@@ -355,44 +337,17 @@ void FileLogger::parseFileNameComponents()
     }
 }
 
-//static inline string OnGetLocalTimer()
-//{
-//#if defined(_WIN32)
-//    SYSTEMTIME t;
-//    GetLocalTime(&t);
-//    return fmt::sprintf("%04hu-%02hu-%02hu %02hu:%02hu:%02hu.%03hu", 
-//        t.wYear, t.wMonth, t.wDay, t.wHour, t.wMinute, t.wSecond, t.wMilliseconds);
-//#else
-//    struct tm t;
-//    struct timeval tv;
-//    gettimeofday(&tv, NULL);
-//    localtime_r(&tv.tv_sec, &t);
-//    return fmt::sprintf("%04d-%02d-%02d %02d:%02d:%02d.%03d",
-//        (int)t.tm_year + 1900, (int)t.tm_mon + 1, (int)t.tm_mday,
-//        (int)t.tm_hour, (int)t.tm_min, (int)t.tm_sec, (int)(tv.tv_usec / 1000) % 1000);
-//#endif
-//}
 
-std::string FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, const char* szFileName, 
+void FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, const char* szFileName, 
     const int iLine, const string & strMessage)
 {
     if (strMessage.empty())
-        return {};
+        return;
 
-    //const char* strLevel = nullptr;
-    //switch (emLevel) {
-    //case EM_LOG_TRACE:   strLevel = "TRACE"; break;
-    //case EM_LOG_DEBUG:   strLevel = "DEBUG"; break;
-    //case EM_LOG_INFO:    strLevel = "INFO ";  break;
-    //case EM_LOG_WARN:    strLevel = "WARN ";  break;
-    //case EM_LOG_ERROR:   strLevel = "ERROR"; break;
-    //case EM_LOG_FATAL:   strLevel = "FATAL"; break;
-    //default: strLevel = "DEBUG";break;
-    //}
-    //return fmt::format(m_strLogFormat, OnGetLocalTimer(), strLevel, getCurThreadtid(), szFunName, szFileName, iLine, strMessage);
     LogMessage logMsg(emLevel, szFileName, iLine, strMessage.c_str(), szFunName);
-    
-    return m_pPatternFmt->format(logMsg);
+    memory_buf_t bufDest;
+    string strFormatted = m_pPatternFmt->format(logMsg);
+    writeToOutPut(emLevel, strFormatted);
 }
 
 void FileLogger::writeMsg2Net(const std::string& strMsg)
@@ -442,7 +397,6 @@ void FileLogger::outPut2File(int iOutMode)
 
 void FileLogger::writeToOutPut(LogLevel &emLevel, const std::string& strMsg)
 {
-
     if (m_iOutPutFile == OUT_CONSOLE)
     {
         std::lock_guard<std::mutex> lock(m_Mutex);
@@ -467,120 +421,123 @@ void FileLogger::writeToOutPut(LogLevel &emLevel, const std::string& strMsg)
 }
 
 void FileLogger::openCurrentFile() {
-    //std::lock_guard<std::mutex> lock(m_Mutex);
     FILE_CLOSE(n_hFile);
     OnCreateDirFromFilePath(m_strBaseName);
     m_strCurrentFile = generateFileName(m_iCurrentIndex);
-    n_hFile = FileSystem::openOrCreateFile(m_strCurrentFile, "a");
+    n_hFile = FileSystem::openOrCreateFile(m_strCurrentFile);
 
     FileSystem::fseekFile(n_hFile, 0, SEEK_END);
     m_iCurrentSize = FileSystem::getFileCurPos(n_hFile);
 }
 
 void FileLogger::rotateFiles() {
-    //std::lock_guard<std::mutex> lock(m_Mutex);
     m_iCurrentIndex++;
     m_iCurrentIndex = m_iCurrentIndex % 5000;
     openCurrentFile();
-    purgeOldFiles();
+    std::unique_lock<std::mutex>  lock(m_mtxSwitchLock);
+    m_cvSwitchFile.notify_one();
 }
 
 void FileLogger::purgeOldFiles()
 {
     if (m_iMaxFiles <= 0) 
         return;
-    map<uint64_t,string> mapFilePath;
+    while (1)
+    {
+        std::unique_lock<std::mutex>  lock(m_mtxSwitchLock);
+        m_cvSwitchFile.wait(lock);
+
+        map<uint64_t, string> mapFilePath;
 #ifdef _WIN32
-    WIN32_FIND_DATAA findData;
-    string strDir = FileSystem::getDirFromFilePath(m_strBaseName);
-    HANDLE hFind = FindFirstFileA((m_strFilePrefix + "_*" + m_strFileExt).c_str(), &findData);
-    if (hFind != INVALID_HANDLE_VALUE) {
-        do {
-            if (!(findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-                uint64_t uTime = (static_cast<uint64_t>(findData.ftLastWriteTime.dwHighDateTime) << 32) | findData.ftLastWriteTime.dwLowDateTime;
-                mapFilePath[uTime] = (strDir + findData.cFileName);
-            }
-        } while (FindNextFileA(hFind, &findData));
-        FindClose(hFind);
-    }
-
-    size_t iIndex = mapFilePath.size();
-    for (auto item : mapFilePath)
-    {
-        if (iIndex > (size_t)m_iMaxFiles)
-        {
-            if (DeleteFileA(item.second.c_str()) == 0)
-                perror(("Error removing old log: " + item.second).c_str());
-            iIndex--;
+        WIN32_FIND_DATAA findData;
+        string strDir = FileSystem::getDirFromFilePath(m_strBaseName);
+        HANDLE hFind = FindFirstFileA((m_strFilePrefix + "_*" + m_strFileExt).c_str(), &findData);
+        if (hFind != INVALID_HANDLE_VALUE) {
+            do {
+                if (!(findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                    uint64_t uTime = (static_cast<uint64_t>(findData.ftLastWriteTime.dwHighDateTime) << 32) | findData.ftLastWriteTime.dwLowDateTime;
+                    mapFilePath[uTime] = (strDir + findData.cFileName);
+                }
+            } while (FindNextFileA(hFind, &findData));
+            FindClose(hFind);
         }
-        else
-            break;
-    }
-#else
-    string strDir = FileSystem::getDirFromFilePath(m_strBaseName);
-    //printf("ext length:%d\n",m_ext.length());
-    if(strDir.empty())
-        strDir="./";
-  
-    DIR *dir = opendir(strDir.c_str());
-    if ( dir == NULL )
-    {
-        printf("[ERROR] %s is not a directory or not exist!", strDir.c_str());
-        return;
-    }
 
-    struct dirent* d_ent = NULL;
-  
-
-    while ( (d_ent = readdir(dir)) != NULL )
-    {
-        if ( (strcmp(d_ent->d_name, ".") != 0) && (strcmp(d_ent->d_name, "..") != 0) )
+        size_t iIndex = mapFilePath.size();
+        for (auto item : mapFilePath)
         {
- 
-            if ( d_ent->d_type != DT_DIR)
+            if (iIndex > (size_t)m_iMaxFiles)
             {
-                //string d_name(d_ent->d_name);
-               
-                if (strcmp(d_ent->d_name + strlen(d_ent->d_name) - m_strFileExt.length(), m_strFileExt.c_str ()) == 0)
+                if (DeleteFileA(item.second.c_str()) == 0)
+                    perror(("Error removing old log: " + item.second).c_str());
+                iIndex--;
+            }
+            else
+                break;
+        }
+#else
+        string strDir = FileSystem::getDirFromFilePath(m_strBaseName);
+        //printf("ext length:%d\n",m_ext.length());
+        if (strDir.empty())
+            strDir = "./";
+
+        DIR* dir = opendir(strDir.c_str());
+        if (dir == NULL)
+        {
+            printf("[ERROR] %s is not a directory or not exist!", strDir.c_str());
+            return;
+        }
+
+        struct dirent* d_ent = NULL;
+
+
+        while ((d_ent = readdir(dir)) != NULL)
+        {
+            if ((strcmp(d_ent->d_name, ".") != 0) && (strcmp(d_ent->d_name, "..") != 0))
+            {
+
+                if (d_ent->d_type != DT_DIR)
                 {
-                    struct stat statbuf;
-                     
-                    string strAbsolutePath;
-                    //string absolutePath = directory + string("/") + string(d_ent->d_name);
-                    if (strDir[strDir.length()-1] == '/')
-                       strAbsolutePath = strDir + string(d_ent->d_name);  
-                    else
-                        strAbsolutePath = strDir + "/" + string(d_ent->d_name);    
+                    //string d_name(d_ent->d_name);
+
+                    if (strcmp(d_ent->d_name + strlen(d_ent->d_name) - m_strFileExt.length(), m_strFileExt.c_str()) == 0)
+                    {
+                        struct stat statbuf;
+
+                        string strAbsolutePath;
+                        //string absolutePath = directory + string("/") + string(d_ent->d_name);
+                        if (strDir[strDir.length() - 1] == '/')
+                            strAbsolutePath = strDir + string(d_ent->d_name);
+                        else
+                            strAbsolutePath = strDir + "/" + string(d_ent->d_name);
 
 
-                    if (stat(strAbsolutePath.c_str(), &statbuf) != 0) {
-                        continue; // 
+                        if (stat(strAbsolutePath.c_str(), &statbuf) != 0) {
+                            continue; // 
+                        }
+
+                        uint64_t uTime = (static_cast<uint64_t>(statbuf.st_mtim.tv_sec * 1000 + statbuf.st_mtim.tv_nsec / 1000000));
+                        mapFilePath[uTime] = strAbsolutePath;
                     }
-
-                    uint64_t uTime = (static_cast<uint64_t>(statbuf.st_mtim.tv_sec * 1000 + statbuf.st_mtim.tv_nsec /1000000));
-                    mapFilePath[uTime] = strAbsolutePath;
                 }
             }
         }
-    }
-    closedir(dir);
+        closedir(dir);
 
-    size_t iIndex = mapFilePath.size();
-    for (auto item : mapFilePath)
-    {
-        if (iIndex > (size_t)m_iMaxFiles)
+        size_t iIndex = mapFilePath.size();
+        for (auto item : mapFilePath)
         {
-            if (remove(item.second.c_str()) != 0)
-                perror(("Error removing old log: " + item.second).c_str());
-            iIndex--;
+            if (iIndex > (size_t)m_iMaxFiles)
+            {
+                if (remove(item.second.c_str()) != 0)
+                    perror(("Error removing old log: " + item.second).c_str());
+                iIndex--;
+            }
+            else
+                break;
         }
-        else
-            break;
-    }
 #endif 
+    }
 }
-
-
 
 int FileLogger::findMaxFileIndex() {
     std::vector<int> vecIndices;

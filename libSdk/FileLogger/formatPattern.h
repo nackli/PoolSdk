@@ -241,7 +241,6 @@ public:
     void format(const LogMessage &msg, memory_buf_t & bufDest) override
     {
         bufDest.push_back('\n');
-        //append_string_view("\n", bufDest);
     }
 };
 class CharFormat final : public Format
@@ -289,7 +288,7 @@ private:
 class FormatterBuilder // Log format constructor
 {
 public:
-    FormatterBuilder(const std::string &pattern = "[%D] [tid:%t] [%l] [%@]  %v%n%T") : m_strPattern(pattern)
+    FormatterBuilder(const std::string &pattern = "[%D] [tid:%t] [%l] [%@]  %v%n") : m_strPattern(pattern)
     {
         parsePattern();
     }
