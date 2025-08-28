@@ -5,7 +5,7 @@
 #version
 cmake_minimum_required(VERSION 3.16)
 
-project(libSdk VERSION 2.5.0)
+project(PoolSdk VERSION 2.5.0)
 
 set(PACKAGE_VERSION ${CMAKE_PROJECT_VERSION})
 set(PACKAGE_STRING "${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_VERSION}")

@@ -96,8 +96,8 @@ void FileOutPutMode::openCurFile()
 
 	FileSystem::fseekFile(m_frLog, 0, SEEK_END);
 	m_iCurrentSize = FileSystem::getFileCurPos(m_frLog);
-	
 }
+
 void FileOutPutMode::changeNextFiles()
 {
 	m_iCurrentIndex++;

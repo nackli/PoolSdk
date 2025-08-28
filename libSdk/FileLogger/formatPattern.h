@@ -99,8 +99,8 @@ struct LogMessage {
     const char * strLogName = nullptr;// logger name
     const char* szFunName = nullptr;// logger name
     LogMessage(int level, const char* szFile, size_t iLine, const char* szMsg,  const char* szFName)
-        : iLevLog(level), iThreadId(std::this_thread::get_id()), szFunName(szFName),
-        szFileName(szFile), iLineNo(iLine), szMsgCtx(szMsg), strLogName(nullptr)
+        : iLevLog(level), iThreadId(std::this_thread::get_id()), szFunName(szFName),  szFileName(szFile), 
+        iLineNo(iLine), szMsgCtx(szMsg), strLogName(nullptr)
     {
 #ifdef _WIN32
         GetLocalTime(&tmCreate);

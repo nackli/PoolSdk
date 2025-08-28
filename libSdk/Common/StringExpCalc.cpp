@@ -174,7 +174,7 @@ static int OnRemoveSpace(std::string& strExp)
     int iEnd = 0;
     int iAlphaNum = 0;
 
-    while (iEnd != strExp.size())
+    while ((size_t)iEnd != strExp.size())
     {
         if (strExp[iEnd] != ' ')
         {
