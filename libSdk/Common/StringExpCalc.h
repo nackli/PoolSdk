@@ -5,6 +5,6 @@ class StringExpCalc
 public:
 	StringExpCalc();
 	~StringExpCalc();
-	double StringExpCalc(std::string);
+	double CalcExpValue(std::string);
 };
 

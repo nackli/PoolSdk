@@ -4,6 +4,12 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#ifndef INVALID_SOCKET
+#define INVALID_SOCKET                  0x0
+#endif
+#ifndef SOCKET_ERROR
+#define SOCKET_ERROR            (-1)
+#endif
 /*************************************************************************************************************************/
 using namespace std;
 static inline void OnCreateDirFromFilePath(const string strFilePath)
@@ -13,7 +19,7 @@ static inline void OnCreateDirFromFilePath(const string strFilePath)
 		FileSystem::createDirectoryRecursive(strCfgDir);
 }
 
-void processFileName(const std::string& fileName, vector<int>& indices)
+static inline void processFileName(const std::string& fileName, vector<int>& indices)
 {
 	size_t pos = fileName.find_last_of("_");
 	if (pos != string::npos)

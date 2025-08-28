@@ -5,7 +5,9 @@
 #include<map>
 #include <algorithm>
 #include <functional>
-#include "CStringExpCalc.h"
+#include "StringExpCalc.h"
+#include <cmath>
+#include <cctype>
 using namespace std;
 /********************************************************************************************************************/
 /********************************************************************************************************************/
@@ -31,8 +33,10 @@ static map<string, function<double(double, double)>>  g_mapDoubleParam =
     {"fdim",        [](double leftNum, double rightNum)->double { return fdim(leftNum , rightNum); } },//fdim 
     {"scalbn",      [](double leftNum, double rightNum)->double { return scalbn(leftNum , (int)rightNum); } },//scalbn 
     {"atan2",       [](double dataNum, double rightNum)->double { return atan2(dataNum,rightNum); } },//atan2
+#ifdef _WIN32     
     {"jn",       [](double dataNum, double rightNum)->double { return _jn((int)dataNum,rightNum); } },//atan2
     {"yn",       [](double dataNum, double rightNum)->double { return _yn((int)dataNum,rightNum); } },//atan2
+#endif
 };
 
 static map<string, function<double(double)>> g_mapSingleParam =
@@ -68,10 +72,12 @@ static map<string, function<double(double)>> g_mapSingleParam =
    {"tgamma",   [](double dataNum)->double { return tgamma(dataNum); } },//tgamma
    {"trunc",    [](double dataNum)->double { return trunc(dataNum); } },//trunc
    {"erf",      [](double dataNum)->double { return erf(dataNum); } },//erf
+#ifdef _WIN32 
    {"j0",       [](double dataNum)->double { return _j0(dataNum); } },//erf
    {"j1",       [](double dataNum)->double { return _j1(dataNum); } },//erf
    {"y0",       [](double dataNum)->double { return _y0(dataNum); } },//erf
    {"y1",       [](double dataNum)->double { return _y1(dataNum); } },//erf
+#endif
 };
 
 static map<string, int> g_mapOperInfo;
@@ -185,7 +191,7 @@ static int OnRemoveSpace(std::string& strExp)
             iEnd++;
     }
     strExp.resize(iBegin);
-    transform(strExp.begin(), strExp.end(), strExp.begin(), tolower);
+    std::transform(strExp.begin(), strExp.end(), strExp.begin(), ::tolower);
     return iAlphaNum;
 }
 

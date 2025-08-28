@@ -107,10 +107,10 @@ namespace FileSystem
 
 		string strFind = OnBuildFindFileReg(strFilePathAndReg, strExt);
 		FileInfoList files;
+		string strDir = getDirFromFilePath(strFind);
 #ifdef _WIN32	
 		WIN32_FIND_DATAA findData;
-		string strDir = getDirFromFilePath(strFind);
-
+		
 		HANDLE hFind = FindFirstFileA(strFind.c_str(), &findData);
 
 		if (hFind == INVALID_HANDLE_VALUE) {
@@ -140,14 +140,11 @@ namespace FileSystem
 		FindClose(hFind);
 		files.sort([](const FILEINFO& tagLeft, const FILEINFO& tagRight) {return CompareFileTime(&tagLeft.lastWriteTime, &tagRight.lastWriteTime) < 0; });
 #else
-		//printf("ext length:%d\n",m_ext.length());
-
-
-		DIR* dir = opendir(strFileDir.c_str());
+		DIR* dir = opendir(strDir.c_str());
 		if (dir == NULL)
 		{
-			printf("[ERROR] %s is not a directory or not exist!", strFileDir.c_str());
-			return FileInfoVec();
+			printf("[ERROR] %s is not a directory or not exist!", strDir.c_str());
+			return FileInfoList();
 		}
 
 		struct dirent* d_ent = NULL;
@@ -159,27 +156,25 @@ namespace FileSystem
 
 				if (d_ent->d_type != DT_DIR)
 				{
-					string d_name(d_ent->d_name);
-					//printf("%s\n",d_ent->d_name);
-					if (strcmp(d_name.c_str() + d_name.length() - strlen(szExt), szExt) == 0)
+					string strFileName(d_ent->d_name);
+					if (strExt.compare(strFileName.c_str() + strFileName.length() - strExt.length()) == 0)
 					{
 						FILEINFO tagFileInfo;
-						if (strFileDir[strFileDir.length() - 1] == '/')
-							tagFileInfo.strFileName = strFileDir + string(d_ent->d_name);
+						if (strDir[strDir.length() - 1] == '/')
+							tagFileInfo.strFileName = strDir + string(d_ent->d_name);
 						else
-							tagFileInfo.strFileName = strFileDir + "/" + string(d_ent->d_name);
-
+							tagFileInfo.strFileName = strDir + "/" + string(d_ent->d_name);
 						struct stat fileStat;
-						if (stat(tagFileInfo.strFileName.c_str(), &fileStat) != 0)
-							tagFileInfo.lastWriteTime = fileStat.st_mtime;
+						if (stat(tagFileInfo.strFileName.c_str(), &fileStat) == 0)
+							tagFileInfo.lastWriteTime  = static_cast<long long>(fileStat.st_mtime) * 1000 + fileStat.st_mtim.tv_nsec / 1000000;
+			
 						files.emplace_back(tagFileInfo);
 					}
 				}
 			}
 		}
 		// sort the returned files
-		files.sort([](const FILEINFO& tagLeft, const FILEINFO& tagRight) {return CompareFileTime(&tagLeft.lastWriteTime, &tagRight.lastWriteTime) < 0; })
-
+		files.sort([](const FILEINFO& tagLeft, const FILEINFO& tagRight) {return tagLeft.lastWriteTime < tagRight.lastWriteTime; });
 		closedir(dir);
 #endif		
 		return 	files;

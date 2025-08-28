@@ -34,9 +34,7 @@ Copyright (c) 2024. All Rights Reserved.
 #define OUT_LOC_FILE                    0x01
 #define OUT_NET_UDP                     0x02
 
-#ifndef INVALID_SOCKET
-#define INVALID_SOCKET                  0x0
-#endif
+
 
 #define FREE_MEM(x)                 if((x)) {PM_FREE((x)); (x)=nullptr;}
 FileLogger FileLogger::m_sFileLogger;
