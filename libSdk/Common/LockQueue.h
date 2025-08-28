@@ -34,8 +34,7 @@ public:
     {
         {
             lock_type lock(m_mtxLock);
-            while (m_queueData.size() == m_uCapSize)
-                m_cvWrite.wait(lock);
+            m_cvWrite.wait(lock, [this]() {return m_queueData.size() != m_uCapSize; });
             m_queueData.emplace(value);
         }
         m_cvRead.notify_one();
@@ -45,8 +44,7 @@ public:
     {
         {
             lock_type lock(m_mtxLock);
-            while (m_queueData.size() == m_uCapSize)
-                m_cvWrite.wait(lock);
+            m_cvWrite.wait(lock, [this]() {return m_queueData.size() != m_uCapSize; });
             m_queueData.emplace(value);
         }
         m_cvRead.notify_one();
@@ -57,8 +55,7 @@ public:
         value_type value;
         {
             lock_type lock(m_mtxLock);
-            while (m_queueData.empty())
-                m_cvRead.wait(lock);
+            m_cvRead.wait(lock, [this]() {return !m_queueData.empty(); });
             value = m_queueData.front();
         }
         return value;
@@ -69,8 +66,7 @@ public:
         value_type value;
         {
             lock_type lock(m_mtxLock);
-            while (m_queueData.empty())
-                m_cvRead.wait(lock);
+            m_cvRead.wait(lock, [this]() {return !m_queueData.empty(); });
             value = m_queueData.back();
         }
         return value;
@@ -79,9 +75,8 @@ public:
     void pop()
     {
         {
-            lock_type lock(m_mtxLock);
-            while (m_queueData.empty())
-                m_cvRead.wait(lock);
+            lock_type lock(m_mtxLock);    
+            m_cvRead.wait(lock, [this]() {return !m_queueData.empty(); });
             m_queueData.pop();
         }
         m_cvWrite.notify_one();
@@ -92,8 +87,7 @@ public:
         value_type value;
         {
             lock_type lock(m_mtxLock);
-            while (m_queueData.empty())
-                m_cvRead.wait(lock);
+            m_cvRead.wait(lock, [this]() {return !m_queueData.empty(); });
             value = m_queueData.front();
             m_queueData.pop();
         }
@@ -106,8 +100,7 @@ public:
         value_type value;
         {
             lock_type lock(m_mtxLock);
-            while (m_queueData.empty())
-                m_cvRead.wait(lock);
+            m_cvRead.wait(lock, [this]() {return !m_queueData.empty(); });
             value = m_queueData.back();
             m_queueData.pop();
         }

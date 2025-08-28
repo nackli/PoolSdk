@@ -12,13 +12,36 @@
 using memory_buf_t = fmt::memory_buffer;
 using string_view_t = fmt::basic_string_view<char>;
 
-static inline void append_int(uint64_t n, memory_buf_t& bufDest)
+template<typename T>
+inline unsigned int CntDigits(T n)
+{
+    using typeCnt = typename std::conditional<(sizeof(T) > sizeof(uint32_t)), uint64_t, uint32_t>::type;
+    return static_cast<unsigned int>(fmt::
+        // fmt 7.0.0 renamed the internal namespace to detail.
+        // See: https://github.com/fmtlib/fmt/issues/1538
+#if FMT_VERSION < 70000
+        internal
+#else
+        detail
+#endif
+        ::count_digits(static_cast<typeCnt>(n)));
+}
+
+template<typename T>
+inline void uint2Str(T n, unsigned int width, memory_buf_t& bufDest)
+{
+    for (auto digits = count_digits(n); digits < width; digits++)
+        bufDest.push_back('0');
+    append_int(n, bufDest);
+}
+
+inline void append_int(uint64_t n, memory_buf_t& bufDest)
 {
     fmt::format_int iData(n);
     bufDest.append(iData.data(), iData.data() + iData.size());
 }
 
-static inline void append_int_100(int n, memory_buf_t& bufDest)
+inline void append_int_100(int n, memory_buf_t& bufDest)
 {
     if (n >= 0 && n < 100) // 0-99
     {
@@ -31,7 +54,7 @@ static inline void append_int_100(int n, memory_buf_t& bufDest)
     }
 }
 
-static inline void append_int_1000(int n, memory_buf_t& bufDest)
+inline void append_int_1000(int n, memory_buf_t& bufDest)
 {
     if (n < 1000)
     {
@@ -46,12 +69,12 @@ static inline void append_int_1000(int n, memory_buf_t& bufDest)
     }
 }
 
-static inline void append_string_view(string_view_t view, memory_buf_t& bufDest)
+inline void append_string_view(string_view_t view, memory_buf_t& bufDest)
 {
     bufDest.append(view.data(), view.data() + view.size());
 }
 
-static inline string_view_t to_string_view(const memory_buf_t& buf)
+inline string_view_t to_string_view(const memory_buf_t& buf)
 {
     return string_view_t{ buf.data(), buf.size() };
 }
@@ -70,11 +93,11 @@ struct LogMessage {
 #endif
     int iLevLog;// log level
     std::thread::id iThreadId;// thread id
-    const char * szFileName;// source file name
-    size_t iLineNo;// source line number
-    const char *szMsgCtx;// log message
-    const char * strLogName;// logger name
-    const char* szFunName;// logger name
+    const char * szFileName = nullptr;// source file name
+    size_t iLineNo = 0;// source line number
+    const char *szMsgCtx =nullptr;// log message
+    const char * strLogName = nullptr;// logger name
+    const char* szFunName = nullptr;// logger name
     LogMessage(int level, const char* szFile, size_t iLine, const char* szMsg,  const char* szFName)
         : iLevLog(level), iThreadId(std::this_thread::get_id()), szFunName(szFName),
         szFileName(szFile), iLineNo(iLine), szMsgCtx(szMsg), strLogName(nullptr)
@@ -103,7 +126,8 @@ class MsgFormat final : public Format
 public:
     void format(const LogMessage& msg, memory_buf_t & bufDest) 
     {
-        append_string_view(msg.szMsgCtx, bufDest);
+        if(msg.szMsgCtx)
+            append_string_view(msg.szMsgCtx, bufDest);
     }
 };
  
@@ -187,7 +211,8 @@ public:
     }
     void format(const LogMessage& msg, memory_buf_t& dest) override
     {
-        append_string_view(msg.szFunName, dest);
+        if(msg.szFunName)
+            append_string_view(msg.szFunName, dest);
     }
 };
 class FileFormat final: public Format
@@ -195,7 +220,8 @@ class FileFormat final: public Format
 public:
     void format(const LogMessage &msg, memory_buf_t& bufDest) override
     {
-        append_string_view(msg.szFileName, bufDest);
+        if (msg.szFileName)
+           append_string_view(msg.szFileName, bufDest);
     }
 };
 class LineFormat final: public Format
@@ -212,7 +238,8 @@ class FileNameAndLineFormat final : public Format
 public:
     void format(const LogMessage& msg, memory_buf_t& bufDest) override
     {
-        append_string_view(msg.szFileName, bufDest);
+        if(msg.szFileName)
+            append_string_view(msg.szFileName, bufDest);
         bufDest.push_back(':');
         append_int(msg.iLineNo, bufDest);
     }

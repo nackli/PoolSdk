@@ -87,20 +87,31 @@ namespace FileSystem
 	}
 #endif
 
-	FileInfoList getFilesInDirectory(const string& strFileDir, const char* szExt)
+	static inline string OnBuildFindFileReg(const string& strPre, const string& strExt)
 	{
-		if (strFileDir.empty())
+		string strReg = strPre;
+		if (FileSystem::IsDirectoryExists(strReg))
+		{
+			if (strReg[strReg.length() - 1] != '/' && strReg[strReg.length() - 1] != '\\')
+				strReg += "\\";	
+		}
+		if(!strExt.empty())
+			return strReg = strReg + "*" + strExt;
+		return strReg;
+	}
+
+	FileInfoList getFilesInCurDir(const string& strFilePathAndReg, const string& strExt,bool bOnlyFileName)
+	{
+		if (strFilePathAndReg.empty())
 			return FileInfoList();
 
+		string strFind = OnBuildFindFileReg(strFilePathAndReg, strExt);
 		FileInfoList files;
 #ifdef _WIN32	
 		WIN32_FIND_DATAA findData;
-		string strDir = strFileDir;
-		if (strDir[strDir.length() - 1] != '/' && strDir[strDir.length() - 1] != '\\')
-			strDir += "\\";
+		string strDir = getDirFromFilePath(strFind);
 
-		strDir = strDir + "*" + szExt;
-		HANDLE hFind = FindFirstFileA(strDir.c_str(), &findData);
+		HANDLE hFind = FindFirstFileA(strFind.c_str(), &findData);
 
 		if (hFind == INVALID_HANDLE_VALUE) {
 			//LOG_ERROR("Open dir fiall: %d", GetLastError());
@@ -110,13 +121,17 @@ namespace FileSystem
 			if (!(findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{
 				FILEINFO tagFileInfo;
-				string strDir = strFileDir;
 				tagFileInfo.lastWriteTime = findData.ftLastWriteTime;
-				if (strDir[strDir.length() - 1] == '/' ||
-					strDir[strDir.length() - 1] == '\\')
-					tagFileInfo.strFileName = strDir + findData.cFileName;
+				if (!bOnlyFileName)
+				{
+					if (strDir[strDir.length() - 1] == '/' ||
+						strDir[strDir.length() - 1] == '\\')
+						tagFileInfo.strFileName = strDir + findData.cFileName;
+					else
+						tagFileInfo.strFileName = strDir + "\\" + findData.cFileName;
+				}
 				else
-					tagFileInfo.strFileName = strDir + "\\" + findData.cFileName;
+					tagFileInfo.strFileName = findData.cFileName;
 
 				files.emplace_back(tagFileInfo);
 			}
@@ -418,8 +433,10 @@ namespace FileSystem
 	{
 		if (szFilePath && szFilePath[0])
 		{
-			createDirFromFilePath(szFilePath);
-			return freopen(szFilePath, szFlags, hFile);
+			if (!hFile)
+				return openOrCreateFile(szFilePath, szFlags);
+			else
+				return freopen(szFilePath, szFlags, hFile);
 		}
 		return nullptr;
 	}

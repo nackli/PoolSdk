@@ -14,6 +14,7 @@ Copyright (c) 2024. All Rights Reserved.
 #include "../Common/LockQueue.h"
 #include "../mem/ConcurrentMem.h"
 #include "formatPattern.h"
+#include "OutPutMode.h"
 
 
 #ifdef _WIN32
@@ -39,10 +40,6 @@ Copyright (c) 2024. All Rights Reserved.
 
 #define FREE_MEM(x)                 if((x)) {PM_FREE((x)); (x)=nullptr;}
 FileLogger FileLogger::m_sFileLogger;
-#ifdef _WIN32
-#pragma comment(lib,"Ws2_32.lib")
-#endif
-
 UNUSED_FUN static void memory_dump(const void* ptr, unsigned int len)
 {
     unsigned int i, j;
@@ -60,14 +57,6 @@ UNUSED_FUN static void memory_dump(const void* ptr, unsigned int len)
         printf("\n");
     }
 }
-
-static void OnCreateDirFromFilePath(const string strFilePath)
-{
-    string strCfgDir = FileSystem::getDirFromFilePath(strFilePath);
-    if (!FileSystem::IsDirectoryExists(strCfgDir))
-        FileSystem::createDirectoryRecursive(strCfgDir);
-}
-
 
 static std::map<std::string, std::string> parseConfig(const std::string& path) 
 {
@@ -90,47 +79,6 @@ static std::map<std::string, std::string> parseConfig(const std::string& path)
     return config;
 }
 
-static void inline OnOutputData(LogLevel& emLevel, const std::string& message)
-{
-#ifdef _WIN32
-    const uint8_t clrIndex[] = { 0x0B,0x07,0x08,0x06,0x04,0x05 };
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), clrIndex[emLevel]);
-    cout << message;
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);
-#else
-    const char* clrIndex[] = { "/033[1;37m","/033[0;37m","/033[0;32;32m", "/033[1;33m","/033[0;32;31m","/033[1;32;31m" };
-    printf("%s%s\033[0m", clrIndex[emLevel], message.c_str());
-#endif
-}
-
-#ifdef _WIN32
-static SOCKET OnCreateSocket()
-#else
-static int OnCreateSocket()
-#endif
-{
-#ifdef _WIN32
-    WSADATA wsaData;
-    int  iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    if (iResult != NO_ERROR) {
-        throw std::runtime_error("WSAStartup failed with error\n");
-        return INVALID_SOCKET;
-    }
-    //---------------------------------------------
-    // Create a socket for sending data
-    SOCKET hSendSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (hSendSocket == INVALID_SOCKET) {
-        throw std::runtime_error("socket failed\n");
-        WSACleanup();
-        return INVALID_SOCKET;
-    }
-#else
-    int hSendSocket = socket(AF_INET, SOCK_DGRAM, 0);
-    if (hSendSocket < 0)
-        throw std::runtime_error("socket creation failed");
-#endif
-    return hSendSocket;
-}
 
 UNUSED_FUN static int dir_list(const char* szDir, int (CallFunFileList)(void* param, const char* name, int isdir), void* param)
 {
@@ -195,422 +143,147 @@ void FileLogger::setLogLevel(LogLevel level) {
 
 void FileLogger::initLog(const std::string &strCfgName)
 {
+    string strBaseName("./Logs/log.log");
+    int iMaxFileNum = 10;
+    int iMaxFileSize = 0x500000;
+    string strNetIpAddr ="127.0.0.1";
+    int iNetPort = 0;
+    int iOutPutFile = OUT_LOC_FILE;
+    string strLogFormat("[%D] [%l] [tid:%t] [%!] %v%n");
+
     if (!strCfgName.empty())
     {
         std::map<std::string, std::string> mapCfg = parseConfig(strCfgName);
         if (!mapCfg.empty())
         {
             if (!mapCfg["file_name"].empty())
-                m_strBaseName = mapCfg["file_name"];         
+                strBaseName = mapCfg["file_name"];
             if(!mapCfg["max_files"].empty())
-                m_iMaxFiles = str2Int(mapCfg["max_files"]);
+                iMaxFileNum = str2Int(mapCfg["max_files"]);
             if(!mapCfg["max_size"].empty())
-                m_iMaxSize = str2Uint(mapCfg["max_size"]);
+                iMaxFileSize = str2Uint(mapCfg["max_size"]);
             if (!mapCfg["log_level"].empty())
                 m_emLogLevel = OnStringToLevel(mapCfg["log_level"]);
             if (!mapCfg["out_put"].empty())
             {
                 if (equals(mapCfg["out_put"].c_str(), "console", false))
-                    m_iOutPutFile = OUT_CONSOLE;
+                    iOutPutFile = OUT_CONSOLE;
                 else if(equals(mapCfg["out_put"].c_str(), "netudp", false))
-                    m_iOutPutFile = OUT_NET_UDP;
+                    iOutPutFile = OUT_NET_UDP;
                 else
-                    m_iOutPutFile = OUT_LOC_FILE;
+                    iOutPutFile = OUT_LOC_FILE;
             }
             if (!mapCfg["out_mode"].empty())
                 m_bSync = equals(mapCfg["out_mode"].c_str(), "sync", false);
             if (!mapCfg["log_pattern"].empty())
-                m_strLogFormat = mapCfg["log_pattern"];
+                strLogFormat = mapCfg["log_pattern"];
 
-            if (m_iOutPutFile == OUT_NET_UDP)
+            if (iOutPutFile == OUT_NET_UDP)
             {
                 if (!mapCfg["netIp"].empty())
                 {
                     std::pair<std::string, std::string> pairNet = spiltKv(mapCfg["netIp"], ':');
                     if (!pairNet.first.empty() && !pairNet.second.empty())
                     {
-                        m_strNetIpAdd = pairNet.first;
-                        m_iNetPort = str2Int(pairNet.second);
+                        strNetIpAddr = pairNet.first;
+                        iNetPort = str2Int(pairNet.second);
                     }
                     else
-                        m_iOutPutFile = OUT_LOC_FILE;
+                        iOutPutFile = OUT_LOC_FILE;
                 }
                 else
-                    m_iOutPutFile = OUT_LOC_FILE;
+                    iOutPutFile = OUT_LOC_FILE;
             }
         }
     }
-    if(m_pPatternFmt && !m_strLogFormat.empty())
-        m_pPatternFmt->updatePattern(m_strLogFormat);
-    //FormatterBuilder myTest("[%D] [tid:%t] [%l] [%@] %v%n%T");
-    //OnFormatLoger(m_strLogFormat);
-    if (m_iOutPutFile == OUT_LOC_FILE)
-    {
-        parseFileNameComponents();
-        m_iCurrentIndex = findMaxFileIndex();
 
+    m_pPatternFmt = new FormatterBuilder(strLogFormat);
+
+    if (iOutPutFile == OUT_NET_UDP)
+    {
+        m_pOutputMode = new UdpOutPutMode;
+        m_pOutputMode->initOutMode(strNetIpAddr.c_str(), iNetPort);
     }
+
+    else if (iOutPutFile == OUT_LOC_FILE)
+    {
+        m_pOutputMode = new FileOutPutMode;
+        m_pOutputMode->initOutMode(strBaseName.c_str(), iMaxFileSize);
+        m_pOutputMode->setMaxFileNum(iMaxFileNum);
+    } 
+    else
+        m_pOutputMode = new ConsoleOutPutMode;
+
     if (!m_bSync)
     {
-        std::thread tRead(&FileLogger::outPut2File, this, m_iOutPutFile);
+        std::thread tRead(&FileLogger::outPut2File, this);
         tRead.detach();
-    }
-
-    if (m_iOutPutFile == OUT_NET_UDP)
-        m_hSendSocket = OnCreateSocket();
-
-    if (m_iOutPutFile == OUT_LOC_FILE)
-    {
-        std::thread tdSwitchFile(&FileLogger::purgeOldFiles, this);
-        tdSwitchFile.detach();
     }
 
 }
 
 void FileLogger::setLogFileName(const std::string& strFileName)
 {
-    if (!strFileName.empty())
+    if (m_pOutputMode && !strFileName.empty())
     {
         std::lock_guard<std::mutex> lock(m_Mutex);
-        m_strBaseName = strFileName;
-        parseFileNameComponents();
-        m_iCurrentIndex = findMaxFileIndex();
+        m_pOutputMode->changeOutModeCfg(strFileName);
     }
 }
 
-FileLogger::FileLogger(const char* strBase, size_t maxSize, int maxFiles, LogLevel level)
-    :n_hFile(nullptr),
-    m_strBaseName(strBase),
-    m_strFilePrefix(),
-    m_strFileExt(),
-    m_strCurrentFile(),
-    m_iMaxSize(maxSize),
-    m_iMaxFiles(maxFiles),
-    m_iCurrentSize(0),
-    m_emLogLevel(level),
-    m_iCurrentIndex(0),
-    m_iOutPutFile(OUT_LOC_FILE),
+FileLogger::FileLogger(LogLevel level)
+    :m_emLogLevel(level),
     m_bSync(false),
-    m_strLogFormat("[%D] [%l] [tid:%t] [%!] %v%n"),
-    m_strNetIpAdd(),
-    m_iNetPort(0),
     m_pOutputMode(nullptr),
-    m_hSendSocket(INVALID_SOCKET)
+    m_pPatternFmt(nullptr)
     
 {
     m_ctxQueue.setSpaces(200);
-    m_pPatternFmt = new FormatterBuilder(m_strLogFormat);
 }
 
 FileLogger::~FileLogger() 
 {
-    if (m_iOutPutFile == OUT_NET_UDP)
+    if (m_pOutputMode)
     {
-        if (m_hSendSocket != INVALID_SOCKET)
-        {
-#ifdef _WIN32
-            closesocket(m_hSendSocket);
-#else
-            close(m_hSendSocket);
-#endif
-            m_hSendSocket = INVALID_SOCKET;
-        }
-#ifdef _WIN32
-        WSACleanup();
-#endif
-    }
-    FILE_CLOSE(n_hFile);
-}
-
-void FileLogger::parseFileNameComponents() 
-{
-    if (m_strBaseName.empty())
-        return;
-    size_t lastDot = m_strBaseName.rfind('.');
-    if (lastDot != std::string::npos) {
-        m_strFilePrefix = m_strBaseName.substr(0, lastDot);
-        m_strFileExt = m_strBaseName.substr(lastDot);
-    }
-    else {
-        m_strFilePrefix = m_strBaseName;
-        m_strFileExt = "";
+        m_pOutputMode->closeOutPut();
+        delete m_pOutputMode;
+        m_pOutputMode = nullptr;
     }
 }
-
 
 void FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, const char* szFileName, 
     const int iLine, const string & strMessage)
 {
-    if (strMessage.empty())
-        return;
-
     LogMessage logMsg(emLevel, szFileName, iLine, strMessage.c_str(), szFunName);
     memory_buf_t bufDest;
     string strFormatted = m_pPatternFmt->format(logMsg);
     writeToOutPut(emLevel, strFormatted);
 }
 
-void FileLogger::writeMsg2Net(const std::string& strMsg)
-{
-    if (strMsg.empty() || m_hSendSocket == INVALID_SOCKET)
-        return;
-    struct sockaddr_in RecvAddr;
-    RecvAddr.sin_family = AF_INET;
-    RecvAddr.sin_port = htons(m_iNetPort);
-
-    RecvAddr.sin_addr.s_addr = inet_addr(m_strNetIpAdd.c_str());
-    sendto(m_hSendSocket,
-        strMsg.c_str(), strMsg.length() , 0, (sockaddr*)&RecvAddr, sizeof(RecvAddr));
-}
-
-void FileLogger::writeMsg2File(const std::string& strMsg)
-{
-    if (strMsg.empty())
-        return;
-    size_t iMsgSize = strMsg.length();
-    if (n_hFile == nullptr)
-        openCurrentFile();
-
-    if (m_iCurrentSize + iMsgSize > m_iMaxSize)
-        rotateFiles();
-
-    if(FileSystem::writeFile(n_hFile, (void*)strMsg.c_str(), iMsgSize))
-        m_iCurrentSize += iMsgSize;
-}
-
-void FileLogger::outPut2File(int iOutMode)
+void FileLogger::outPut2File()
 {
     while (1)
     {     
         do 
         {
             std::string strData = m_ctxQueue.pop_front();
-            if (iOutMode == OUT_NET_UDP)
-                writeMsg2Net(strData);
-            else
-                writeMsg2File(strData);
-           
+            m_pOutputMode->writeData(strData,0); 
         }while(!m_ctxQueue.empty());
-        FileSystem::flushFile(n_hFile);
+        //m_pOutputMode->flushFile();
     }
 }
 
 void FileLogger::writeToOutPut(LogLevel &emLevel, const std::string& strMsg)
 {
-    if (m_iOutPutFile == OUT_CONSOLE)
-    {
-        std::lock_guard<std::mutex> lock(m_Mutex);
-        OnOutputData(emLevel, strMsg);
-    }
+    if (!m_bSync)
+        m_ctxQueue.push(strMsg);
     else
     {
-        if (!m_bSync)
-            m_ctxQueue.push(strMsg);
-        else
         {
             std::lock_guard<std::mutex> lock(m_Mutex);
-            if (m_iOutPutFile == OUT_LOC_FILE)
-            {
-                writeMsg2File(strMsg);
-                FileSystem::flushFile(n_hFile);
-            }
-            else if (m_iOutPutFile == OUT_NET_UDP)
-                writeMsg2Net(strMsg);
+            m_pOutputMode->writeData(strMsg, emLevel);
         }
+
+        //m_pOutputMode->flushFile();
     }
-}
-
-void FileLogger::openCurrentFile() {
-    FILE_CLOSE(n_hFile);
-    OnCreateDirFromFilePath(m_strBaseName);
-    m_strCurrentFile = generateFileName(m_iCurrentIndex);
-    n_hFile = FileSystem::openOrCreateFile(m_strCurrentFile);
-
-    FileSystem::fseekFile(n_hFile, 0, SEEK_END);
-    m_iCurrentSize = FileSystem::getFileCurPos(n_hFile);
-}
-
-void FileLogger::rotateFiles() {
-    m_iCurrentIndex++;
-    m_iCurrentIndex = m_iCurrentIndex % 5000;
-    openCurrentFile();
-    std::unique_lock<std::mutex>  lock(m_mtxSwitchLock);
-    m_cvSwitchFile.notify_one();
-}
-
-void FileLogger::purgeOldFiles()
-{
-    if (m_iMaxFiles <= 0) 
-        return;
-    while (1)
-    {
-        std::unique_lock<std::mutex>  lock(m_mtxSwitchLock);
-        m_cvSwitchFile.wait(lock);
-
-        map<uint64_t, string> mapFilePath;
-#ifdef _WIN32
-        WIN32_FIND_DATAA findData;
-        string strDir = FileSystem::getDirFromFilePath(m_strBaseName);
-        HANDLE hFind = FindFirstFileA((m_strFilePrefix + "_*" + m_strFileExt).c_str(), &findData);
-        if (hFind != INVALID_HANDLE_VALUE) {
-            do {
-                if (!(findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-                    uint64_t uTime = (static_cast<uint64_t>(findData.ftLastWriteTime.dwHighDateTime) << 32) | findData.ftLastWriteTime.dwLowDateTime;
-                    mapFilePath[uTime] = (strDir + findData.cFileName);
-                }
-            } while (FindNextFileA(hFind, &findData));
-            FindClose(hFind);
-        }
-
-        size_t iIndex = mapFilePath.size();
-        for (auto item : mapFilePath)
-        {
-            if (iIndex > (size_t)m_iMaxFiles)
-            {
-                if (DeleteFileA(item.second.c_str()) == 0)
-                    perror(("Error removing old log: " + item.second).c_str());
-                iIndex--;
-            }
-            else
-                break;
-        }
-#else
-        string strDir = FileSystem::getDirFromFilePath(m_strBaseName);
-        //printf("ext length:%d\n",m_ext.length());
-        if (strDir.empty())
-            strDir = "./";
-
-        DIR* dir = opendir(strDir.c_str());
-        if (dir == NULL)
-        {
-            printf("[ERROR] %s is not a directory or not exist!", strDir.c_str());
-            return;
-        }
-
-        struct dirent* d_ent = NULL;
-
-
-        while ((d_ent = readdir(dir)) != NULL)
-        {
-            if ((strcmp(d_ent->d_name, ".") != 0) && (strcmp(d_ent->d_name, "..") != 0))
-            {
-
-                if (d_ent->d_type != DT_DIR)
-                {
-                    //string d_name(d_ent->d_name);
-
-                    if (strcmp(d_ent->d_name + strlen(d_ent->d_name) - m_strFileExt.length(), m_strFileExt.c_str()) == 0)
-                    {
-                        struct stat statbuf;
-
-                        string strAbsolutePath;
-                        //string absolutePath = directory + string("/") + string(d_ent->d_name);
-                        if (strDir[strDir.length() - 1] == '/')
-                            strAbsolutePath = strDir + string(d_ent->d_name);
-                        else
-                            strAbsolutePath = strDir + "/" + string(d_ent->d_name);
-
-
-                        if (stat(strAbsolutePath.c_str(), &statbuf) != 0) {
-                            continue; // 
-                        }
-
-                        uint64_t uTime = (static_cast<uint64_t>(statbuf.st_mtim.tv_sec * 1000 + statbuf.st_mtim.tv_nsec / 1000000));
-                        mapFilePath[uTime] = strAbsolutePath;
-                    }
-                }
-            }
-        }
-        closedir(dir);
-
-        size_t iIndex = mapFilePath.size();
-        for (auto item : mapFilePath)
-        {
-            if (iIndex > (size_t)m_iMaxFiles)
-            {
-                if (remove(item.second.c_str()) != 0)
-                    perror(("Error removing old log: " + item.second).c_str());
-                iIndex--;
-            }
-            else
-                break;
-        }
-#endif 
-    }
-}
-
-int FileLogger::findMaxFileIndex() {
-    std::vector<int> vecIndices;
-
-#ifdef _WIN32
-    WIN32_FIND_DATAA findData;
-    HANDLE hFind = FindFirstFileA((m_strFilePrefix + "_*" + m_strFileExt).c_str(), &findData);
-    if (hFind != INVALID_HANDLE_VALUE) {
-        do {
-            if (!(findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-                processFileName(findData.cFileName, vecIndices);
-            }
-        } while (FindNextFileA(hFind, &findData));
-        FindClose(hFind);
-    }
-#else
-    string strDir = FileSystem::getDirFromFilePath(m_strBaseName);
-    DIR* dir = opendir(strDir.c_str());
-    if (dir) {
-        struct dirent* ent = nullptr;
-        while ((ent = readdir(dir)) != nullptr) {
-            if (ent->d_type == DT_REG) {
-                processFileName(ent->d_name, vecIndices);
-            }
-        }
-        closedir(dir);
-    }
-#endif
-
-    return vecIndices.empty() ? 0 : *std::max_element(vecIndices.begin(), vecIndices.end());
-}
-
-void FileLogger::processFileName(const std::string& fileName, std::vector<int>& indices) 
-{
-#if 0
-    const std::string prefix = m_strFilePrefix + "_";
-    const std::string ext = m_strFileExt;
-
-    if (fileName.size() <= prefix.size() + ext.size())
-        return;
-    if (fileName.substr(0, prefix.size()) != prefix)
-        return;
-    if (fileName.substr(fileName.size() - ext.size()) != ext) 
-        return;
-
-    const std::string numStr = fileName.substr(prefix.size(),
-        fileName.size() - prefix.size() - ext.size()
-    );
-
-    if (isNumber(numStr)) {
-        try {
-            indices.push_back(std::stoi(numStr));
-        }
-        catch (...) {}
-    }
-#else
-    size_t pos = fileName.find_last_of("_");
-    if (pos != string::npos)
-    {
-        const std::string numStr = fileName.substr(pos + 1);
-        if(!numStr.empty())
-            indices.push_back(std::stoi(numStr));
-    }
-#endif
-
-}
-
-bool FileLogger::isNumber(const std::string& s) {
-    return !s.empty() &&
-        std::all_of(s.begin(), s.end(),
-            [](unsigned char c) { return std::isdigit(c); });
-}
-
-std::string FileLogger::generateFileName(int index) const {
-    return m_strFilePrefix + "_" + std::to_string(index) + m_strFileExt;
 }

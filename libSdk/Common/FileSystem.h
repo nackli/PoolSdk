@@ -24,7 +24,7 @@ using FileInfoList = list<FILEINFO>;
 	string NtPathToDosPath(const string& strPath);
 #endif	
 	std::string getDirFromFilePath(const std::string& filepath);
-	FileInfoList getFilesInDirectory(const string& strDir, const char* szExt);
+	FileInfoList getFilesInCurDir(const string& strFilePathAndReg, const string& strExt,bool bOnlyFileName = false);
 	bool IsDirectoryExists(const string& strDir);
 	bool IsFileExists(const string& strDir);
 	bool createDirectoryRecursive(string& strDir);
