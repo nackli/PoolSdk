@@ -1,7 +1,13 @@
+/***************************************************************************************************************************************************/
 /*
-Written by Nack li <nackli@163.com>
-Copyright (c) 2024. All Rights Reserved.
+* @Author: Nack Li
+* @version 1.0
+* @copyright 2025 nackli. All rights reserved.
+* @License: MIT (https://opensource.org/licenses/MIT).
+* @Date: 2025-08-29
+* @LastEditTime: 2025-08-29
 */
+/***************************************************************************************************************************************************/
 
 #include "FileSystem.h"
 #include <string>
@@ -15,6 +21,8 @@ Copyright (c) 2024. All Rights Reserved.
 #include <algorithm>
 #include <cstring>
 #include <iostream>
+#include <unistd.h>
+#include <vector>
 namespace FileSystem
 {
 #ifdef _WIN32	
@@ -143,7 +151,7 @@ namespace FileSystem
 		DIR* dir = opendir(strDir.c_str());
 		if (dir == NULL)
 		{
-			printf("[ERROR] %s is not a directory or not exist!", strDir.c_str());
+			printf("[ERROR] %s is not a directory or not exist!\n", strDir.c_str());
 			return FileInfoList();
 		}
 
@@ -450,11 +458,22 @@ namespace FileSystem
 		return fread(pData, uSize, 1, hFile) > 0;
 	}
 
-	bool flushFile(FILE* hFile)
+	bool flushFile(FILE* hFile,bool bForcedDisk)
 	{
 		if (!hFile)
 			return false;
-		return fflush(hFile) == 0;
+#ifndef _MSC_VER		
+		if(fflush(hFile) == 0)
+		{
+			if(bForcedDisk)
+			{
+				int fd = ::fileno(hFile);
+				::fsync(fd);
+			}
+			return true;
+		}
+#endif	
+		return false;
 	}
 
 	bool fseekFile(FILE* hFile, int iPos, int origin)
@@ -536,19 +555,88 @@ namespace FileSystem
 #endif
 	}
 
+	// 规范化路径，处理 . 和 .. 以及反斜杠
+inline std::string normalizePath(const std::string& path) {
+    std::string normalized;
+    std::vector<std::string> components;
+    std::string current;
+    
+    // 首先替换所有反斜杠为正斜杠
+    std::string temp = path;
+    std::replace(temp.begin(), temp.end(), '\\', '/');
+    
+    // 处理路径组件
+    for (char c : temp)
+	{
+        if (c == '/') 
+		{
+            if (!current.empty()) 
+			{
+                if (current == ".")
+				{
+
+                } 
+				else if (current == "..") 
+				{
+                    if (!components.empty()) 
+                        components.pop_back();
+                } 
+				else 
+                    components.push_back(current);
+                current.clear();
+            }
+        } 
+		else 
+            current += c;
+    }
+    
+    if (!current.empty()) {
+        if (current == ".") 
+		{
+        } 
+		else if (current == "..") 
+		{
+            if (!components.empty()) 
+                components.pop_back();
+        } 
+		else 
+            components.push_back(current);
+    }
+    
+    if (temp.find('/') == 0) 
+        normalized = "/"; 
+    
+    for (size_t i = 0; i < components.size(); ++i) 
+	{
+        normalized += components[i];
+        if (i < components.size() - 1) 
+            normalized += "/";
+    }
+    
+    return normalized;
+}
+
 	string relative2AbsolutePath(const std::string& strRelaPath)
 	{
 #ifndef _WIN32
-		const uint16_t MAX_PATH = 256;
+		const uint16_t MAX_PATH = PATH_MAX;
 #endif
 		char szFullPath[MAX_PATH];
 #ifdef _WIN32
 		GetFullPathNameA(strRelaPath.c_str(), MAX_PATH, szFullPath, nullptr);
 		return std::string(szFullPath);
 #else
+#if 0
 		if (!realpath(strRelaPath.c_str(), szFullPath))
-			std::cerr << "real path fun: " << strerror(errno) << std::endl;
+			std::cerr << "real path fun: " <<strRelaPath <<" "<< strerror(errno) << std::endl;
 		return std::string(szFullPath);
+#else
+		if (getcwd(szFullPath, sizeof(szFullPath)) != nullptr) 
+		{
+			return normalizePath(std::string(szFullPath) + "/" + strRelaPath);	
+		}
+		return 	strRelaPath;
+#endif
 #endif
 	}
 }

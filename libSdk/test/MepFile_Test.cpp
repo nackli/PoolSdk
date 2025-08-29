@@ -1,11 +1,13 @@
-﻿/*
- * @Author: nackli nackli@163.com
- * @Date: 2025-08-01 21:20:49
- * @LastEditors: nackli nackli@163.com
- * @LastEditTime: 2025-08-01 22:04:35
- * @FilePath: /PoolSdk/PoolSdk/PoolSdk.cpp
- * */
-//
+﻿/***************************************************************************************************************************************************/
+/*
+* @Author: Nack Li
+* @version 1.0
+* @copyright 2025 nackli. All rights reserved.
+* @License: MIT (https://opensource.org/licenses/MIT).
+* @Date: 2025-08-29
+* @LastEditTime: 2025-08-29
+*/
+/***************************************************************************************************************************************************/
 #ifdef _WIN32
 #include <Windows.h>
 #else

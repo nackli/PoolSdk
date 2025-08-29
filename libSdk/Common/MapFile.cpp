@@ -1,17 +1,37 @@
+/***************************************************************************************************************************************************/
+/*
+* @Author: Nack Li
+* @version 1.0
+* @copyright 2025 nackli. All rights reserved.
+* @License: MIT (https://opensource.org/licenses/MIT).
+* @Date: 2025-08-29
+* @LastEditTime: 2025-08-29
+*/
+/***************************************************************************************************************************************************/
 #ifdef _WIN32
 #include <Windows.h>
+#else
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <unistd.h>
 #endif
 #include "FileSystem.h"
 #include "MapFile.h"
 #include "FileLogger/FileLogger.h"
+
 /*********************************************************************************************************************/
 #define MAX_READ_MEM_BYTE					0x300000
+#ifndef INVALID_HANDLE_VALUE
+#define INVALID_HANDLE_VALUE				-1
+#endif
 /*********************************************************************************************************************/
 typedef struct
 {
 #ifdef _WIN32
 	HANDLE hFile;
 	HANDLE hMap;
+#else
+	int hFile;	
 #endif
 	void* pMem;
 }MAP_HANDLE, *LP_MAP_HANDLE;
@@ -33,9 +53,10 @@ bool MapFile::openOrCreateMap(const char* szMapName, int iMaxSize, const char* s
 	LP_MAP_HANDLE lpMap = new MAP_HANDLE;
 	if (!lpMap)
 		return false;
+	m_uMemMaxSize = iMaxSize - 1;	
+	m_hFileMap = lpMap;	
 #ifdef _WIN32
-	m_hFileMap = lpMap;
-	m_uMemMaxSize = iMaxSize - 1;
+	
 	if (szFileName)
 		lpMap->hFile = FileSystem::openOrCreateFile(szFileName, GENERIC_WRITE | GENERIC_READ, OPEN_ALWAYS, 0, 0);
 	else
@@ -52,6 +73,31 @@ bool MapFile::openOrCreateMap(const char* szMapName, int iMaxSize, const char* s
 	lpMap->pMem = (char*)MapViewOfFile(lpMap->hMap, FILE_MAP_READ | FILE_MAP_WRITE, 0, (DWORD)0, 0);
 	if (!lpMap->pMem)
 		goto end;
+#else
+    if(!szFileName)
+		szFileName = "/dev/xg_map";
+    lpMap->hFile= open(szFileName, O_RDWR | O_CREAT, 0666);
+	if(lpMap->hFile < 0)
+	{
+		perror("open dev fail\n"); 
+		return false;
+	}
+
+	if(ftruncate(lpMap->hFile, m_uMemMaxSize) < 0)
+	{
+		perror("ftruncate fail\n"); 
+		printf("m_uMemMaxSize = %d",m_uMemMaxSize);
+		goto end;
+	}
+	
+	
+	lpMap->pMem =  (char *)mmap(NULL, m_uMemMaxSize, PROT_READ | PROT_WRITE, MAP_SHARED, lpMap->hFile, 0);
+    if (lpMap->pMem  == MAP_FAILED) 
+	{
+		perror("open mmap fail\n"); 
+		close(lpMap->hFile);
+		goto end;
+	}
 #endif
 	return true;
 end:
@@ -162,10 +208,22 @@ bool MapFile::closeMap()
 		CloseHandle(lpMap->hMap);
 		lpMap->hMap = INVALID_HANDLE_VALUE;
 	}
+#else
+	if (lpMap->hFile != INVALID_HANDLE_VALUE)
+	{
+		close(lpMap->hFile);
+		lpMap->hFile = INVALID_HANDLE_VALUE;
+	}
+
+	if (lpMap->pMem)
+	{
+		munmap(lpMap->pMem,m_uMemMaxSize);
+		lpMap->pMem = nullptr;
+	}
 #endif
 	if (m_hFileMap)
 	{
-		delete m_hFileMap;
+		delete (LP_MAP_HANDLE)m_hFileMap;
 		m_hFileMap = nullptr;
 	}
 	return true;

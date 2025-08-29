@@ -42,9 +42,9 @@ netIp = 127.0.0.1:9000
 ```
 out_mode = async
 ```
-#日志输出格式，包括时间、级别、文件、线程ID，文件行号、文件名称 日志消息[{time} {level} {file} {tid} {line} {func} {message}]
+#日志输出格式，包括时间、级别、文件、线程ID，文件行号、文件名称 日志消息[%D or %y or %Y  %l %g %t %#  %! %v]
 ```
-log_format=[{time}] [{level}] [tid : {tid}] [line : {line}] [{func}] {message}
+log_pattern=[%y] [%l] [tid:%t] [%!] %v%n
 ```
 | 输出格式 | 说明| 样式|
 |:----:|------|------|

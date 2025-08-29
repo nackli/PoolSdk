@@ -1,11 +1,21 @@
+/***************************************************************************************************************************************************/
+/*
+* @Author: Nack Li
+* @version 1.0
+* @copyright 2025 nackli. All rights reserved.
+* @License: MIT (https://opensource.org/licenses/MIT).
+* @Date: 2025-08-29
+* @LastEditTime: 2025-08-29
+*/
+/***************************************************************************************************************************************************/
 #pragma once
 #ifdef _WIN32
 #include <windows.h>
 #define smp_rmb() MemoryBarrier()
 #define smp_mb() MemoryBarrier()
 #define smp_wmb() MemoryBarrier()
-#else // ·ÇWindowsÆ½Ì¨
-#define smp_rmb() asm volatile("lfence" ::: "memory")	//lfence ¶Á´®ÐÐ»¯
-#define smp_mb() asm volatile("mfence" ::: "memory")	//mfence ¶ÁÐ´¶¼´®ÐÐ»¯
-#define smp_wmb() asm volatile("sfence" ::: "memory")	//sfence Ð´´®ÐÐ»¯
+#else // ï¿½ï¿½WindowsÆ½Ì¨
+#define smp_rmb() asm volatile("lfence" ::: "memory")	//lfence ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½
+#define smp_mb() asm volatile("mfence" ::: "memory")	//mfence ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½
+#define smp_wmb() asm volatile("sfence" ::: "memory")	//sfence Ð´ï¿½ï¿½ï¿½Ð»ï¿½
 #endif

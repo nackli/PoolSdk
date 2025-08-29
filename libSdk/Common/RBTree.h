@@ -1,3 +1,13 @@
+/***************************************************************************************************************************************************/
+/*
+* @Author: Nack Li
+* @version 1.0
+* @copyright 2025 nackli. All rights reserved.
+* @License: MIT (https://opensource.org/licenses/MIT).
+* @Date: 2025-08-29
+* @LastEditTime: 2025-08-29
+*/
+/***************************************************************************************************************************************************/
 #pragma once
 #include <iostream>
 #include <memory>
@@ -152,9 +162,9 @@ public:
     }
 private:
     shart_node_type root;
-    shart_node_type nil;  // ÉÚ±ø½Úµã£¬´ú±íNULL
+    shart_node_type nil;  // ï¿½Ú±ï¿½ï¿½Úµã£¬ï¿½ï¿½ï¿½ï¿½NULL
 
-    // ¸¨Öúº¯Êý
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     void leftRotate(shart_node_type x)
     {
         auto y = x->right;
@@ -231,7 +241,7 @@ private:
                 }
             }
             else {
-                // ¶Ô³ÆÇé¿ö
+                // ï¿½Ô³ï¿½ï¿½ï¿½ï¿½
                 auto y = z->parent->parent->left;
 
                 if (y->color == Color::TREE_RED) {
@@ -304,7 +314,7 @@ private:
                     }
                 }
                 else {
-                    // ¶Ô³ÆÇé¿ö
+                    // ï¿½Ô³ï¿½ï¿½ï¿½ï¿½
                     auto w = x->parent->left;
 
                     if (w->color == Color::TREE_RED) {

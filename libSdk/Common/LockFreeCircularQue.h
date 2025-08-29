@@ -1,3 +1,13 @@
+/***************************************************************************************************************************************************/
+/*
+* @Author: Nack Li
+* @version 1.0
+* @copyright 2025 nackli. All rights reserved.
+* @License: MIT (https://opensource.org/licenses/MIT).
+* @Date: 2025-08-29
+* @LastEditTime: 2025-08-29
+*/
+/***************************************************************************************************************************************************/
 #pragma once
 #ifndef __PLATFORM_LOCK_FREE_CIRCULAR_QUEUE_H_
 #define __PLATFORM_LOCK_FREE_CIRCULAR_QUEUE_H_
@@ -36,7 +46,7 @@ public:
 
     bool enqueue(T new_value) {
         if (size.load() >= capacity.load()) {
-            return false; // ╤сапрябЗ
+            return false; // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
         }
 
         std::shared_ptr<T> new_data(std::make_shared<T>(std::move(new_value)));
@@ -56,7 +66,7 @@ public:
         Node* next_node = old_head->next.load();
 
         if (!next_node) {
-            return false; // ╤сапн╙©у
+            return false; // О©╫О©╫О©╫О©╫н╙О©╫О©╫
         }
 
         value = std::move(*(next_node->data));

@@ -1,3 +1,13 @@
+/***************************************************************************************************************************************************/
+/*
+* @Author: Nack Li
+* @version 1.0
+* @copyright 2025 nackli. All rights reserved.
+* @License: MIT (https://opensource.org/licenses/MIT).
+* @Date: 2025-08-29
+* @LastEditTime: 2025-08-29
+*/
+/***************************************************************************************************************************************************/
 #pragma once
 #ifndef __PLATFORM_FILE_LOG_H_
 #define __PLATFORM_FILE_LOG_H_
@@ -11,6 +21,7 @@
 #include <cstdarg>
 #include <ctime>
 #include <mutex>
+//#include <pair>
 #include <memory>
 #include "../Common/LockQueue.h"
 #include "../Common/StringUtils.h"
@@ -101,7 +112,7 @@ private:
     LogLevel m_emLogLevel;
     bool m_bSync;
     std::mutex m_Mutex;
-    LockQueue<std::string> m_ctxQueue;
+    LockQueue<std::pair<std::string,int>> m_ctxQueue;
     OutPutMode* m_pOutputMode;
     FormatterBuilder* m_pPatternFmt;
 };

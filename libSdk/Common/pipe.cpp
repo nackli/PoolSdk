@@ -1,7 +1,13 @@
+/***************************************************************************************************************************************************/
 /*
-Written by Nack li <nackli@163.com>
-Copyright (c) 2024. All Rights Reserved.
+* @Author: Nack Li
+* @version 1.0
+* @copyright 2025 nackli. All rights reserved.
+* @License: MIT (https://opensource.org/licenses/MIT).
+* @Date: 2025-08-29
+* @LastEditTime: 2025-08-29
 */
+/***************************************************************************************************************************************************/
 #include "pipe.h"
 #include "FileFun.h"
 int createPipe(PIPE_HANDLE hPipe[OPT_MAX])

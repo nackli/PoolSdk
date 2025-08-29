@@ -1,9 +1,21 @@
+/***************************************************************************************************************************************************/
+/*
+* @Author: Nack Li
+* @version 1.0
+* @copyright 2025 nackli. All rights reserved.
+* @License: MIT (https://opensource.org/licenses/MIT).
+* @Date: 2025-08-29
+* @LastEditTime: 2025-08-29
+*/
+/***************************************************************************************************************************************************/
 #include "OutPutMode.h"
 #include "Common/FileSystem.h"
 #include <sstream>
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include "fmt/printf.h"
+#include "fmt/color.h"
 #ifndef INVALID_SOCKET
 #define INVALID_SOCKET                  0x0
 #endif
@@ -346,8 +358,8 @@ bool ConsoleOutPutMode::writeData(const std::string &strMsgData,int iLogLevel)
 	cout << strMsgData;
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);
 #else
-	const char* clrIndex[] = { "/033[1;37m","/033[0;37m","/033[0;32;32m", "/033[1;33m","/033[0;32;31m","/033[1;32;31m" };
-	printf("%s%s\033[0m", clrIndex[iLogLevel], strMsgData.c_str());
+	const fmt::color clrIndex[] = { fmt::color::dark_sea_green, fmt::color::white, fmt::color::dim_gray, fmt::color::light_yellow, fmt::color::red, fmt::color::indigo};
+	fmt::print(fg(clrIndex[iLogLevel]),"{}",strMsgData);
 #endif
 	return true;
 }

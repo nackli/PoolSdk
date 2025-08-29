@@ -1,3 +1,13 @@
+/***************************************************************************************************************************************************/
+/*
+* @Author: Nack Li
+* @version 1.0
+* @copyright 2025 nackli. All rights reserved.
+* @License: MIT (https://opensource.org/licenses/MIT).
+* @Date: 2025-08-29
+* @LastEditTime: 2025-08-29
+*/
+/***************************************************************************************************************************************************/
 #pragma once
 #ifndef __EVENT_LINUX_WIN__H__
 #define __EVENT_LINUX_WIN__H__
@@ -7,6 +17,8 @@
 #else
 #include <pthread.h>
 #include <sys/time.h>
+#include <new>
+#include <cerrno>
 typedef struct  
 {
     bool bState;
@@ -19,11 +31,11 @@ typedef struct
 
 inline  EVENT_HANDLE eventCreate(bool bManualReset, bool bInitState)
 {
-#ifdef _WIN32
+#ifdef _MSC_VER
     HANDLE hEvent = CreateEvent(NULL, bManualReset, bInitState, NULL);
 #else
     EVENT_HANDLE hEvent = new(std::nothrow) EVENT_T;
-    if (hevent == NULL)
+    if (hEvent == NULL)
         return NULL;
 	
     hEvent->bState = bInitState;
@@ -45,7 +57,7 @@ inline  EVENT_HANDLE eventCreate(bool bManualReset, bool bInitState)
 
 inline int eventWait(EVENT_HANDLE hEvent)
 {
-#ifdef _WIN32
+#ifdef _MSC_VER
     DWORD ret = WaitForSingleObject(hEvent, INFINITE);
     if (ret == WAIT_OBJECT_0)
         return 0;
@@ -103,12 +115,11 @@ inline  int eventWaitTimeOut(EVENT_HANDLE hEvent, long milliseconds)
 	
     while (!hEvent->bState)    
     {      
-        if (rc = pthread_cond_timedwait(&hEvent->condThread, &hEvent->mtxThread, &abstime))   
-        {   
-            if (rc == ETIMEDOUT) break;   
-            pthread_mutex_unlock(&hEvent->mtxThread);    
-            return -1;   
-        }   
+        rc = pthread_cond_timedwait(&hEvent->condThread, &hEvent->mtxThread, &abstime);
+        if (rc == ETIMEDOUT) 
+            break;   
+        pthread_mutex_unlock(&hEvent->mtxThread);    
+        return -1;   
     }  
 	
     if (rc == 0 && !hEvent->bManualReset)   
@@ -187,7 +198,7 @@ inline void eventDestroy(EVENT_HANDLE hEvent)
 #else
     pthread_cond_destroy(&hEvent->condThread);
     pthread_mutex_destroy(&hEvent->mtxThread);
-    delete hevent;
+    delete hEvent;
 #endif
 }
 #endif

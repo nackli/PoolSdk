@@ -1,3 +1,13 @@
+/***************************************************************************************************************************************************/
+/*
+* @Author: Nack Li
+* @version 1.0
+* @copyright 2025 nackli. All rights reserved.
+* @License: MIT (https://opensource.org/licenses/MIT).
+* @Date: 2025-08-29
+* @LastEditTime: 2025-08-29
+*/
+/***************************************************************************************************************************************************/
 #pragma once
 #include <memory>
 #include <ctime>
@@ -99,8 +109,9 @@ struct LogMessage {
     const char * strLogName = nullptr;// logger name
     const char* szFunName = nullptr;// logger name
     LogMessage(int level, const char* szFile, size_t iLine, const char* szMsg,  const char* szFName)
-        : iLevLog(level), iThreadId(std::this_thread::get_id()), szFunName(szFName),  szFileName(szFile), 
-        iLineNo(iLine), szMsgCtx(szMsg), strLogName(nullptr)
+        :iLevLog(level), iThreadId(std::this_thread::get_id()),szFileName(szFile), iLineNo(iLine), szMsgCtx(szMsg), 
+        strLogName(nullptr), szFunName(szFName)
+       
     {
 #ifdef _WIN32
         GetLocalTime(&tmCreate);

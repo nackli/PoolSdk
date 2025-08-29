@@ -1,3 +1,13 @@
+/***************************************************************************************************************************************************/
+/*
+* @Author: Nack Li
+* @version 1.0
+* @copyright 2025 nackli. All rights reserved.
+* @License: MIT (https://opensource.org/licenses/MIT).
+* @Date: 2025-08-29
+* @LastEditTime: 2025-08-29
+*/
+/***************************************************************************************************************************************************/
 #pragma once
 #include <iostream>
 #include <memory>
@@ -142,12 +152,12 @@ public:
         return count;
     }
 
-    // ´òÓ¡Ìø±í½á¹¹
+    // ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½á¹¹
     void printHelper() const {
-        std::cout << "Ìø±í½á¹¹: " << std::endl;
+        std::cout << "ï¿½ï¿½ï¿½ï¿½ï¿½á¹¹: " << std::endl;
         for (int i = 0; i <= m_iCurLevel; i++) {
             auto node = m_pHeader->forward[i];
-            std::cout << "µÚ " << i << " ²ã: ";
+            std::cout << "ï¿½ï¿½ " << i << " ï¿½ï¿½: ";
             while (node != nullptr) {
                 std::cout << node->value << " ";
                 node = node->forward[i];

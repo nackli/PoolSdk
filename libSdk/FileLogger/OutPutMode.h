@@ -1,3 +1,13 @@
+/***************************************************************************************************************************************************/
+/*
+* @Author: Nack Li
+* @version 1.0
+* @copyright 2025 nackli. All rights reserved.
+* @License: MIT (https://opensource.org/licenses/MIT).
+* @Date: 2025-08-29
+* @LastEditTime: 2025-08-29
+*/
+/***************************************************************************************************************************************************/
 #pragma once
 #ifndef __OUT_PUT_MODE_H__
 #define __OUT_PUT_MODE_H__
@@ -23,6 +33,7 @@ class OutPutMode
 {
 public:
     using ptr = std::unique_ptr<OutPutMode>;
+	virtual ~OutPutMode(){};
     virtual bool writeData(const std::string &strMsgData,int iLogLevel) = 0;
 	virtual bool initOutMode(const char *,int iMaxSize = 0) {return true;};
 	virtual void closeOutPut(){};

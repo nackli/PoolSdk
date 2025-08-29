@@ -1,7 +1,13 @@
+/***************************************************************************************************************************************************/
 /*
-Written by Nack li <nackli@163.com>
-Copyright (c) 2024. All Rights Reserved.
+* @Author: Nack Li
+* @version 1.0
+* @copyright 2025 nackli. All rights reserved.
+* @License: MIT (https://opensource.org/licenses/MIT).
+* @Date: 2025-08-29
+* @LastEditTime: 2025-08-29
 */
+/***************************************************************************************************************************************************/
 
 #include "FileLogger.h"
 #include <stdio.h>
@@ -264,17 +270,17 @@ void FileLogger::outPut2File()
     {     
         do 
         {
-            std::string strData = m_ctxQueue.pop_front();
-            m_pOutputMode->writeData(strData,0); 
+            std::pair<string,int> pairData = m_ctxQueue.pop_front();
+            m_pOutputMode->writeData(pairData.first,pairData.second); 
         }while(!m_ctxQueue.empty());
-        //m_pOutputMode->flushFile();
+        m_pOutputMode->flushFile();
     }
 }
 
 void FileLogger::writeToOutPut(LogLevel &emLevel, const std::string& strMsg)
 {
     if (!m_bSync)
-        m_ctxQueue.push(strMsg);
+        m_ctxQueue.push(std::pair<string,int>(strMsg,emLevel));
     else
     {
         {

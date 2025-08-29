@@ -71,6 +71,7 @@
         "source_location": "cpp",
         "ranges": "cpp",
         "valarray": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "cerrno": "cpp"
     }
 }
