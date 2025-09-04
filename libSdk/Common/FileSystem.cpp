@@ -17,11 +17,11 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <cstdint>
+#include <unistd.h>
 #endif
 #include <algorithm>
 #include <cstring>
 #include <iostream>
-#include <unistd.h>
 #include <vector>
 namespace FileSystem
 {
@@ -462,17 +462,18 @@ namespace FileSystem
 	{
 		if (!hFile)
 			return false;
-#ifndef _MSC_VER		
+	
 		if(fflush(hFile) == 0)
 		{
+#ifndef _MSC_VER	
 			if(bForcedDisk)
 			{
 				int fd = ::fileno(hFile);
 				::fsync(fd);
 			}
+#endif	
 			return true;
 		}
-#endif	
 		return false;
 	}
 

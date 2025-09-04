@@ -12,7 +12,12 @@
 #include "Common/LockQueue.h"
 #ifdef _WIN32
 #include <Windows.h>
+#ifdef _DEBUG
+#pragma comment(lib,"PoolSdk_d.lib")
+#else
 #pragma comment(lib,"libSdk.lib")
+#endif
+
 #else
 unsigned long GetTickCount()
 {
