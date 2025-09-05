@@ -10,11 +10,6 @@
 /***************************************************************************************************************************************************/
 #ifdef _WIN32
 #include <Windows.h>
-#ifdef _DEBUG
-#pragma comment(lib,"PoolSdk_d.lib")
-#else
-#pragma comment(lib,"PoolSdk.lib")
-#endif
 #endif
 #include "Common/MemTable.h"
 int main()

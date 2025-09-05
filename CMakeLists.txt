@@ -93,7 +93,11 @@ add_msvc_options(${PROJECT_NAME})
 add_executable(${PROJECT_NAME}_test .//libSdk/test/log_Test.cpp)
 
 if(MSVC)
-target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
+  target_link_libraries(${PROJECT_NAME}_test PUBLIC 
+    debug ${PROJECT_NAME}_d.lib 
+    optimized ${PROJECT_NAME}.lib)
+else()
+  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
 endif()
 
 include(BuildPage.cmake)

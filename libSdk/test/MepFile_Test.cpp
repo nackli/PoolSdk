@@ -10,11 +10,6 @@
 /***************************************************************************************************************************************************/
 #ifdef _WIN32
 #include <Windows.h>
-#ifdef _DEBUG
-#pragma comment(lib,"PoolSdk_d.lib")
-#else
-#pragma comment(lib,"PoolSdk.lib")
-#endif
 #else
 #include <time.h>
 #include <unistd.h>
