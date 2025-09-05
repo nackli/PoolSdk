@@ -16,6 +16,7 @@
 #ifdef _WIN32
 #include <Windows.h>
 #endif
+#include <stdint.h>
 namespace FileSystem
 {
 using namespace std;
