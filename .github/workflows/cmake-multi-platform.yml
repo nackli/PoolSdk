@@ -42,7 +42,7 @@ jobs:
         exclude:
           - os: windows-latest
             c_compiler: gcc
-          - os: windows-latest
+          - os: ubuntu-latest
             c_compiler: clang
           - os: ubuntu-latest
             c_compiler: cl
@@ -101,5 +101,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ${{ steps.strings.outputs.build-output-dir }}/PoolSdk.zip
-        asset_name: /PoolSdk-${{ matrix.run_env }}-${{ github.ref }}.zip
+        asset_name: /PoolSdk-${{ matrix.run_env }}-${{ github.ref_name }}.zip
         asset_content_type: application/zip
