@@ -9,9 +9,16 @@
 * @LastEditTime: 2025-08-29
 */
 /***************************************************************************************************************************************************/
+#ifdef _WIN32
 #include <Windows.h>
+#ifdef _DEBUG
+#pragma comment(lib,"PoolSdk_d.lib")
+#else
+#pragma comment(lib,"PoolSdk.lib")
+#endif
+#endif
 #include "Common/RBTree.h"
-#pragma comment(lib,"libSdk.lib")
+
 int main()
 {
 	RedBlackTree<int> rbTree;

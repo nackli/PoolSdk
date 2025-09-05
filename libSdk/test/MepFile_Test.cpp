@@ -10,6 +10,11 @@
 /***************************************************************************************************************************************************/
 #ifdef _WIN32
 #include <Windows.h>
+#ifdef _DEBUG
+#pragma comment(lib,"PoolSdk_d.lib")
+#else
+#pragma comment(lib,"PoolSdk.lib")
+#endif
 #else
 #include <time.h>
 #include <unistd.h>
@@ -23,9 +28,7 @@
 #include "FileLogger/FileLogger.h"
 #include "Common/StringUtils.h"
 #include "Common/MapFile.h"
-#ifdef _WIN32
-#pragma comment(lib,"libSdk.lib")
-#endif
+
 
 HANDLE g_hNotifyEvent = nullptr;
 static void OnWriteData(MapFile* pData)

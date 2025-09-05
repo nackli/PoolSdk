@@ -15,7 +15,7 @@
 #ifdef _DEBUG
 #pragma comment(lib,"PoolSdk_d.lib")
 #else
-#pragma comment(lib,"libSdk.lib")
+#pragma comment(lib,"PoolSdk.lib")
 #endif
 
 #else

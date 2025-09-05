@@ -92,9 +92,9 @@ add_msvc_options(${PROJECT_NAME})
 
 add_executable(${PROJECT_NAME}_test .//libSdk/test/log_Test.cpp)
 
-
+if(MSVC)
 target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
-
+endif()
 
 include(BuildPage.cmake)
 use_pack_fun(${PROJECT_NAME} "ZIP")
