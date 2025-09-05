@@ -71,6 +71,11 @@ jobs:
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --target package
 
+    - name: Generate Changelog
+      run: |
+        npm install --save-dev conventional-changelog-cli conventional-changelog-angular
+        npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0
+
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
@@ -85,7 +90,7 @@ jobs:
       with:
         tag_name:  ${{ matrix.run_env }}-${{ github.ref }}
         release_name: Release ${{ github.ref }}
-        body: ${{ matrix.run_env }} environment running package.
+        body_path: CHANGELOG.md
         draft: false
         prerelease: false
         
