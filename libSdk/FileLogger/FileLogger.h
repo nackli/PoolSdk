@@ -70,6 +70,7 @@ public:
     void setLogLevel(LogLevel level);
     void initLog(const std::string& strCfgName);
     void setLogFileName(const std::string& strFileName);
+    void closeLog();
 
     template<typename FormatStr,typename... Args>
     void log(bool bFormat,LogLevel emLevel, const char* szFun,const char *szFileName, 

@@ -147,6 +147,7 @@ void FileLogger::setLogLevel(LogLevel level) {
 
 void FileLogger::initLog(const std::string &strCfgName)
 {
+    closeLog(); 
     string strBaseName("./Logs/log.log");
     int iMaxFileNum = 10;
     int iMaxFileSize = 0x500000;
@@ -235,17 +236,7 @@ void FileLogger::setLogFileName(const std::string& strFileName)
     }
 }
 
-FileLogger::FileLogger(LogLevel level)
-    :m_emLogLevel(level),
-    m_bSync(false),
-    m_pOutputMode(nullptr),
-    m_pPatternFmt(nullptr)
-    
-{
-    m_ctxQueue.setSpaces(200);
-}
-
-FileLogger::~FileLogger() 
+void FileLogger::closeLog()
 {
     if (m_pOutputMode)
     {
@@ -255,9 +246,32 @@ FileLogger::~FileLogger()
     }
 }
 
+FileLogger::FileLogger(LogLevel level)
+    :m_emLogLevel(level),
+    m_bSync(false),
+    m_pOutputMode(nullptr),
+    m_pPatternFmt(nullptr)
+    
+{
+    // m_pOutputMode = new FileOutPutMode;
+    // m_pOutputMode->initOutMode("./logs/logfile.log", 0x500000);
+    // m_pOutputMode->setMaxFileNum(10);
+    m_ctxQueue.setSpaces(200);
+}
+
+FileLogger::~FileLogger() 
+{
+    closeLog();
+}
+
 void FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, const char* szFileName, 
     const int iLine, const string & strMessage)
 {
+    if(!m_pPatternFmt)
+    {
+        cout << "Logger not init->formatMessage" <<endl;
+        return;
+    }
     LogMessage logMsg(emLevel, szFileName, iLine, strMessage.c_str(), szFunName);
     memory_buf_t bufDest;
     string strFormatted = m_pPatternFmt->format(logMsg);
@@ -279,6 +293,12 @@ void FileLogger::outPut2File()
 
 void FileLogger::writeToOutPut(LogLevel &emLevel, const std::string& strMsg)
 {
+    if(!m_pOutputMode)
+    {
+        cout << "Logger not init->formatMessage" <<endl;
+        return;
+    }
+
     if (!m_bSync)
         m_ctxQueue.push(std::pair<string,int>(strMsg,emLevel));
     else
