@@ -29,13 +29,11 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 
 include_directories(./libSdk)
 
-
 if(MSVC) 
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd /Zi")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /Zi")
-
 	set(CMAKE_GENERATOR_PLATFORM Win32)
-  add_compile_options(/W3 /utf-8 /bigobj /MP)
+    add_compile_options(/W3 /utf-8 /bigobj /MP)
 else()
 	 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall -O3 -fPIC")
 	 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 -fPIC")
@@ -75,11 +73,8 @@ macro(add_msvc_options target)
 endmacro()
 
 
-
-
 if(MSVC)
   set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
-  link_directories(${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endif()
 
 
@@ -90,14 +85,13 @@ list(REMOVE_ITEM DEV_SOURCES_EXE ${REMOVE_SOURCES})
 add_library(${PROJECT_NAME} ${DEV_SOURCES_EXE})
 add_msvc_options(${PROJECT_NAME})
 
-
 add_executable(${PROJECT_NAME}_test .//libSdk/test/log_Test.cpp)
 
 if(MSVC)
-
   target_link_libraries(${PROJECT_NAME}_test PUBLIC 
-    debug ${PROJECT_NAME}_d.lib 
-    optimized ${PROJECT_NAME}.lib)
+    debug ${PROJECT_BINARY_DIR}/Debug/${PROJECT_NAME}.lib 
+    optimized ${PROJECT_BINARY_DIR}/Release/${PROJECT_NAME}.lib)
+
 else()
   target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
 endif()
