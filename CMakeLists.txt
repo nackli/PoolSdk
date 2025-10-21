@@ -91,9 +91,8 @@ if(MSVC)
   target_link_libraries(${PROJECT_NAME}_test PUBLIC 
     debug ${PROJECT_BINARY_DIR}/Debug/${PROJECT_NAME}.lib 
     optimized ${PROJECT_BINARY_DIR}/Release/${PROJECT_NAME}.lib)
-
 else()
-  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
+  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} -lpthread)
 endif()
 
 include(BuildPage.cmake)

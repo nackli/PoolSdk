@@ -65,10 +65,13 @@ UNUSED_FUN static void memory_dump(const void* ptr, unsigned int len)
 static std::map<std::string, std::string> parseConfig(const std::string& path) 
 {
     std::map<std::string, std::string> config;
+    config.clear();
     if (path.empty())
         return config;
 
     std::ifstream file(path);
+    if(!file.is_open())
+        return config;
     std::string line;
 
     while (std::getline(file, line))
@@ -78,7 +81,8 @@ static std::map<std::string, std::string> parseConfig(const std::string& path)
             continue;
         std::pair <std::string, std::string> pairKv = spiltKv(strData);
         if(!pairKv.first.empty())
-            config[pairKv.first] = pairKv.second;
+            config.insert(pairKv);
+            //config[pairKv.first] = pairKv.second;
     }
     return config;
 }
@@ -161,14 +165,19 @@ void FileLogger::initLog(const std::string &strCfgName)
         std::map<std::string, std::string> mapCfg = parseConfig(strCfgName);
         if (!mapCfg.empty())
         {
+ 
             if (!mapCfg["file_name"].empty())
                 strBaseName = mapCfg["file_name"];
+      
             if(!mapCfg["max_files"].empty())
                 iMaxFileNum = str2Int(mapCfg["max_files"]);
+  
             if(!mapCfg["max_size"].empty())
                 iMaxFileSize = str2Uint(mapCfg["max_size"]);
+     
             if (!mapCfg["log_level"].empty())
                 m_emLogLevel = OnStringToLevel(mapCfg["log_level"]);
+       
             if (!mapCfg["out_put"].empty())
             {
                 if (equals(mapCfg["out_put"].c_str(), "console", false))
@@ -178,8 +187,10 @@ void FileLogger::initLog(const std::string &strCfgName)
                 else
                     iOutPutFile = OUT_LOC_FILE;
             }
+    
             if (!mapCfg["out_mode"].empty())
                 m_bSync = equals(mapCfg["out_mode"].c_str(), "sync", false);
+      
             if (!mapCfg["log_pattern"].empty())
                 strLogFormat = mapCfg["log_pattern"];
 
