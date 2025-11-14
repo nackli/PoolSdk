@@ -79,10 +79,10 @@ static std::map<std::string, std::string> parseConfig(const std::string& path)
         std::string strData = subLeft(line, "#");
         if (strData.empty())
             continue;
+        strData[strcspn(strData.c_str(), "\r\n")] = 0;
         std::pair <std::string, std::string> pairKv = spiltKv(strData);
         if(!pairKv.first.empty())
             config.insert(pairKv);
-            //config[pairKv.first] = pairKv.second;
     }
     return config;
 }
@@ -154,7 +154,7 @@ void FileLogger::initLog(const std::string &strCfgName)
     closeLog(); 
     string strBaseName("./Logs/log.log");
     int iMaxFileNum = 10;
-    int iMaxFileSize = 0x500000;
+    int iMaxFileSize = 0x3200000;//0x500000;
     string strNetIpAddr ="127.0.0.1";
     int iNetPort = 0;
     int iOutPutFile = OUT_LOC_FILE;
