@@ -93,8 +93,9 @@ inline LogLevel OnStringToLevel(const std::string& strLevel) {
     };
 	std::string strLev = strLevel;
     toUpper(strLev);
-	if(levelMap.find(strLev) == levelMap.end())
+	auto itFind = levelMap.find(strLev);
+	if(itFind == levelMap.end())
 		return LogLevel::EM_LOG_DEBUG;
-    return levelMap.at(strLev);
+    return itFind->second;
 }
 #endif

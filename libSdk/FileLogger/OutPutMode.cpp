@@ -304,6 +304,7 @@ bool UdpOutPutMode::writeData(const std::string &strMsgData,int iLogLevel)
 		return true;
 	return false;
 }
+
 bool UdpOutPutMode::initOutMode(const char * szAddr, int iPort)
 {
 #ifdef _WIN32
