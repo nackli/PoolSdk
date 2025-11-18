@@ -75,7 +75,7 @@ bool MapFile::openOrCreateMap(const char* szMapName, int iMaxSize, const char* s
 		goto end;
 #else
     if(!szFileName)
-		szFileName = "//tmp/xg_map";
+		szFileName = "/tmp/xg_map";
     lpMap->hFile= open(szFileName, O_RDWR | O_CREAT, 0666);
 	if(lpMap->hFile < 0)
 	{
