@@ -33,7 +33,7 @@ int main()
 		for (int i = 0; i < iCntNum; i++)
 		{
 #if 0
-			LOG_TRACE("Welcome to nack log space: %d", i);
+			LOG_TRACE("Welcome to nack log space: %c", i);
 			LOG_DEBUG("Welcome to nack log space:");
 			LOG_INFO("Welcome to nack log space::");
 			LOG_WARN("Welcome to nack log space::");
