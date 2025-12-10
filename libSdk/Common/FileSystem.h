@@ -13,6 +13,7 @@
 #define __PLATFORM_FILE_SYSTEM_H_
 #include <string>
 #include <list>
+#include <map>
 #ifdef _WIN32
 #include <Windows.h>
 #endif
@@ -30,6 +31,7 @@ typedef struct FILEINFO
 #endif
 }FILEINFO,*LP_FILEINFO;
 using FileInfoList = list<FILEINFO>;
+using MAPSTRING = std::map<std::string, std::string>;
 #ifdef _WIN32		
 	string DosPathToNtPath(const string& strPath);
 	string NtPathToDosPath(const string& strPath);
@@ -42,6 +44,7 @@ using FileInfoList = list<FILEINFO>;
 	string getDirectory(const string& strFilePath);
 	string getFileName(const string& strFilePath);
 	void createDirFromFilePath(const string &strFilePath);
+	MAPSTRING parseConfig(const std::string& path); 
 #ifdef _WIN32	
 	HANDLE openOrCreateFile(const string &strFilePath, uint32_t uDesiredAccess, uint32_t uCreationDisposition,
 		uint32_t uFlagsAndAttributes, uint32_t uShartMode = 0);

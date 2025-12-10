@@ -11,12 +11,12 @@
 
 #include "FileLogger.h"
 #include <stdio.h>
-#include <map>
-#include <set>
+//#include <map>
+//#include <set>
 #include <algorithm>
 #include <cctype>
 #include "../Common/FileSystem.h"
-#include "../Common/StringUtils.h"
+//#include "../Common/StringUtils.h"
 #include "../Common/LockQueue.h"
 #include "../mem/ConcurrentMem.h"
 #include "formatPattern.h"
@@ -62,30 +62,30 @@ UNUSED_FUN static void memory_dump(const void* ptr, unsigned int len)
     }
 }
 
-static std::map<std::string, std::string> parseConfig(const std::string& path) 
-{
-    std::map<std::string, std::string> config;
-    config.clear();
-    if (path.empty())
-        return config;
+// static std::map<std::string, std::string> parseConfig(const std::string& path) 
+// {
+//     std::map<std::string, std::string> config;
+//     config.clear();
+//     if (path.empty())
+//         return config;
 
-    std::ifstream file(path);
-    if(!file.is_open())
-        return config;
-    std::string line;
+//     std::ifstream file(path);
+//     if(!file.is_open())
+//         return config;
+//     std::string line;
 
-    while (std::getline(file, line))
-    {
-        std::string strData = subLeft(line, "#");
-        if (strData.empty())
-            continue;
-        strData[strcspn(strData.c_str(), "\r\n")] = 0;
-        std::pair <std::string, std::string> pairKv = spiltKv(strData);
-        if(!pairKv.first.empty())
-            config.insert(pairKv);
-    }
-    return config;
-}
+//     while (std::getline(file, line))
+//     {
+//         std::string strData = subLeft(line, "#");
+//         if (strData.empty())
+//             continue;
+//         strData[strcspn(strData.c_str(), "\r\n")] = 0;
+//         std::pair <std::string, std::string> pairKv = spiltKv(strData);
+//         if(!pairKv.first.empty())
+//             config.insert(pairKv);
+//     }
+//     return config;
+// }
 
 
 UNUSED_FUN static int dir_list(const char* szDir, int (CallFunFileList)(void* param, const char* name, int isdir), void* param)
@@ -162,7 +162,7 @@ void FileLogger::initLog(const std::string &strCfgName)
 
     if (!strCfgName.empty())
     {
-        std::map<std::string, std::string> mapCfg = parseConfig(strCfgName);
+        std::map<std::string, std::string> mapCfg = FileSystem::parseConfig(strCfgName);
         if (!mapCfg.empty())
         {
  

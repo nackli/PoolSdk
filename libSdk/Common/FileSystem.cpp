@@ -23,6 +23,8 @@
 #include <cstring>
 #include <iostream>
 #include <vector>
+#include "StringUtils.h"
+#include <fstream>
 namespace FileSystem
 {
 #ifdef _WIN32	
@@ -257,14 +259,13 @@ namespace FileSystem
 		}
 		return false;
 #else
-		std::string strSubPath;
 		size_t iPos = 0;
 		if (path.empty())
 			return true;
 
 		while ((iPos = path.find('/', iPos)) != std::string::npos)
 		{
-			strSubPath = path.substr(0, iPos++);
+			std::string strSubPath = path.substr(0, iPos++);
 
 			if (strSubPath.empty())
 				continue;
@@ -639,5 +640,31 @@ inline std::string normalizePath(const std::string& path) {
 		return 	strRelaPath;
 #endif
 #endif
+	}
+
+
+	MAPSTRING parseConfig(const std::string& path)
+	{
+		std::map<std::string, std::string> config;
+		config.clear();
+		if (path.empty())
+			return config;
+
+		std::ifstream file(path);
+		if(!file.is_open())
+			return config;
+		std::string line;
+
+		while (std::getline(file, line))
+		{
+			std::string strData = subLeft(line, "#");
+			if (strData.empty())
+				continue;
+			strData[strcspn(strData.c_str(), "\r\n")] = 0;
+			std::pair <std::string, std::string> pairKv = spiltKv(strData);
+			if(!pairKv.first.empty())
+				config.insert(pairKv);
+		}
+		return config;
 	}
 }
