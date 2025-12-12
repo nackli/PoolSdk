@@ -35,14 +35,14 @@
 #define UNUSED_FUN __attribute__((unused))
 #endif
 
-#define FILE_CLOSE(x)					if((x)){if(!FileSystem::closeFile((x)))(x) = nullptr;}
-#define OUT_CONSOLE                     0x0
-#define OUT_LOC_FILE                    0x01
-#define OUT_NET_UDP                     0x02
+#define FILE_CLOSE(x)					               if((x)){if(!FileSystem::closeFile((x)))(x) = nullptr;}
+#define OUT_CONSOLE                                    0x0
+#define OUT_LOC_FILE                                   0x01
+#define OUT_NET_UDP                                    0x02
 
 
-
-#define FREE_MEM(x)                 if((x)) {PM_FREE((x)); (x)=nullptr;}
+#define LOG_SELF_LOG(Level,format, ...)                log(false,Level,__func__, __FILE__, __LINE__,format, ##__VA_ARGS__);
+#define FREE_MEM(x)                                    if((x)) {PM_FREE((x)); (x)=nullptr;}
 FileLogger FileLogger::m_sFileLogger;
 UNUSED_FUN static void memory_dump(const void* ptr, unsigned int len)
 {
@@ -146,6 +146,7 @@ FileLogger& FileLogger::getInstance() {
 void FileLogger::setLogLevel(LogLevel level) {
     std::lock_guard<std::mutex> lock(m_Mutex);
     m_emLogLevel = level;
+    LOG_SELF_LOG(EM_LOG_INFO,"Change log level {}",(uint8_t)level);
 }
 
 
@@ -230,6 +231,7 @@ void FileLogger::initLog(const std::string &strCfgName)
     else
         m_pOutputMode = new ConsoleOutPutMode;
 
+    LOG_SELF_LOG(EM_LOG_INFO,"Init log finsh,outmodel : {}, filename : {}",iOutPutFile,strBaseName);
     if (!m_bSync)
     {
         std::thread tRead(&FileLogger::outPut2File, this);
@@ -244,6 +246,7 @@ void FileLogger::setLogFileName(const std::string& strFileName)
     {
         std::lock_guard<std::mutex> lock(m_Mutex);
         m_pOutputMode->changeOutModeCfg(strFileName);
+        LOG_SELF_LOG(EM_LOG_INFO,"Change log file name or path {}",strFileName);
     }
 }
 
@@ -251,6 +254,7 @@ void FileLogger::closeLog()
 {
     if (m_pOutputMode)
     {
+        LOG_SELF_LOG(EM_LOG_INFO,"Close log");
         m_pOutputMode->closeOutPut();
         delete m_pOutputMode;
         m_pOutputMode = nullptr;

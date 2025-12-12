@@ -440,7 +440,11 @@ namespace FileSystem
 			if (!hFile)
 				return openOrCreateFile(szFilePath, szFlags);
 			else
+			{
+				createDirFromFilePath(szFilePath);
 				return freopen(szFilePath, szFlags, hFile);
+			}
+			
 		}
 		return nullptr;
 	}

@@ -18,7 +18,7 @@ option(ENABLE_MEM_POOL "mem pool enable" ON)
 option(USE_LIBFMT_FORMAT "use fmtlib" ON)
 
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+# list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # set C++ standard
 set(CMAKE_CXX_STANDARD 14)
