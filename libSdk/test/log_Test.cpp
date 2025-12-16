@@ -26,6 +26,7 @@ unsigned long GetTickCount()
 int main()
 {
 	FileLogger::getInstance().initLog("./logCfg.cfg");
+	//FileLogger::getInstance().setLogFileName()
 	const int iCntNum = 45000;
 	while (1)
 	{

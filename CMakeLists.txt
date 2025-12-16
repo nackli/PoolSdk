@@ -68,6 +68,7 @@ macro(add_msvc_options target)
     #/Gm-               # 已弃用。 启用最小重新生成。
 	/Gy				   	# 启用函数级链接。
 	/sdl				# 启用更多安全功能和警告。
+	/EHsc				# 启用c++异常
     )
   endif()
 endmacro()
