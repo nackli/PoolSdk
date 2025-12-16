@@ -33,7 +33,7 @@ if(MSVC)
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd /Zi")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /Zi")
 	set(CMAKE_GENERATOR_PLATFORM Win32)
-    add_compile_options(/W3 /utf-8 /bigobj /MP)
+  add_compile_options(/utf-8 /bigobj)
 else()
 	 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall -O3 -fPIC")
 	 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 -fPIC")
@@ -66,9 +66,9 @@ macro(add_msvc_options target)
     /Zc:__cplusplus    	# 启用正确的 __cplusplus 宏值
     /Zc:inline         	# 移除未使用的函数
     #/Gm-               # 已弃用。 启用最小重新生成。
-	/Gy				   	# 启用函数级链接。
-	/sdl				# 启用更多安全功能和警告。
-	/EHsc				# 启用c++异常
+    /Gy				   	# 启用函数级链接。
+    /sdl				# 启用更多安全功能和警告。
+    /EHsc				# 启用c++异常
     )
   endif()
 endmacro()
