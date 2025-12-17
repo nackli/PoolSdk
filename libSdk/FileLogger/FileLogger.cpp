@@ -153,13 +153,13 @@ void FileLogger::setLogLevel(LogLevel level) {
 void FileLogger::initLog(const std::string &strCfgName)
 {
     closeLog(); 
-    string strBaseName("./Logs/log.log");
+    std::string strBaseName("./Logs/log.log");
     int iMaxFileNum = 10;
     int iMaxFileSize = 0x3200000;//0x500000;
-    string strNetIpAddr ="127.0.0.1";
+    std::string strNetIpAddr ="127.0.0.1";
     int iNetPort = 0;
     int iOutPutFile = OUT_LOC_FILE;
-    string strLogFormat("[%D] [%l] [tid:%t] [%!] %v%n");
+    std::string strLogFormat("[%D] [%l] [tid:%t] [%!] %v%n");
 
     if (!strCfgName.empty())
     {
@@ -280,16 +280,16 @@ FileLogger::~FileLogger()
 }
 
 void FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, const char* szFileName, 
-    const int iLine, const string & strMessage)
+    const int iLine, const std::string & strMessage)
 {
     if(!m_pPatternFmt)
     {
-        cout << "Logger not init->formatMessage" <<endl;
+        std::cout << "Logger not init->formatMessage" <<std::endl;
         return;
     }
     LogMessage logMsg(emLevel, szFileName, iLine, strMessage.c_str(), szFunName);
     memory_buf_t bufDest;
-    string strFormatted = m_pPatternFmt->format(logMsg);
+    std::string strFormatted = m_pPatternFmt->format(logMsg);
     writeToOutPut(emLevel, strFormatted);
 }
 
@@ -299,7 +299,7 @@ void FileLogger::outPut2File()
     {     
         do 
         {
-            std::pair<string,int> pairData = m_ctxQueue.pop_front();
+            std::pair<std::string,int> pairData = m_ctxQueue.pop_front();
             m_pOutputMode->writeData(pairData.first,pairData.second); 
         }while(!m_ctxQueue.empty());
         m_pOutputMode->flushFile();
@@ -310,12 +310,12 @@ void FileLogger::writeToOutPut(LogLevel &emLevel, const std::string& strMsg)
 {
     if(!m_pOutputMode)
     {
-        cout << "Logger not init->formatMessage" <<endl;
+        std::cout << "Logger not init->formatMessage" <<std::endl;
         return;
     }
 
     if (!m_bSync)
-        m_ctxQueue.push(std::pair<string,int>(strMsg,emLevel));
+        m_ctxQueue.push(std::pair<std::string,int>(strMsg,emLevel));
     else
     {
         {

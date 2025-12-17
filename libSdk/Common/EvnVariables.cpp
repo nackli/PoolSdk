@@ -10,6 +10,7 @@
 /***************************************************************************************************************************************************/
 #include "EvnVariables.h"
 #include <stdlib.h>
+using namespace std;
 #ifdef _WIN32   
 static int OnSetEnv(const char* name, const char* value, int overwrite)
 {

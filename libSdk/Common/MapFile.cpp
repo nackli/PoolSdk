@@ -146,7 +146,7 @@ std::pair<char*, uint32_t> MapFile::readMap(bool& bDeleteMem)
 	if (!lpMap || !lpMap->pMem )
 	{
 		LOG_ERROR_S("Read map param error");
-		return pair<char*, uint32_t>();
+		return std::pair<char*, uint32_t>();
 	}
 	uint32_t uActMemSize = MAX_READ_MEM_BYTE;
 	uint64_t uMemFree = getCurFreeMem();
@@ -166,7 +166,7 @@ std::pair<char*, uint32_t> MapFile::readMap(bool& bDeleteMem)
 		if (iMemPos + uActMemSize < m_uMemMaxSize)
 		{
 			pMemData = (char*)lpMap->pMem + iMemPos;
-			return pair<char*, uint32_t>(pMemData, uActMemSize);
+			return std::pair<char*, uint32_t>(pMemData, uActMemSize);
 		}
 		else
 		{
@@ -179,10 +179,10 @@ std::pair<char*, uint32_t> MapFile::readMap(bool& bDeleteMem)
 			memcpy(pDataRet + uFreeMem, lpMap->pMem, uActMemSize - uFreeMem);
 			*(pDataRet + uActMemSize) = '\0';
 			bDeleteMem = true;
-			return pair<char*, uint32_t>(pDataRet, uActMemSize);
+			return std::pair<char*, uint32_t>(pDataRet, uActMemSize);
 		}
 	}
-	return pair<char*, uint32_t>();
+	return std::pair<char*, uint32_t>();
 }
 
 bool MapFile::closeMap()

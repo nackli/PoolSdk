@@ -51,6 +51,6 @@ int main()
 #endif
 		}
 
-		cout << "diff = " << " " << ::GetTickCount() - dwTest << endl;
+		std::cout << "diff = " << " " << ::GetTickCount() - dwTest << std::endl;
 	}
 }

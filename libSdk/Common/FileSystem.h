@@ -20,33 +20,33 @@
 #include <stdint.h>
 namespace FileSystem
 {
-using namespace std;
+
 typedef struct FILEINFO
 {
-	string strFileName;
+	std::string strFileName;
 #ifdef _WIN32
 	FILETIME lastWriteTime;
 #else
 	uint64_t lastWriteTime;
 #endif
 }FILEINFO,*LP_FILEINFO;
-using FileInfoList = list<FILEINFO>;
+using FileInfoList = std::list<FILEINFO>;
 using MAPSTRING = std::map<std::string, std::string>;
 #ifdef _WIN32		
 	string DosPathToNtPath(const string& strPath);
 	string NtPathToDosPath(const string& strPath);
 #endif	
 	std::string getDirFromFilePath(const std::string& filepath);
-	FileInfoList getFilesInCurDir(const string& strFilePathAndReg, const string& strExt,bool bOnlyFileName = false);
-	bool IsDirectoryExists(const string& strDir);
-	bool IsFileExists(const string& strDir);
-	bool createDirectoryRecursive(string& strDir);
-	string getDirectory(const string& strFilePath);
-	string getFileName(const string& strFilePath);
-	void createDirFromFilePath(const string &strFilePath);
+	FileInfoList getFilesInCurDir(const std::string& strFilePathAndReg, const std::string& strExt,bool bOnlyFileName = false);
+	bool IsDirectoryExists(const std::string& strDir);
+	bool IsFileExists(const std::string& strDir);
+	bool createDirectoryRecursive(std::string& strDir);
+	std::string getDirectory(const std::string& strFilePath);
+	std::string getFileName(const std::string& strFilePath);
+	void createDirFromFilePath(const std::string &strFilePath);
 	MAPSTRING parseConfig(const std::string& path); 
 #ifdef _WIN32	
-	HANDLE openOrCreateFile(const string &strFilePath, uint32_t uDesiredAccess, uint32_t uCreationDisposition,
+	HANDLE openOrCreateFile(const std::string &strFilePath, uint32_t uDesiredAccess, uint32_t uCreationDisposition,
 		uint32_t uFlagsAndAttributes, uint32_t uShartMode = 0);
 	bool setFilePoint(HANDLE hFile, uint32_t uPoint, uint8_t uMoveMethod);
 	bool writeFile(HANDLE hFile, void* pData, uint32_t uSize);
@@ -54,10 +54,10 @@ using MAPSTRING = std::map<std::string, std::string>;
 	bool flushFile(HANDLE hFile);
 	size_t getFileSize(HANDLE hFile);
 	bool closeFile(HANDLE);
-	bool winDelFile(const string& strFilePath);
-	bool winMoveFile(const string& strOldFilePath, const string& strNewFilePath);
+	bool winDelFile(const std::string& strFilePath);
+	bool winMoveFile(const std::string& strOldFilePath, const string& strNewFilePath);
 #endif
-	FILE* openOrCreateFile(const string& strFilePath, const char *szFlags = "ab+");
+	FILE* openOrCreateFile(const std::string& strFilePath, const char *szFlags = "ab+");
 	FILE* openOrCreateFile(const char * szFilePath, const char* szFlags = "ab+");
 	FILE* reopenOrCreateFile(const char* szFilePath, FILE* hFile, const char* szFlags = "ab+");
 	bool writeFile(FILE* hFile, void* pData, uint32_t uSize);
@@ -74,6 +74,6 @@ using MAPSTRING = std::map<std::string, std::string>;
 	bool moveFile(const char* szOldFile, const char* szNewFile);
 	bool delFile(const char* szFilePath);
 	bool IsAbsolutePath(const std::string& strPath);
-	string relative2AbsolutePath(const std::string& strRelaPath);	
+	std::string relative2AbsolutePath(const std::string& strRelaPath);	
 #endif
 }

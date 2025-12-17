@@ -25,6 +25,7 @@
 #include <vector>
 #include "StringUtils.h"
 #include <fstream>
+using namespace std;
 namespace FileSystem
 {
 #ifdef _WIN32	

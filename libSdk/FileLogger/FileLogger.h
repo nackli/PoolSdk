@@ -63,7 +63,7 @@
 class FormatterBuilder;
 class OutPutMode;
 //using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
-using namespace std;
+//using namespace std;
 class FileLogger {
 public:
     static FileLogger& getInstance();
@@ -104,7 +104,7 @@ private:
     }
 
     void formatMessage(LogLevel emLevel, const char* szFunName, 
-        const char* szFileName, const int iLine, const string& szMessage);
+        const char* szFileName, const int iLine, const std::string& szMessage);
 
     void writeToOutPut(LogLevel &emLevel,const std::string& message);
     void outPut2File();
