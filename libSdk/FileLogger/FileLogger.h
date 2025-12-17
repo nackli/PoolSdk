@@ -74,7 +74,7 @@ public:
 
     template<typename FormatStr,typename... Args>
     void log(bool bFormat,LogLevel emLevel, const char* szFun,const char *szFileName, 
-        const int iLine, FormatStr& format, Args&&... args)
+        const int iLine, const FormatStr& format, Args&&... args)
     {
         if (emLevel < m_emLogLevel)
             return;         
@@ -89,15 +89,15 @@ private:
 
     template<typename FormatStr,typename... Args>
     void formatMessage(bool bFormat,LogLevel emLevel, const char* szFun, const char* szFileName,
-        const int iLine, FormatStr& format, Args&&... args)
+        const int iLine, const FormatStr& formatValue, Args&&... args)
     {
         std::string strContent;
         if(bFormat)
-            strContent = fmt::sprintf(format, /*std::forward<Args>*/(args)...); 
+            strContent = fmt::sprintf(formatValue, /*std::forward<Args>*/(args)...); 
         else
         {
             fmt::memory_buffer outBuf;
-            fmt::format_to(fmt::appender(outBuf), format, std::forward<Args>(args)...);
+            fmt::format_to(fmt::appender(outBuf), fmt::runtime(formatValue), std::forward<Args>(args)...);
             strContent = std::string(outBuf.data(), outBuf.size());
         }
         formatMessage(emLevel, szFun, szFileName, iLine, strContent);
