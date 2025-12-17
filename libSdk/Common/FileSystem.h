@@ -33,8 +33,8 @@ typedef struct FILEINFO
 using FileInfoList = std::list<FILEINFO>;
 using MAPSTRING = std::map<std::string, std::string>;
 #ifdef _WIN32		
-	string DosPathToNtPath(const string& strPath);
-	string NtPathToDosPath(const string& strPath);
+	std::string DosPathToNtPath(const std::string& strPath);
+	std::string NtPathToDosPath(const std::string& strPath);
 #endif	
 	std::string getDirFromFilePath(const std::string& filepath);
 	FileInfoList getFilesInCurDir(const std::string& strFilePathAndReg, const std::string& strExt,bool bOnlyFileName = false);
@@ -55,7 +55,7 @@ using MAPSTRING = std::map<std::string, std::string>;
 	size_t getFileSize(HANDLE hFile);
 	bool closeFile(HANDLE);
 	bool winDelFile(const std::string& strFilePath);
-	bool winMoveFile(const std::string& strOldFilePath, const string& strNewFilePath);
+	bool winMoveFile(const std::string& strOldFilePath, const std::string& strNewFilePath);
 #endif
 	FILE* openOrCreateFile(const std::string& strFilePath, const char *szFlags = "ab+");
 	FILE* openOrCreateFile(const char * szFilePath, const char* szFlags = "ab+");
