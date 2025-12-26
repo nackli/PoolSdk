@@ -262,7 +262,7 @@ class ThreadIdFormat final : public Format
 public:
     void format(const LogMessage &msg, memory_buf_t & bufDest) override
     {
-        append_int(static_cast<int>(std::hash<std::thread::id>{}(msg.iThreadId)), bufDest);
+        append_int(static_cast<int>(std::hash<std::thread::id>{}(msg.iThreadId)) & 0xfffffffff, bufDest);
         //append_int(static_cast<int>(reinterpret_cast<uintptr_t>(&msg.iThreadId)), bufDest);
     }
 };
