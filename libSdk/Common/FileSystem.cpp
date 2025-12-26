@@ -678,13 +678,14 @@ inline std::string normalizePath(const std::string& path) {
 	{
 		if(!szFilePath)
 			return false;
-		FILE *fr = openOrCreateFile(szFilePath,"r");
-		if(!fr)
+		FILE *fr = openOrCreateFile(szFilePath,"w");
+		if(fr)
 		{
-			fr = openOrCreateFile(szFilePath,"w");
 			writeFile(fr,(void*)szCtx, strlen(szCtx));
+			closeFile(fr);
+			fr = nullptr;
+			return true;
 		}
-		closeFile(fr);
-		fr = nullptr;
+		return false;
 	}
 }
