@@ -672,4 +672,19 @@ inline std::string normalizePath(const std::string& path) {
 		}
 		return config;
 	}
+
+
+	bool onlyOneWrite(const char *szFilePath,const char *szCtx)
+	{
+		if(!szFilePath)
+			return false;
+		FILE *fr = openOrCreateFile(szFilePath,"r");
+		if(!fr)
+		{
+			fr = openOrCreateFile(szFilePath,"w");
+			writeFile(fr,(void*)szCtx, strlen(szCtx) + 1);
+		}
+		closeFile(fr);
+		fr = nullptr;
+	}
 }

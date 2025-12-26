@@ -75,5 +75,6 @@ using MAPSTRING = std::map<std::string, std::string>;
 	bool delFile(const char* szFilePath);
 	bool IsAbsolutePath(const std::string& strPath);
 	std::string relative2AbsolutePath(const std::string& strRelaPath);	
+	bool onlyOneWrite(const char *szFilePath, const char *szCtx);
 #endif
 }
