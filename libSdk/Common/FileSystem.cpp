@@ -682,7 +682,7 @@ inline std::string normalizePath(const std::string& path) {
 		if(!fr)
 		{
 			fr = openOrCreateFile(szFilePath,"w");
-			writeFile(fr,(void*)szCtx, strlen(szCtx) + 1);
+			writeFile(fr,(void*)szCtx, strlen(szCtx));
 		}
 		closeFile(fr);
 		fr = nullptr;
