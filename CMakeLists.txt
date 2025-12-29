@@ -17,7 +17,9 @@ option(ENABLE_POOL_SDK_TEST "Enable test" OFF)
 option(ENABLE_MEM_POOL "mem pool enable" ON)
 option(USE_LIBFMT_FORMAT "use fmtlib" ON)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+include(BuildVersion)
 # list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # set C++ standard
@@ -103,5 +105,5 @@ else()
   target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} -lpthread)
 endif()
 
-include(BuildPage.cmake)
+include(BuildPage)
 use_pack_fun(${PROJECT_NAME} "ZIP")

@@ -25,6 +25,7 @@
 #include <vector>
 #include "StringUtils.h"
 #include <fstream>
+#include "version.h"
 using namespace std;
 namespace FileSystem
 {
@@ -687,5 +688,10 @@ inline std::string normalizePath(const std::string& path) {
 			return true;
 		}
 		return false;
+	}
+
+	std::string getCurVersionINfo()
+	{
+		return LibSdk::VersionInfo::fullInfo();
 	}
 }
