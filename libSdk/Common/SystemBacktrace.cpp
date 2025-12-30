@@ -10,6 +10,7 @@
 /***************************************************************************************************************************************************/
 
 #include "SystemBacktrace.h"
+#ifdef BACKTRACE_ENBALE
 #ifdef _WIN32
 #include <Windows.h>
 #include <Dbghelp.h>
@@ -127,4 +128,5 @@ int system_thread_backtrace(DWORD tid, char* line, int size)
     CloseHandle(hThread);
     return n;
 }
+#endif
 #endif
