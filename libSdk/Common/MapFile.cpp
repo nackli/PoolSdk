@@ -241,7 +241,7 @@ bool MapFile::moveReadOffset(uint32_t uOffset)
 
 uint64_t MapFile::getCurFreeMem()
 {
-	LOG_ERROR_S("Write offset {}, {}",m_uWriteOffset, m_uReadOffset);
+	LOG_ERROR_S("Write offset {}, {}",m_uWriteOffset.load(), m_uReadOffset);
 	if(m_uWriteOffset.load() > m_uReadOffset)
 		return (m_uWriteOffset.load() - m_uReadOffset);
 	return 0;
