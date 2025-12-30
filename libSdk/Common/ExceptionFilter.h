@@ -11,6 +11,8 @@
 #pragma once
 #ifndef __PLATFORM_EXCEP_DUMP_H_
 #define __PLATFORM_EXCEP_DUMP_H_
+#ifdef BACKTRACE_ENBALE
  void initExceptionDump();
+ #endif
 #endif
 

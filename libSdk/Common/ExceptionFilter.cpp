@@ -8,10 +8,8 @@
 * @LastEditTime: 2025-08-29
 */
 /***************************************************************************************************************************************************/
-
-#include "ExceptionFilter.h"
 #ifdef BACKTRACE_ENBALE
-#ifdef __PLATFORM_EXCEP_DUMP_H_
+#include "ExceptionFilter.h"
 #include <iostream>
 #include <stdint.h>
 #include <signal.h>
@@ -234,10 +232,5 @@ void initExceptionDump()
 	for(size_t iIndex = 0;iIndex < sizeof(signalId) / sizeof(signalId);iIndex++)
 		signal(signalId[iIndex], SignalHandler);
 #endif
-}
-#endif
-#else
-void initExceptionDump()
-{
 }
 #endif
