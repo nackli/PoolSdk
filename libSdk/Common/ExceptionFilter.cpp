@@ -10,6 +10,7 @@
 /***************************************************************************************************************************************************/
 
 #include "ExceptionFilter.h"
+#ifdef BACKTRACE_ENBALE
 #ifdef __PLATFORM_EXCEP_DUMP_H_
 #include <iostream>
 #include <stdint.h>
@@ -233,5 +234,10 @@ void initExceptionDump()
 	for(size_t iIndex = 0;iIndex < sizeof(signalId) / sizeof(signalId);iIndex++)
 		signal(signalId[iIndex], SignalHandler);
 #endif
+}
+#endif
+#else
+void initExceptionDump()
+{
 }
 #endif
