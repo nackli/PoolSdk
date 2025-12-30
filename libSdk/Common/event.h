@@ -29,10 +29,15 @@ typedef struct
 #define EVENT_HANDLE EVENT_T*
 #endif
 
-inline  EVENT_HANDLE eventCreate(bool bManualReset, bool bInitState)
+inline  EVENT_HANDLE eventCreate(bool bManualReset, bool bInitState , const char *szEventName = nullptr)
 {
 #ifdef _MSC_VER
-    HANDLE hEvent = CreateEvent(NULL, bManualReset, bInitState, NULL);
+    HANDLE hEvent = CreateEventA(NULL, bManualReset, bInitState, szEventName);
+   	if (hEvent == nullptr && szEventName)
+	{
+		if (GetLastError() == ERROR_ALREADY_EXISTS)
+			hEvent = OpenEventA(EVENT_ALL_ACCESS, TRUE, szEventName);
+	}
 #else
     EVENT_HANDLE hEvent = new(std::nothrow) EVENT_T;
     if (hEvent == NULL)
