@@ -10,7 +10,7 @@ function(use_pack_fun PACKAGE_NAME PAGE_TYPE)
         install(TARGETS ${PROJECT_NAME} DESTINATION lib)
         install(
             DIRECTORY 
-                libSdk/
+                include/
             DESTINATION libSdk_inc
             FILES_MATCHING 
                 PATTERN "*.h"
