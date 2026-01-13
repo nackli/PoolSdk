@@ -666,8 +666,9 @@ inline std::string normalizePath(const std::string& path) {
 			std::string strData = subLeft(line, "#");
 			if (strData.empty())
 				continue;
-			strData[strcspn(strData.c_str(), "\r\n")] = 0;
-			std::pair <std::string, std::string> pairKv = spiltKv(strData);
+			std::string strTemp = strData.substr(0, strcspn(strData.c_str(), "\r\n"));
+			//strData[strcspn(strData.c_str(), "\r\n")] = 0;
+			std::pair <std::string, std::string> pairKv = spiltKv(strTemp);
 			if(!pairKv.first.empty())
 				config.insert(pairKv);
 		}
