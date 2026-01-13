@@ -9,9 +9,8 @@ function(use_pack_fun PACKAGE_NAME PAGE_TYPE)
     if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
         install(TARGETS ${PROJECT_NAME} DESTINATION lib)
         install(
-            DIRECTORY 
-                include/
-            DESTINATION libSdk_inc
+            DIRECTORY   libSdk/
+            DESTINATION include
             FILES_MATCHING 
                 PATTERN "*.h"
                 PATTERN "*.hpp"
