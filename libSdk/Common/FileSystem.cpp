@@ -677,12 +677,17 @@ inline std::string normalizePath(const std::string& path) {
 
 	bool onlyOneWrite(const char *szFilePath,const char *szCtx)
 	{
+		return onlyOneWrite(szFilePath, szCtx, strlen(szCtx));
+	}
+
+	bool onlyOneWrite(const char *szFilePath, const void *szCtx, uint32_t uSize,const char *szFlag)
+	{
 		if(!szFilePath)
 			return false;
-		FILE *fr = openOrCreateFile(szFilePath,"w");
+		FILE *fr = openOrCreateFile(szFilePath,szFlag);
 		if(fr)
 		{
-			writeFile(fr,(void*)szCtx, strlen(szCtx));
+			writeFile(fr,(void*)szCtx, uSize);
 			closeFile(fr);
 			fr = nullptr;
 			return true;
