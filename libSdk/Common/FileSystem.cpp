@@ -627,6 +627,9 @@ inline std::string normalizePath(const std::string& path) {
 	string relative2AbsolutePath(const std::string& strRelaPath)
 	{
 #ifndef _WIN32
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
 		const uint16_t MAX_PATH = PATH_MAX;
 #endif
 		char szFullPath[MAX_PATH];
