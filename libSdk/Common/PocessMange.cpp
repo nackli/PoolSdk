@@ -674,7 +674,7 @@
             
             if(iRest < 0)
                 std::cerr << "Exec failed for: " << strProgram << std::endl;
-            //exit(EXIT_FAILURE);
+            return -1;
         } 
         else 
         {
@@ -690,6 +690,7 @@
             } 
             return 0;
         }
+        return -1;
     }  
     
     
@@ -1089,9 +1090,9 @@ void PocessMange::listProcesses()
 bool PocessMange::createProcWithArg(const std::string& strProcName, const std::vector<std::string>& args, bool waitForExit)
 {
 #ifdef _WIN32
-    return OnLaunchWindowsWithArgs(strProcName, args, waitForExit);
+    return OnLaunchWindowsWithArgs(strProcName, args, waitForExit) >= 0;
 #else
-    return OnLaunchUnixWithArgs(strProcName, args, waitForExit);
+    return OnLaunchUnixWithArgs(strProcName, args, waitForExit) >= 0;
 #endif
 }
 
