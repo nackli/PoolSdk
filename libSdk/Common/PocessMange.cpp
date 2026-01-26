@@ -599,7 +599,7 @@
                                 if(bForce)
                                     kill(atoi(pid.c_str()), SIGKILL);
                                 else
-                                    kill(atoi(pid.c_str()), SIGQUIT);
+                                    kill(atoi(pid.c_str()), SIGTERM);
 
                                 std::cout << "Killed: " << processName 
                                           << " (PID: " << pid << ")" << std::endl;
