@@ -294,7 +294,7 @@
         }
         
         SERVICE_STATUS status;
-        ServiceStatus result = PocessMange::ServiceStatus::UNKNOWN_ERROR;
+        PocessMange::ServiceStatus result = PocessMange::ServiceStatus::UNKNOWN_ERROR;
         
         if (QueryServiceStatus(service, &status))
         {
@@ -327,7 +327,7 @@
     
     static PocessMange::ServiceInfo getWindowsServiceInfo(const std::string& serviceName) 
     {
-        ServiceInfo info;
+        PocessMange::ServiceInfo info;
         info.name = serviceName;
         
         SC_HANDLE scm = OpenSCManager(NULL, NULL, SC_MANAGER_CONNECT);
@@ -424,9 +424,9 @@
         return exists;
     }
     
-    static std::vector<ServiceInfo> listWindowsServices() 
+    static std::vector<PocessMange::ServiceInfo> listWindowsServices() 
     {
-        std::vector<ServiceInfo> services;
+        std::vector<PocessMange::ServiceInfo> services;
         
         SC_HANDLE scm = OpenSCManager(NULL, NULL, SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE);
         if (!scm) 
@@ -454,7 +454,7 @@
         {
             for (DWORD i = 0; i < serviceCount; i++) 
             {
-                ServiceInfo info;
+                PocessMange::ServiceInfo info;
                 info.name = serviceStatus[i].lpServiceName;
                 info.displayName = serviceStatus[i].lpDisplayName;
                 
@@ -1155,7 +1155,7 @@ bool PocessMange::uninstallService(const std::string& serviceName)
 bool PocessMange::startService(const std::string& serviceName, int timeoutSeconds, const std::vector<std::string>& arguments)
 {
 #ifdef _WIN32
-        return startWindowsService(serviceName, timeoutSeconds);
+        return OnStartWindowsService(serviceName, timeoutSeconds);
 #else
         return startUnixService(serviceName, timeoutSeconds, arguments);
 #endif
