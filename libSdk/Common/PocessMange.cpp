@@ -670,11 +670,11 @@
             argv.push_back(nullptr);
             
     
-            execvp(strProgram.c_str(), argv.data());
+            int iRest = execvp(strProgram.c_str(), argv.data());
             
-            // 如果execvp失败
-            std::cerr << "Exec failed for: " << strProgram << std::endl;
-            exit(EXIT_FAILURE);
+            if(iRest < 0)
+                std::cerr << "Exec failed for: " << strProgram << std::endl;
+            //exit(EXIT_FAILURE);
         } 
         else 
         {
