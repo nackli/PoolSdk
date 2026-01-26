@@ -119,7 +119,7 @@
         si.cb = sizeof(si);
     
         
-        if (!CreateProcessA(NULL, strCommadLine.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si,  &pi)) 
+        if (!CreateProcessA(NULL, (LPSTR)strCommadLine.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si,  &pi)) 
         {
             std::cerr << "CreateProcess failed: " << GetLastError() << std::endl;
             return -1;
@@ -280,42 +280,42 @@
         return stopped;
     }
     
-    static ServiceStatus getWindowsServiceStatus(const std::string& serviceName) 
+    static PocessMange::ServiceStatus getWindowsServiceStatus(const std::string& serviceName) 
     {
         SC_HANDLE scm = OpenSCManager(NULL, NULL, SC_MANAGER_CONNECT);
         if (!scm) 
-            return ServiceStatus::ACCESS_DENIED;
+            return PocessMange::ServiceStatus::ACCESS_DENIED;
         
         SC_HANDLE service = OpenService(scm, serviceName.c_str(), SERVICE_QUERY_STATUS);
         if (!service) 
         {
             CloseServiceHandle(scm);
-            return ServiceStatus::NOT_FOUND;
+            return PocessMange::ServiceStatus::NOT_FOUND;
         }
         
         SERVICE_STATUS status;
-        ServiceStatus result = ServiceStatus::UNKNOWN_ERROR;
+        ServiceStatus result = PocessMange::ServiceStatus::UNKNOWN_ERROR;
         
         if (QueryServiceStatus(service, &status))
         {
             switch (status.dwCurrentState) {
                 case SERVICE_STOPPED:
-                    result = ServiceStatus::STOPPED;
+                    result = PocessMange::ServiceStatus::STOPPED;
                     break;
                 case SERVICE_START_PENDING:
-                    result = ServiceStatus::START_PENDING;
+                    result = PocessMange::ServiceStatus::START_PENDING;
                     break;
                 case SERVICE_STOP_PENDING:
-                    result = ServiceStatus::STOP_PENDING;
+                    result = PocessMange::ServiceStatus::STOP_PENDING;
                     break;
                 case SERVICE_RUNNING:
-                    result = ServiceStatus::RUNNING;
+                    result = PocessMange::ServiceStatus::RUNNING;
                     break;
                 case SERVICE_PAUSED:
-                    result = ServiceStatus::PAUSED;
+                    result = PocessMange::ServiceStatus::PAUSED;
                     break;
                 default:
-                    result = ServiceStatus::UNKNOWN_ERROR;
+                    result = PocessMange::ServiceStatus::UNKNOWN_ERROR;
             }
         }
         
@@ -325,7 +325,7 @@
         return result;
     }
     
-    static ServiceInfo getWindowsServiceInfo(const std::string& serviceName) 
+    static PocessMange::ServiceInfo getWindowsServiceInfo(const std::string& serviceName) 
     {
         ServiceInfo info;
         info.name = serviceName;
@@ -333,7 +333,7 @@
         SC_HANDLE scm = OpenSCManager(NULL, NULL, SC_MANAGER_CONNECT);
         if (!scm) 
         {
-            info.status = ServiceStatus::ACCESS_DENIED;
+            info.status = PocessMange::ServiceStatus::ACCESS_DENIED;
             return info;
         }
         
@@ -342,7 +342,7 @@
         if (!service) 
         {
             CloseServiceHandle(scm);
-            info.status = ServiceStatus::NOT_FOUND;
+            info.status = PocessMange::ServiceStatus::NOT_FOUND;
             return info;
         }
         
@@ -371,33 +371,33 @@
             switch (ssp.dwCurrentState) 
             {
                 case SERVICE_STOPPED:
-                    info.status = ServiceStatus::STOPPED;
+                    info.status = PocessMange::ServiceStatus::STOPPED;
                     info.statusText = "Stopped";
                     break;
                 case SERVICE_START_PENDING:
-                    info.status = ServiceStatus::START_PENDING;
+                    info.status = PocessMange::ServiceStatus::START_PENDING;
                     info.statusText = "Start pending";
                     break;
                 case SERVICE_STOP_PENDING:
-                    info.status = ServiceStatus::STOP_PENDING;
+                    info.status = PocessMange::ServiceStatus::STOP_PENDING;
                     info.statusText = "Stop pending";
                     break;
                 case SERVICE_RUNNING:
-                    info.status = ServiceStatus::RUNNING;
+                    info.status = PocessMange::ServiceStatus::RUNNING;
                     info.statusText = "Running";
                     break;
                 case SERVICE_PAUSED:
-                    info.status = ServiceStatus::PAUSED;
+                    info.status = PocessMange::ServiceStatus::PAUSED;
                     info.statusText = "Paused";
                     break;
                 default:
-                    info.status = ServiceStatus::UNKNOWN_ERROR;
+                    info.status = PocessMange::ServiceStatus::UNKNOWN_ERROR;
                     info.statusText = "Unknown";
             }
         } 
         else 
         {
-            info.status = ServiceStatus::UNKNOWN_ERROR;
+            info.status = PocessMange::ServiceStatus::UNKNOWN_ERROR;
             info.statusText = "Query failed";
         }
         
@@ -461,22 +461,22 @@
                 switch (serviceStatus[i].ServiceStatus.dwCurrentState) 
                 {
                     case SERVICE_STOPPED:
-                        info.status = ServiceStatus::STOPPED;
+                        info.status = PocessMange::ServiceStatus::STOPPED;
                         break;
                     case SERVICE_RUNNING:
-                        info.status = ServiceStatus::RUNNING;
+                        info.status = PocessMange::ServiceStatus::RUNNING;
                         break;
                     case SERVICE_PAUSED:
-                        info.status = ServiceStatus::PAUSED;
+                        info.status = PocessMange::ServiceStatus::PAUSED;
                         break;
                     case SERVICE_START_PENDING:
-                        info.status = ServiceStatus::START_PENDING;
+                        info.status = PocessMange::ServiceStatus::START_PENDING;
                         break;
                     case SERVICE_STOP_PENDING:
-                        info.status = ServiceStatus::STOP_PENDING;
+                        info.status = PocessMange::ServiceStatus::STOP_PENDING;
                         break;
                     default:
-                        info.status = ServiceStatus::UNKNOWN_ERROR;
+                        info.status = PocessMange::ServiceStatus::UNKNOWN_ERROR;
                 }
                 
                 services.push_back(info);
