@@ -668,7 +668,7 @@
                if (setsid() < 0) 
                {
                     std::cerr << "setsid failed: " << strerror(errno) << std::endl;
-                    exit(EXIT_FAILURE);
+                    return -1;
                 }
             }
 
