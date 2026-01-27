@@ -677,7 +677,7 @@
                     dup2(devnull, STDERR_FILENO);
                     close(devnull);
                 }
-            }
+            }  
             
             std::vector<char*> argv;
             argv.push_back(const_cast<char*>(strProgram.c_str()));
@@ -692,6 +692,9 @@
             
             if(iRest < 0)
                 std::cerr << "Exec failed for: " << strProgram << std::endl;
+            else
+                return 0;
+                    
             return -1;
         } 
         else 
