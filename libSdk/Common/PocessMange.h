@@ -33,7 +33,7 @@ public:
     static bool killByName(const std::string& strProcName,bool bForce= true);
     static void listProcesses();
     static bool createProcWithArg(const std::string& strProcName, const std::vector<std::string>& args = {}, bool waitForExit = false);
-    static bool createDetachedProcWithArg(const std::string& strProcName, const std::vector<std::string>& args = {},bool bBackGround = false, bool waitForExit = false);
+    static bool createDetachedProcWithArg(const std::string& strProcName, const std::vector<std::string>& args = {}, bool bBackGround = false, bool waitForExit = false);
     static bool startService(const std::string& serviceName, int timeoutSeconds = 30, const std::vector<std::string>& arguments = {});
     static bool stopService(const std::string& serviceName,  int timeoutSeconds = 30);
     static ServiceStatus getServiceStatus(const std::string& serviceName);
