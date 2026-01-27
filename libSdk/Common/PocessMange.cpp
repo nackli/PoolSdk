@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <sys/wait.h>
+#include <fcntl.h>
 #endif
 /********************************************************************************************************************************************************************* */
 #ifdef _WIN32
@@ -1095,6 +1096,63 @@ bool PocessMange::createProcWithArg(const std::string& strProcName, const std::v
     return OnLaunchUnixWithArgs(strProcName, args, waitForExit) >= 0;
 #endif
 }
+
+bool PocessMange::createDetachedProcWithArg(const std::string& strProcName, const std::vector<std::string>& args, bool bBackGround, bool waitForExit)
+{  
+#ifndef _WIN32 
+    // double fork
+    pid_t pid = fork();
+    if (pid < 0) {
+        return false;
+    }
+    
+    if (pid > 0) {
+
+        int status;
+        waitpid(pid, &status, 0);
+        return false;  
+    }
+    
+    // first create 
+    setsid();
+
+    if(!bBackGround)
+    {
+        pid_t pid2 = fork();
+        if (pid2 < 0) 
+            return false;
+
+        
+        if (pid2 > 0) 
+            return false;
+    
+
+
+        int devnull = open("/dev/null", O_RDWR);
+        if (devnull >= 0) 
+        {
+            dup2(devnull, STDIN_FILENO);
+            dup2(devnull, STDOUT_FILENO);
+            dup2(devnull, STDERR_FILENO);
+            close(devnull);
+        }
+    }
+    // build param
+    std::vector<char*> argv;
+    argv.push_back(const_cast<char*>(strProcName.c_str()));
+    for (const auto& arg : args) {
+        argv.push_back(const_cast<char*>(arg.c_str()));
+    }
+    argv.push_back(nullptr);
+    if(execvp(strProcName.c_str(), argv.data()) < 0)
+    {
+        std::cerr << "Exec failed for: " << strProcName << std::endl;   
+        return false;
+    }
+ #endif   
+    return true;
+}
+
 
 PocessMange::ServiceStatus PocessMange::getServiceStatus(const std::string& serviceName)
 {
