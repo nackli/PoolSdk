@@ -1102,15 +1102,19 @@ bool PocessMange::createDetachedProcWithArg(const std::string& strProcName, cons
 #ifndef _WIN32 
     // double fork
     pid_t pid = fork();
-    if (pid < 0) {
+    if (pid < 0) 
+    {
+        std::cerr << "Fork failed" << std::endl;
         return false;
     }
     
-    if (pid > 0) {
 
+    if (pid > 0) 
+    {
         int status;
         waitpid(pid, &status, 0);
-        return false;  
+        std::cout << "fork > 0 ,run parent" <<std::endl;
+        return true;  
     }
     
     // first create 
@@ -1120,14 +1124,20 @@ bool PocessMange::createDetachedProcWithArg(const std::string& strProcName, cons
     {
         pid_t pid2 = fork();
         if (pid2 < 0) 
+        {
+            std::cout << "sec fork fail" <<std::endl;
             return false;
-
+        }
         
         if (pid2 > 0) 
+        {
+            int status;
+            waitpid(pid, &status, 0);
+            std::cout << "sec fork > 0 ,run parent" <<std::endl;
             return false;
+        }
+            
     
-
-
         int devnull = open("/dev/null", O_RDWR);
         if (devnull >= 0) 
         {
@@ -1137,6 +1147,7 @@ bool PocessMange::createDetachedProcWithArg(const std::string& strProcName, cons
             close(devnull);
         }
     }
+    
     // build param
     std::vector<char*> argv;
     argv.push_back(const_cast<char*>(strProcName.c_str()));
