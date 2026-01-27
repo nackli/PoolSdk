@@ -652,7 +652,6 @@
     static int OnLaunchUnixWithArgs(const std::string& strProgram,
                                  const std::vector<std::string>& args,
                                  bool bStandalone,
-                                 bool bBackgroud,
                                  bool waitForExit)
     {
         pid_t pid = fork();
@@ -665,19 +664,25 @@
         else if (pid == 0) 
         {
             if(bStandalone)
-                setsid();
-
-            if(bBackgroud)
             {
-                int devnull = open("/dev/null", O_RDWR);
-                if (devnull >= 0) 
-                {
-                    dup2(devnull, STDIN_FILENO);
-                    dup2(devnull, STDOUT_FILENO);
-                    dup2(devnull, STDERR_FILENO);
-                    close(devnull);
+               if (setsid() < 0) 
+               {
+                    std::cerr << "setsid failed: " << strerror(errno) << std::endl;
+                    exit(EXIT_FAILURE);
                 }
-            }  
+            }
+
+            // if(bBackgroud)
+            // {
+            //     int devnull = open("/dev/null", O_RDWR);
+            //     if (devnull >= 0) 
+            //     {
+            //         dup2(devnull, STDIN_FILENO);
+            //         dup2(devnull, STDOUT_FILENO);
+            //         dup2(devnull, STDERR_FILENO);
+            //         close(devnull);
+            //     }
+            // }  
             
             std::vector<char*> argv;
             argv.push_back(const_cast<char*>(strProgram.c_str()));
@@ -1108,21 +1113,13 @@ void PocessMange::listProcesses()
 #endif
 }
 
-bool PocessMange::createProcWithArg(const std::string& strProcName, const std::vector<std::string>& args, bool waitForExit)
+bool PocessMange::createProcWithArg(const std::string& strProcName, const std::vector<std::string>& args, bool bStandalone, bool waitForExit)
 {
 #ifdef _WIN32
     return OnLaunchWindowsWithArgs(strProcName, args, waitForExit) >= 0;
 #else
-    return OnLaunchUnixWithArgs(strProcName, args, false , false ,waitForExit) >= 0;
+    return OnLaunchUnixWithArgs(strProcName, args, bStandalone , waitForExit) >= 0;
 #endif
-}
-
-bool PocessMange::createDetachedProcWithArg(const std::string& strProcName, const std::vector<std::string>& args, bool bBackGround, bool waitForExit)
-{  
-#ifndef _WIN32 
-    return OnLaunchUnixWithArgs(strProcName, args, true , bBackGround ,waitForExit) >= 0;
-#endif   
-    return true;
 }
 
 
