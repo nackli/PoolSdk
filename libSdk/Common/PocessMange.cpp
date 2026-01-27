@@ -653,7 +653,65 @@
                                  const std::vector<std::string>& args,
                                  bool bStandalone,
                                  bool waitForExit)
+{
+    if (!waitForExit && bStandalone) 
     {
+        // 使用双fork避免僵尸进程
+        pid_t pid = fork();
+        
+        if (pid == -1) 
+        {
+            std::cerr << "First fork failed" << std::endl;
+            return -1;
+        } 
+        else if (pid > 0) 
+        {
+            // 第一级父进程直接等待子进程退出
+            waitpid(pid, NULL, 0);
+            return 0;
+        }
+        // 第一级子进程继续执行
+        
+        // 创建新会话
+        if (setsid() < 0) 
+        {
+            std::cerr << "setsid failed: " << strerror(errno) << std::endl;
+            return -1;
+        }
+        
+        // 第二次fork
+        pid = fork();
+        if (pid == -1) 
+        {
+            std::cerr << "Second fork failed" << std::endl;
+            return -1;
+        } 
+        else if (pid > 0) 
+        {
+            // 第一级子进程退出，第二级子进程由init进程接管
+            exit(0);
+        }
+        // 第二级子进程继续执行
+        
+        // 第二级子进程执行目标程序
+        std::vector<char*> argv;
+        argv.push_back(const_cast<char*>(strProgram.c_str()));
+        
+        for (const auto& arg : args)
+            argv.push_back(const_cast<char*>(arg.c_str()));
+
+        argv.push_back(nullptr);
+        
+        int iRest = execvp(strProgram.c_str(), argv.data());
+        
+        if(iRest < 0)
+            std::cerr << "Exec failed for: " << strProgram << std::endl;
+        
+        exit(-1);  // execvp失败时退出
+    }
+    else
+    {
+        // 原有的单fork逻辑，用于需要等待的情况
         pid_t pid = fork();
         
         if (pid == -1) 
@@ -663,26 +721,11 @@
         } 
         else if (pid == 0) 
         {
-            if(bStandalone)
+            if(bStandalone && setsid() < 0) 
             {
-               if (setsid() < 0) 
-               {
-                    std::cerr << "setsid failed: " << strerror(errno) << std::endl;
-                    return -1;
-                }
+                std::cerr << "setsid failed: " << strerror(errno) << std::endl;
+                return -1;
             }
-
-            // if(bBackgroud)
-            // {
-            //     int devnull = open("/dev/null", O_RDWR);
-            //     if (devnull >= 0) 
-            //     {
-            //         dup2(devnull, STDIN_FILENO);
-            //         dup2(devnull, STDOUT_FILENO);
-            //         dup2(devnull, STDERR_FILENO);
-            //         close(devnull);
-            //     }
-            // }  
             
             std::vector<char*> argv;
             argv.push_back(const_cast<char*>(strProgram.c_str()));
@@ -692,19 +735,15 @@
 
             argv.push_back(nullptr);
             
-    
             int iRest = execvp(strProgram.c_str(), argv.data());
             
             if(iRest < 0)
                 std::cerr << "Exec failed for: " << strProgram << std::endl;
-            else
-                return 0;
-                    
-            return -1;
+            
+            exit(-1);
         } 
         else 
         {
-            // 父进程
             if (waitForExit) 
             {
                 int status;
@@ -714,10 +753,16 @@
                     return WEXITSTATUS(status);
                 return -1;
             } 
-            return 0;
+            else 
+            {
+                // 非阻塞等待，避免僵尸进程
+                waitpid(pid, NULL, WNOHANG);
+                return 0;
+            }
         }
-        return -1;
-    }  
+    }
+    return -1;
+}  
     
     
      // Unix/Linux/macOS 服务管理实现
