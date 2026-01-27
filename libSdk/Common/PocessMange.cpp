@@ -1126,7 +1126,7 @@ bool PocessMange::createDetachedProcWithArg(const std::string& strProcName, cons
         if (pid2 < 0) 
         {
             std::cout << "sec fork fail" <<std::endl;
-            return false;
+            exit(0);
         }
         
         if (pid2 > 0) 
@@ -1134,7 +1134,7 @@ bool PocessMange::createDetachedProcWithArg(const std::string& strProcName, cons
             int status;
             waitpid(pid, &status, 0);
             std::cout << "sec fork > 0 ,run parent" <<std::endl;
-            return false;
+            exit(0);
         }
             
     
