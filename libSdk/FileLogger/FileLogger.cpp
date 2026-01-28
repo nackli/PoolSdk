@@ -152,6 +152,7 @@ void FileLogger::setLogLevel(LogLevel level) {
 
 void FileLogger::initLog(const std::string &strCfgName)
 {
+
     closeLog(); 
     std::string strBaseName("./Logs/log.log");
     int iMaxFileNum = 10;
@@ -213,7 +214,7 @@ void FileLogger::initLog(const std::string &strCfgName)
             }
         }
     }
-
+        
     m_pPatternFmt = new FormatterBuilder(strLogFormat);
 
     if (iOutPutFile == OUT_NET_UDP)
@@ -256,8 +257,14 @@ void FileLogger::closeLog()
     {
         LOG_SELF_LOG(EM_LOG_INFO,"Close log");
         m_pOutputMode->closeOutPut();
+
         delete m_pOutputMode;
         m_pOutputMode = nullptr;
+    }
+    if(m_pPatternFmt)
+    {
+        delete m_pPatternFmt;
+        m_pPatternFmt = nullptr;
     }
 }
 
