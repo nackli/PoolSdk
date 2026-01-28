@@ -283,10 +283,12 @@ void FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, const ch
     const int iLine, const std::string & strMessage)
 {
     if(!m_pPatternFmt)
-    {
-        std::cout << "Logger not init->formatMessage" <<std::endl;
-        return;
-    }
+        initLog("");
+    //{
+        //std::cout << "Logger not init->formatMessage" <<std::endl;
+        //return;
+        initLog("");
+    //}
     LogMessage logMsg(emLevel, szFileName, iLine, strMessage.c_str(), szFunName);
     memory_buf_t bufDest;
     std::string strFormatted = m_pPatternFmt->format(logMsg);
