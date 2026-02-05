@@ -680,7 +680,7 @@ inline std::string normalizePath(const std::string& path) {
 
 	bool openAndWrite(const char *szFilePath,const char *szCtx)
 	{
-		return onlyOneWrite(szFilePath, szCtx, strlen(szCtx));
+		return openAndWrite(szFilePath, szCtx, strlen(szCtx));
 	}
 
 	bool openAndWrite(const char *szFilePath, const void *szCtx, uint32_t uSize,const char *szFlag)
@@ -698,30 +698,33 @@ inline std::string normalizePath(const std::string& path) {
 		return false;
 	}	
 
-	bool onlyOneWrite(const char *szFilePath,const char *szCtx)
+	std::string onlyOneWrite(const char *szFilePath,const char *szCtx)
 	{
-		return onlyOneWrite(szFilePath, szCtx, strlen(szCtx));
-	}
-
-	bool onlyOneWrite(const char *szFilePath, const void *szCtx, uint32_t uSize)
-	{
-		if(!szFilePath || !szCtx || !uSize)
-			return false;
-		FILE *fr = openOrCreateFile(szFilePath,"rb");
+		if(!szFilePath || !szCtx)
+			return "";
+		FILE *fr = openOrCreateFile(szFilePath,"rt");
 		if(!fr)
 		{
-			fr = openOrCreateFile(szFilePath,"wb");
+			fr = openOrCreateFile(szFilePath,"rt");
 			if(fr)
 			{
-				writeFile(fr,(void*)szCtx, uSize);
+				writeFile(fr,(void*)szCtx, strlen(szCtx));
 				closeFile(fr);
 				fr = nullptr;
-				return true;
+				return std::string(szCtx);
 			}
 		}
 		else
-			return true;
-		return false;
+		{
+			size_t uSize = getFileSize(fr);
+			char *szReadData = new char[uSize];
+			readFile(fr, szReadData, uSize);
+			std::string strData(szReadData);
+			delete []szReadData;
+			szReadData = nullptr;
+			return strData;
+		}
+		return "";
 	}
 
 	std::string getCurVersionINfo()
