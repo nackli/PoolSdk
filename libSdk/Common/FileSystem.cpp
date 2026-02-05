@@ -678,13 +678,12 @@ inline std::string normalizePath(const std::string& path) {
 		return config;
 	}
 
-
-	bool onlyOneWrite(const char *szFilePath,const char *szCtx)
+	bool openAndWrite(const char *szFilePath,const char *szCtx)
 	{
 		return onlyOneWrite(szFilePath, szCtx, strlen(szCtx));
 	}
 
-	bool onlyOneWrite(const char *szFilePath, const void *szCtx, uint32_t uSize,const char *szFlag)
+	bool openAndWrite(const char *szFilePath, const void *szCtx, uint32_t uSize,const char *szFlag)
 	{
 		if(!szFilePath)
 			return false;
@@ -696,6 +695,32 @@ inline std::string normalizePath(const std::string& path) {
 			fr = nullptr;
 			return true;
 		}
+		return false;
+	}	
+
+	bool onlyOneWrite(const char *szFilePath,const char *szCtx)
+	{
+		return onlyOneWrite(szFilePath, szCtx, strlen(szCtx));
+	}
+
+	bool onlyOneWrite(const char *szFilePath, const void *szCtx, uint32_t uSize)
+	{
+		if(!szFilePath || !szCtx || !uSize)
+			return false;
+		FILE *fr = openOrCreateFile(szFilePath,"rb");
+		if(!fr)
+		{
+			fr = openOrCreateFile(szFilePath,"wb");
+			if(fr)
+			{
+				writeFile(fr,(void*)szCtx, uSize);
+				closeFile(fr);
+				fr = nullptr;
+				return true;
+			}
+		}
+		else
+			return true;
 		return false;
 	}
 

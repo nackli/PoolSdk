@@ -77,6 +77,8 @@ using MAPSTRING = std::map<std::string, std::string>;
 	std::string relative2AbsolutePath(const std::string& strRelaPath);	
 	bool onlyOneWrite(const char *szFilePath, const char *szCtx);
 	bool onlyOneWrite(const char *szFilePath, const void *szCtx, uint32_t uSize,const char *szFlag="wb");
+	bool openAndWrite(const char *szFilePath, const char *szCtx);
+	bool openAndWrite(const char *szFilePath, const void *szCtx, uint32_t uSize);
 	std::string getCurVersionINfo();
 #endif
 }
