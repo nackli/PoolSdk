@@ -102,9 +102,9 @@ void FileOutPutMode::closeOutPut()
 	
 void FileOutPutMode::openCurFile()
 {
-	std::string strCurrentFile = m_strFilePrefix + "_" + std::to_string(m_iCurrentIndex) + m_strFileExt;
+	//std::string strCurrentFile = m_strFilePrefix + "_" + std::to_string(m_iCurrentIndex) + m_strFileExt;
 
-	m_frLog = FileSystem::reopenOrCreateFile(strCurrentFile.c_str(), m_frLog);
+	m_frLog = FileSystem::openOrCreateFile(m_strBaseName.c_str());
 
 	FileSystem::fseekFile(m_frLog, 0, SEEK_END);
 	m_iCurrentSize = FileSystem::getFileCurPos(m_frLog);
@@ -114,6 +114,10 @@ void FileOutPutMode::changeNextFiles()
 {
 	m_iCurrentIndex++;
 	m_iCurrentIndex = m_iCurrentIndex % 5000;
+
+	closeOutPut();
+	std::string strNewFileName = m_strFilePrefix + "_" + std::to_string(m_iCurrentIndex) + m_strFileExt;
+	std::rename(m_strBaseName.c_str(), strNewFileName.c_str());
 	openCurFile();
 	std::unique_lock<std::mutex>  lock(m_mtxSwitchLock);
 	m_cvSwitchFile.notify_one();	
