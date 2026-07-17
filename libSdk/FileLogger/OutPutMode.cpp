@@ -14,6 +14,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <iomanip>
 #include "fmt/printf.h"
 #include "fmt/color.h"
 #ifndef INVALID_SOCKET
@@ -31,15 +32,30 @@ static inline void OnCreateDirFromFilePath(const string strFilePath)
 		FileSystem::createDirectoryRecursive(strCfgDir);
 }
 
+static inline bool OnIsAllDigits(const std::string& str) 
+{
+    if (str.empty()) 
+		return false;  // 空串视为不满足
+    return std::all_of(str.begin(), str.end(), [](unsigned char c) {
+        return std::isdigit(c);
+    });
+}
+
 static inline void processFileName(const std::string& fileName, vector<int>& indices)
 {
 	size_t pos = fileName.find_last_of("_");
 	if (pos != string::npos)
 	{
 		const std::string numStr = fileName.substr(pos + 1);
-		if (!numStr.empty())
+		if (OnIsAllDigits(numStr))
 			indices.push_back(std::stoi(numStr));
 	}
+}
+
+std::string OnString2WithLeadingZero(int value, int width) {
+    std::ostringstream oss;
+    oss << std::setw(width) << std::setfill('0') << value;
+    return oss.str();
 }
 /*************************************************************************************************************************/
 
@@ -113,10 +129,10 @@ void FileOutPutMode::openCurFile()
 void FileOutPutMode::changeNextFiles()
 {
 	m_iCurrentIndex++;
-	m_iCurrentIndex = m_iCurrentIndex % 5000;
+	m_iCurrentIndex = m_iCurrentIndex % 10000;
 
 	closeOutPut();
-	std::string strNewFileName = m_strFilePrefix + "_" + std::to_string(m_iCurrentIndex) + m_strFileExt;
+	std::string strNewFileName = m_strFilePrefix + "_" + OnString2WithLeadingZero(m_iCurrentIndex, 4) + m_strFileExt;
 	std::rename(m_strBaseName.c_str(), strNewFileName.c_str());
 	openCurFile();
 	std::unique_lock<std::mutex>  lock(m_mtxSwitchLock);
