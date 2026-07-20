@@ -226,7 +226,8 @@ void FileLogger::initLog(const std::string &strCfgName)
     else if (iOutPutFile == OUT_LOC_FILE)
     {
         m_pOutputMode = new FileOutPutMode;
-        m_pOutputMode->initOutMode(strBaseName.c_str(), iMaxFileSize);
+        std::string strBaseAbsolute = FileSystem::relativePath2Absolute(strBaseName.c_str());
+        m_pOutputMode->initOutMode(strBaseAbsolute.c_str(), iMaxFileSize);
         m_pOutputMode->setMaxFileNum(iMaxFileNum);
     } 
     else
