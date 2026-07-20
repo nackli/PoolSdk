@@ -582,7 +582,7 @@ namespace FileSystem
 	}
 
 	// 规范化路径，处理 . 和 .. 以及反斜杠
-inline std::string normalizePath(const std::string& path) {
+static inline std::string normalizePath(const std::string& path) {
     std::string normalized;
     std::vector<std::string> components;
     std::string current;
@@ -642,8 +642,10 @@ inline std::string normalizePath(const std::string& path) {
     return normalized;
 }
 
-	string relative2AbsolutePath(const std::string& strRelaPath)
+	std::string relative2AbsolutePath(const std::string& strRelaPath)
 	{
+		if(IsAbsolutePath(strRelaPath))
+			return strRelaPath;
 #ifndef _WIN32
 #ifndef PATH_MAX
 #define PATH_MAX 4096
@@ -676,7 +678,7 @@ inline std::string normalizePath(const std::string& path) {
 		config.clear();
 		if (path.empty())
 			return config;
-		std::ifstream file(relativePath2Absolute(path));
+		std::ifstream file(relative2AbsolutePath(path));
 		if(!file.is_open())
 			return config;
 		std::string line;
@@ -800,31 +802,29 @@ inline std::string normalizePath(const std::string& path) {
 		return fs::path(buf).parent_path().string();
 	}
 #endif
-	std::string relativePath2Absolute(const char *szFilePath)
-	{
-		if(!szFilePath)
-			return std::string();
-		fs::path pathFile(szFilePath);
-		std::string strFilePath(szFilePath);
-		if(pathFile.is_relative())
-		{
-			std::string strExeDir = getCurExeDir();
-			strFilePath = strExeDir + "/" + szFilePath;
-		}
-		return strFilePath;
-	}
+	// std::string relativePath2Absolute(const char *szFilePath)
+	// {
+	// 	if(!szFilePath)
+	// 		return std::string();
+	// 	std::string strFilePath(szFilePath);
+	// 	if(!IsAbsolutePath(szFilePath))
+	// 	{
+	// 		std::string strExeDir = getCurExeDir();
+	// 		strFilePath = strExeDir + "/" + szFilePath;
+	// 	}
+	// 	return strFilePath;
+	// }
 
-	std::string relativePath2Absolute(const std::string& strFilePath)
-	{
-		if(strFilePath.empty())
-			return std::string();
-		fs::path pathFile(strFilePath);
-		std::string strFileAbsPath(strFilePath);
-		if(pathFile.is_relative())
-		{
-			std::string strExeDir = getCurExeDir();
-			strFileAbsPath = strExeDir + "/" + strFilePath;
-		}
-		return strFileAbsPath;
-	}
+	// std::string relativePath2Absolute(const std::string& strFilePath)
+	// {
+	// 	if(strFilePath.empty())
+	// 		return std::string();
+	// 	std::string strFileAbsPath(strFilePath);
+	// 	if(!IsAbsolutePath(strFilePath))
+	// 	{
+	// 		std::string strExeDir = getCurExeDir();
+	// 		strFileAbsPath = strExeDir + "/" + strFilePath;
+	// 	}
+	// 	return strFileAbsPath;
+	// }
 }
