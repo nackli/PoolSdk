@@ -80,5 +80,6 @@ using MAPSTRING = std::map<std::string, std::string>;
 	std::string  onlyOneWrite(const char *szFilePath, const char *szCtx);
 	std::string getCurVersionINfo();
 	std::string getCurExeDir();
+	std::string getWorkDir();
 #endif
 }
