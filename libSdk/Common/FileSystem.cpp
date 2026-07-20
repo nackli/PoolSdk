@@ -782,4 +782,18 @@ static inline std::string normalizePath(const std::string& path) {
 		return fs::path(buf).parent_path().string();
 	}
 #endif
+
+
+	std::string getWorkDir()
+	{
+		std::string strWorkDir;
+		char *szPath = getcwd(NULL, 0);
+		if(szPath)
+		{
+			strWorkDir = szPath;
+			free(szPath);
+			szPath = nullptr;
+		}
+		return strWorkDir;
+	}
 }
