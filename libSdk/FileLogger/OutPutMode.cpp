@@ -379,7 +379,7 @@ bool ConsoleOutPutMode::writeData(const std::string &strMsgData,int iLogLevel)
 	cout << strMsgData;
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);
 #else
-	const fmt::color clrIndex[] = { fmt::color::dark_sea_green, fmt::color::white, fmt::color::dim_gray, fmt::color::light_yellow, fmt::color::red, fmt::color::indigo};
+	const fmt::color clrIndex[] = { fmt::color::dark_sea_green, fmt::color::white, fmt::color::dim_gray, fmt::color::orange, fmt::color::red, fmt::color::indigo};
 	fmt::print(fg(clrIndex[iLogLevel]),"{}",strMsgData);
 #endif
 	return true;
