@@ -21,7 +21,8 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(BuildVersion)
 # list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
+include(SetCppVersion)
+set_cpp_version()
 # set C++ standard
 
 if(NOT CMAKE_CXX_STANDARD)

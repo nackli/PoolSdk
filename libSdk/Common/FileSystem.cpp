@@ -26,7 +26,25 @@
 #include "StringUtils.h"
 #include <fstream>
 #include "version.h"
+
+#ifdef __linux__
+    #include <unistd.h>
+#elif _WIN32
+    #include <windows.h>
+#elif __APPLE__
+    #include <mach-o/dyld.h>
+    #include <limits.h>
+    #include <unistd.h>
+#endif
 using namespace std;
+#if __cplusplus >= 201703L && !defined(__GNUC__) || (__GNUC__ >= 8)
+    #include <filesystem>
+    namespace fs = std::filesystem;
+#else
+    #include <experimental/filesystem>
+    namespace fs = std::experimental::filesystem;
+#endif
+namespace fs = std::filesystem;
 namespace FileSystem
 {
 #ifdef _WIN32	
@@ -730,5 +748,68 @@ inline std::string normalizePath(const std::string& path) {
 	std::string getCurVersionINfo()
 	{
 		return LibSdk::VersionInfo::fullInfo();
+	}
+
+
+#ifdef __linux__
+	std::string  getCurExeDir() {
+		return fs::read_symlink("/proc/self/exe").parent_path().string();
+	}
+#elif _WIN32
+	std::string getCurExeDir() {
+		// 先获取所需缓冲区大小（动态分配以支持长路径）
+		DWORD bufferSize = MAX_PATH;
+		std::vector<char> buffer(bufferSize);
+		DWORD result = 0;
+		
+		// 循环直到缓冲区足够大（处理路径长度超过 MAX_PATH 的情况）
+		do {
+			buffer.resize(bufferSize);
+			result = GetModuleFileNameA(NULL, buffer.data(), bufferSize);
+			if (result == 0) {
+				// 获取失败
+				return std::string();
+			}
+			// 如果返回长度等于缓冲区大小且缓冲区已满，说明可能截断了，尝试增大缓冲区
+			if (result == bufferSize && GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
+				bufferSize *= 2;
+				continue;
+			}
+			break;
+		} while (true);
+		
+		// 构造路径（注意：buffer 中可能包含空终止符，但 vector 大小包含它，我们用 result 作为长度）
+		return fs::path(std::string(buffer.data(), result)).parent_path().string();
+	}
+#elif __APPLE__
+	std::string getCurExeDir() {
+		char buf[PATH_MAX] = {0};
+		uint32_t size = sizeof(buf);
+		
+		if (_NSGetExecutablePath(buf, &size) != 0) {
+			// 缓冲区不足，但这里我们使用固定大小，理论上 PATH_MAX 足够，如果失败则返回空
+			// 也可以动态分配，但为简化，直接返回空
+			return std::string();
+		}
+		
+		// 解析符号链接（如果存在），得到真实路径
+		char resolved[PATH_MAX] = {0};
+		if (realpath(buf, resolved) != nullptr) {
+			return fs::path(resolved).parent_path().string();
+		}
+		// 如果 realpath 失败（比如路径不存在），返回原始路径
+		return fs::path(buf).parent_path().string();
+	}
+#endif
+	std::string relativePath2Absolute(const char *szFilePath)
+	{
+		fs::path pathFile(szFilePath);
+		std::string strFilePath(szFilePath);
+		if(pathFile.is_relative())
+		{
+			std::string strExeDir = getCurExeDir();
+			strFilePath = strExeDir + "/" + szFilePath;
+		}
+		return strFilePath;
 	}
 }

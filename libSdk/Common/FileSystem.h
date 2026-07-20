@@ -79,5 +79,7 @@ using MAPSTRING = std::map<std::string, std::string>;
 	bool openAndWrite(const char *szFilePath, const void *szCtx, uint32_t uSize,const char *szFlag="wb");
 	std::string  onlyOneWrite(const char *szFilePath, const char *szCtx);
 	std::string getCurVersionINfo();
+	std::string getCurExeDir();
+	std::string relativePath2Absolute(const char *szFilePath);
 #endif
 }
