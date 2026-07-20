@@ -676,7 +676,7 @@ inline std::string normalizePath(const std::string& path) {
 		config.clear();
 		if (path.empty())
 			return config;
-		std::ifstream file(relativePath2Absolute(path.c_str()));
+		std::ifstream file(relativePath2Absolute(path));
 		if(!file.is_open())
 			return config;
 		std::string line;
