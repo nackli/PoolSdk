@@ -81,5 +81,6 @@ using MAPSTRING = std::map<std::string, std::string>;
 	std::string getCurVersionINfo();
 	std::string getCurExeDir();
 	std::string relativePath2Absolute(const char *szFilePath);
+	std::string relativePath2Absolute(const std::string& );
 #endif
 }

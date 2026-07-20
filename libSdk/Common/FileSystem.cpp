@@ -802,6 +802,8 @@ inline std::string normalizePath(const std::string& path) {
 #endif
 	std::string relativePath2Absolute(const char *szFilePath)
 	{
+		if(!szFilePath)
+			return std::string();
 		fs::path pathFile(szFilePath);
 		std::string strFilePath(szFilePath);
 		if(pathFile.is_relative())
@@ -810,5 +812,19 @@ inline std::string normalizePath(const std::string& path) {
 			strFilePath = strExeDir + "/" + szFilePath;
 		}
 		return strFilePath;
+	}
+
+	std::string relativePath2Absolute(const std::string& strFilePath)
+	{
+		if(strFilePath.empty())
+			return std::string();
+		fs::path pathFile(strFilePath);
+		std::string strFileAbsPath(strFilePath);
+		if(pathFile.is_relative())
+		{
+			std::string strExeDir = getCurExeDir();
+			strFileAbsPath = strExeDir + "/" + strFilePath;
+		}
+		return strFileAbsPath;
 	}
 }
