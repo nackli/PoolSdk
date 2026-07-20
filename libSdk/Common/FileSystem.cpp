@@ -638,7 +638,6 @@ static inline std::string normalizePath(const std::string& path) {
         if (i < components.size() - 1) 
             normalized += "/";
     }
-    printf("normalized = %s\n", normalized.c_str());
     return normalized;
 }
 
