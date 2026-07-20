@@ -638,7 +638,7 @@ static inline std::string normalizePath(const std::string& path) {
         if (i < components.size() - 1) 
             normalized += "/";
     }
-    
+    printf("normalized = %s\n", normalized.c_str());
     return normalized;
 }
 
@@ -646,29 +646,11 @@ static inline std::string normalizePath(const std::string& path) {
 	{
 		if(IsAbsolutePath(strRelaPath))
 			return strRelaPath;
-#ifndef _WIN32
-#ifndef PATH_MAX
-#define PATH_MAX 4096
-#endif
-		const uint16_t MAX_PATH = PATH_MAX;
-#endif
-		char szFullPath[MAX_PATH];
-#ifdef _WIN32
-		GetFullPathNameA(strRelaPath.c_str(), MAX_PATH, szFullPath, nullptr);
-		return std::string(szFullPath);
-#else
-#if 0
-		if (!realpath(strRelaPath.c_str(), szFullPath))
-			std::cerr << "real path fun: " <<strRelaPath <<" "<< strerror(errno) << std::endl;
-		return std::string(szFullPath);
-#else
-		if (getcwd(szFullPath, sizeof(szFullPath)) != nullptr) 
-		{
-			return normalizePath(std::string(szFullPath) + "/" + strRelaPath);	
-		}
+
+		std::string strExeRunPath = getCurExeDir();
+		if(!strExeRunPath.empty())
+			return normalizePath(strExeRunPath + "/" + strRelaPath);	
 		return 	strRelaPath;
-#endif
-#endif
 	}
 
 
@@ -751,7 +733,6 @@ static inline std::string normalizePath(const std::string& path) {
 		return LibSdk::VersionInfo::fullInfo();
 	}
 
-
 #ifdef __linux__
 	std::string  getCurExeDir() {
 		return fs::read_symlink("/proc/self/exe").parent_path().string();
@@ -802,29 +783,4 @@ static inline std::string normalizePath(const std::string& path) {
 		return fs::path(buf).parent_path().string();
 	}
 #endif
-	// std::string relativePath2Absolute(const char *szFilePath)
-	// {
-	// 	if(!szFilePath)
-	// 		return std::string();
-	// 	std::string strFilePath(szFilePath);
-	// 	if(!IsAbsolutePath(szFilePath))
-	// 	{
-	// 		std::string strExeDir = getCurExeDir();
-	// 		strFilePath = strExeDir + "/" + szFilePath;
-	// 	}
-	// 	return strFilePath;
-	// }
-
-	// std::string relativePath2Absolute(const std::string& strFilePath)
-	// {
-	// 	if(strFilePath.empty())
-	// 		return std::string();
-	// 	std::string strFileAbsPath(strFilePath);
-	// 	if(!IsAbsolutePath(strFilePath))
-	// 	{
-	// 		std::string strExeDir = getCurExeDir();
-	// 		strFileAbsPath = strExeDir + "/" + strFilePath;
-	// 	}
-	// 	return strFileAbsPath;
-	// }
 }
