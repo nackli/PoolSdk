@@ -320,28 +320,23 @@ void FileLogger::initLogJsonStr(const std::string& strJsonStr)
     }
 }
 
-void FileLogger::initLog(const std::string &strCfgName)
+void FileLogger::initLog(std::ifstream& inFile)
 {
     closeLog(); 
     LOG_CONFIG_INFO tagConfig;
-    if (!strCfgName.empty())
+    if (inFile.is_open())
     {
-        std::ifstream inFile(strCfgName);
-        if (!inFile.is_open()) 
-        {
-            std::cerr << "无法打开文件 "<< strCfgName << std::endl;
-            return;
-        }
         if(OnGetLogConfig(inFile, tagConfig))
         {
             m_emLogLevel = tagConfig.emLogLevel;
             m_bSync = tagConfig.bSync;
         }
         else
-            printf("read config error,use default config\n");
+            printf("read config error,use default config\n");    
     }
-    // printf("read config info {outmodel: %d, filename: %s, maxsize: %d, maxnum: %d, logPattern: %s}\n",
-    //     tagConfig.iOutPutFile, tagConfig.strBaseName.c_str(), tagConfig.iMaxFileSize, tagConfig.iMaxFileNum, tagConfig.strLogFormat.c_str());    
+    else
+        std::cerr << "file not open, use default config" << std::endl;
+    
     m_pPatternFmt = new FormatterBuilder(tagConfig.strLogFormat);
     if (tagConfig.iOutPutFile == OUT_NET_UDP)
     {
@@ -365,8 +360,14 @@ void FileLogger::initLog(const std::string &strCfgName)
     {
         std::thread tRead(&FileLogger::outPut2File, this);
         tRead.detach();
-    }
+    }    
+}
 
+void FileLogger::initLog(const std::string &strCfgName)
+{
+    LOG_CONFIG_INFO tagConfig;
+    std::ifstream inFile(strCfgName);
+    initLog(inFile);
 }
 
 void FileLogger::setLogFileName(const std::string& strFileName)
