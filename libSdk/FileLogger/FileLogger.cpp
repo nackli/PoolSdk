@@ -171,8 +171,8 @@ static inline void from_json(const json& jsonData, LOG_CONFIG_INFO& tagConfig)
    tagConfig.strBaseName = OnGetKey2Value<std::string>(jsonData, "file_name", tagConfig.strBaseName);
    tagConfig.strLogFormat = OnGetKey2Value<std::string>(jsonData, "log_format", tagConfig.strLogFormat);
    
-   tagConfig.iMaxFileNum = OnGetKey2Value<int>(jsonData, "max_files"); 
-   tagConfig.iMaxFileSize = OnGetKey2Value<int>(jsonData, "max_size"); 
+   tagConfig.iMaxFileNum = OnGetKey2Value<int>(jsonData, "max_files", tagConfig.iMaxFileNum); 
+   tagConfig.iMaxFileSize = OnGetKey2Value<int>(jsonData, "max_size", tagConfig.iMaxFileSize); 
    tagConfig.emLogLevel = OnStringToLevel(OnGetKey2Value<std::string>(jsonData, "log_level"));
    if(jsonData.contains("out_put"))
    {
@@ -276,6 +276,49 @@ void FileLogger::setLogLevel(LogLevel level) {
     LOG_SELF_LOG(EM_LOG_INFO,"Change log level {}",(uint8_t)level);
 }
 
+void FileLogger::initLogJsonStr(const std::string& strJsonStr)
+{
+    closeLog();  
+    if(strJsonStr.empty())
+        return;
+    LOG_CONFIG_INFO tagConfig; 
+    json inputData = json::parse(strJsonStr, nullptr, false, true);
+    if(inputData.contains("LogConfig"))
+    {
+        auto jsonLogConfig = inputData.at("LogConfig");
+        if(jsonLogConfig.is_object())
+            tagConfig = jsonLogConfig.get<LOG_CONFIG_INFO>();
+        else
+            perror("LogConfig error\n");
+    }
+
+    m_emLogLevel = tagConfig.emLogLevel;
+    m_bSync = tagConfig.bSync;    
+    m_pPatternFmt = new FormatterBuilder(tagConfig.strLogFormat);
+    if (tagConfig.iOutPutFile == OUT_NET_UDP)
+    {
+        m_pOutputMode = new UdpOutPutMode;
+        m_pOutputMode->initOutMode(tagConfig.strNetIpAddr.c_str(), tagConfig.iNetPort);
+    }
+
+    else if (tagConfig.iOutPutFile == OUT_LOC_FILE)
+    {
+        m_pOutputMode = new FileOutPutMode;
+        std::string strBaseAbsolute = FileSystem::relative2AbsolutePath(tagConfig.strBaseName);
+        m_pOutputMode->initOutMode(strBaseAbsolute.c_str(), tagConfig.iMaxFileSize);
+        m_pOutputMode->setMaxFileNum(tagConfig.iMaxFileNum);
+    } 
+    else
+        m_pOutputMode = new ConsoleOutPutMode;
+
+    LOG_SELF_LOG(EM_LOG_INFO,"Init log finsh,outmodel: {}, filename: {}, maxsize: {}, maxnum: {}, logPattern: {}",
+        tagConfig.iOutPutFile, tagConfig.strBaseName, tagConfig.iMaxFileSize, tagConfig.iMaxFileNum, tagConfig.strLogFormat);
+    if (!m_bSync)
+    {
+        std::thread tRead(&FileLogger::outPut2File, this);
+        tRead.detach();
+    }
+}
 
 void FileLogger::initLog(const std::string &strCfgName)
 {

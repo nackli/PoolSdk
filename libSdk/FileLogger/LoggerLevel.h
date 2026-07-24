@@ -83,6 +83,8 @@ inline const char * getLoggerLevelShortName(int iLev)
 }
 
 inline LogLevel OnStringToLevel(const std::string& strLevel) {
+	if(strLevel.empty())
+		return LogLevel::EM_LOG_DEBUG;
     static std::map<std::string, LogLevel> levelMap = {
         {"TRACE", LogLevel::EM_LOG_TRACE},
         {"DEBUG", LogLevel::EM_LOG_DEBUG},

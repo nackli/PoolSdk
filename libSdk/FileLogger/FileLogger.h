@@ -69,6 +69,7 @@ public:
     static FileLogger& getInstance();
     void setLogLevel(LogLevel level);
     void initLog(const std::string& strCfgName);
+    void initLogJsonStr(const std::string& strJsonStr);
     void setLogFileName(const std::string& strFileName);
     void closeLog();
 
