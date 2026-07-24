@@ -25,13 +25,13 @@ include(SetCppVersion)
 set_cpp_version()
 # set C++ standard
 
-if(NOT CMAKE_CXX_STANDARD)
-    message(STATUS "CMAKE_CXX_STANDARD set default 14")
-    # 设置默认值
-    set(CMAKE_CXX_STANDARD 14)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-    set(CMAKE_CXX_EXTENSIONS OFF)
-endif()
+# if(NOT CMAKE_CXX_STANDARD)
+#     message(STATUS "CMAKE_CXX_STANDARD set default 14")
+#     # 设置默认值
+#     set(CMAKE_CXX_STANDARD 14)
+#     set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#     set(CMAKE_CXX_EXTENSIONS OFF)
+# endif()
 # set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # set(CMAKE_CXX_EXTENSIONS OFF)
 #set(CMAKE_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build)

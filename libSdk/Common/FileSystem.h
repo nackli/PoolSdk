@@ -45,6 +45,7 @@ using MAPSTRING = std::map<std::string, std::string>;
 	std::string getFileName(const std::string& strFilePath);
 	void createDirFromFilePath(const std::string &strFilePath);
 	MAPSTRING parseConfig(const std::string& path); 
+	MAPSTRING parseConfig(std::ifstream & inFile); 
 #ifdef _WIN32	
 	HANDLE openOrCreateFile(const std::string &strFilePath, uint32_t uDesiredAccess, uint32_t uCreationDisposition,
 		uint32_t uFlagsAndAttributes, uint32_t uShartMode = 0);

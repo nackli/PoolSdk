@@ -652,19 +652,14 @@ static inline std::string normalizePath(const std::string& path) {
 		return 	strRelaPath;
 	}
 
-
-	MAPSTRING parseConfig(const std::string& path)
+	MAPSTRING parseConfig(std::ifstream & inFile)
 	{
-		std::map<std::string, std::string> config;
-		config.clear();
-		if (path.empty())
-			return config;
-		std::ifstream file(relative2AbsolutePath(path));
-		if(!file.is_open())
-			return config;
-		std::string line;
+		if(!inFile.is_open())
+			return MAPSTRING();
 
-		while (std::getline(file, line))
+		std::string line;
+		MAPSTRING config;
+		while (std::getline(inFile, line))
 		{
 			std::string strData = subLeft(line, "#");
 			if (strData.empty())
@@ -675,7 +670,18 @@ static inline std::string normalizePath(const std::string& path) {
 			if(!pairKv.first.empty())
 				config.insert(pairKv);
 		}
-		return config;
+		return config;		
+	}
+
+	MAPSTRING parseConfig(const std::string& path)
+	{
+		std::map<std::string, std::string> config;
+		if (path.empty())
+			return config;
+		std::ifstream file(relative2AbsolutePath(path));
+		if(!file.is_open())
+			return config;
+		return parseConfig(file);
 	}
 
 	bool openAndWrite(const char *szFilePath,const char *szCtx)

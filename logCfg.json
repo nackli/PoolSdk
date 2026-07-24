@@ -1,0 +1,11 @@
+{
+    "LogConfig":{
+        "file_name": "./Data/logs/Json_logfile.log",
+        "max_size": 52428800,
+        "max_files": 5,
+        "log_level": "TRACE",                                                       //[trace、debug、info、warning、error、fatal] default debug
+        "out_put":"file",                                                        //"console", "file" {"netIp": "127.0.0.1", "netPort": 9000 }
+        "syncMode": true,
+        "log_pattern": "[{time}] [{level}] {tid} {file}:{line} {func} - {message}"   //[%y、%Y、%D->datatime %l->level fullname %L->short level named %g->filename %t->threadid %#->line num %!->function name %v->message %n->\n %t->\t,%@->filename:linenum]
+    }
+}

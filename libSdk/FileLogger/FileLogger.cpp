@@ -21,6 +21,7 @@
 #include "../mem/ConcurrentMem.h"
 #include "formatPattern.h"
 #include "OutPutMode.h"
+#include "Common/json.hpp"
 
 
 #ifdef _WIN32
@@ -44,6 +45,21 @@
 #define LOG_SELF_LOG(Level,format, ...)                log(false,Level,__func__, __FILE__, __LINE__,format, ##__VA_ARGS__);
 #define FREE_MEM(x)                                    if((x)) {PM_FREE((x)); (x)=nullptr;}
 FileLogger FileLogger::m_sFileLogger;
+
+using json = nlohmann::json;
+typedef struct LOG_CONFIG_INFO
+{
+    int iMaxFileNum = 10;
+    int iMaxFileSize = 0x3200000;//0x500000;
+    int iNetPort = 9000;
+    int iOutPutFile = OUT_CONSOLE;
+    LogLevel emLogLevel = EM_LOG_DEBUG;
+    bool bSync = false;
+    std::string strLogFormat = "[%D] [%l] [tid:%t] [%!] %v%n";
+    std::string strBaseName = "./Logs/log.log";
+    std::string strNetIpAddr ="127.0.0.1";
+}LOG_CONFIG_INFO,*LP_LOG_CONFIG_INFO;
+
 UNUSED_FUN static void memory_dump(const void* ptr, unsigned int len)
 {
     unsigned int i, j;
@@ -138,6 +154,117 @@ UNUSED_FUN static int dir_list(const char* szDir, int (CallFunFileList)(void* pa
     return r;
 #endif
 }
+template < typename T>
+static inline auto OnGetKey2Value(const json& j, const char *strKey, T defValue = T())
+{
+    if(j.contains(strKey)) 
+    {
+        json jValue = j.at(strKey);
+        if(jValue.is_primitive())
+            return jValue.get<T>();
+    }
+    return defValue;
+}
+
+static inline void from_json(const json& jsonData, LOG_CONFIG_INFO& tagConfig) 
+{
+   tagConfig.strBaseName = OnGetKey2Value<std::string>(jsonData, "file_name", tagConfig.strBaseName);
+   tagConfig.strLogFormat = OnGetKey2Value<std::string>(jsonData, "log_format", tagConfig.strLogFormat);
+   
+   tagConfig.iMaxFileNum = OnGetKey2Value<int>(jsonData, "max_files"); 
+   tagConfig.iMaxFileSize = OnGetKey2Value<int>(jsonData, "max_size"); 
+   tagConfig.emLogLevel = OnStringToLevel(OnGetKey2Value<std::string>(jsonData, "log_level"));
+   if(jsonData.contains("out_put"))
+   {
+        tagConfig.iOutPutFile = OUT_CONSOLE;
+        std::string strOuput;
+        json jOutput = jsonData.at("out_put");
+        if(jOutput.is_primitive())
+        {
+            strOuput = jOutput.get<std::string>();
+            if (equals(strOuput.c_str(), "console", false))
+                tagConfig.iOutPutFile = OUT_CONSOLE;
+            else if(equals(strOuput.c_str(), "file", false))
+                tagConfig.iOutPutFile = OUT_LOC_FILE;
+        }  
+        else if(jOutput.is_object())
+        {
+            tagConfig.iOutPutFile = OUT_NET_UDP;
+            tagConfig.strNetIpAddr = OnGetKey2Value<std::string>(jOutput, "netIp", tagConfig.strNetIpAddr);
+            tagConfig.iNetPort = OnGetKey2Value<int>(jOutput, "netPort", tagConfig.iNetPort);
+        }
+        else
+            perror("out_put config error\n");
+   }  
+    tagConfig.bSync = OnGetKey2Value<bool>(jsonData, "syncMode", true);  
+}
+
+static bool OnGetLogConfig(std::ifstream &inFile,LOG_CONFIG_INFO &tagConfig)
+{
+    json inputData = json::parse(inFile, nullptr, false, true);
+    if(inputData.is_discarded() || !inputData.contains("LogConfig"))
+    {
+        FileSystem::MAPSTRING mapCfg = FileSystem::parseConfig(inFile);
+        if (!mapCfg.empty())
+        {
+            if (!mapCfg["file_name"].empty())
+                tagConfig.strBaseName = mapCfg["file_name"];
+        
+            if(!mapCfg["max_files"].empty())
+                tagConfig.iMaxFileNum = str2Int(mapCfg["max_files"]);
+
+            if(!mapCfg["max_size"].empty())
+                tagConfig.iMaxFileSize = str2Uint(mapCfg["max_size"]);
+        
+            if (!mapCfg["log_level"].empty())
+                tagConfig.emLogLevel = OnStringToLevel(mapCfg["log_level"]);
+        
+            if (!mapCfg["out_put"].empty())
+            {
+                if (equals(mapCfg["out_put"].c_str(), "console", false))
+                    tagConfig.iOutPutFile = OUT_CONSOLE;
+                else if(equals(mapCfg["out_put"].c_str(), "netudp", false))
+                    tagConfig.iOutPutFile = OUT_NET_UDP;
+                else
+                    tagConfig.iOutPutFile = OUT_LOC_FILE;
+            }
+
+            if (!mapCfg["out_mode"].empty())
+                tagConfig.bSync = equals(mapCfg["out_mode"].c_str(), "sync", false);
+        
+            if (!mapCfg["log_pattern"].empty())
+                tagConfig.strLogFormat = mapCfg["log_pattern"];
+
+            if (tagConfig.iOutPutFile == OUT_NET_UDP)
+            {
+                if (!mapCfg["netIp"].empty())
+                {
+                    std::pair<std::string, std::string> pairNet = spiltKv(mapCfg["netIp"], ':');
+                    if (!pairNet.first.empty() && !pairNet.second.empty())
+                    {
+                        tagConfig.strNetIpAddr = pairNet.first;
+                        tagConfig.iNetPort = str2Int(pairNet.second);
+                    }
+                    else
+                        tagConfig.iOutPutFile = OUT_LOC_FILE;
+                }
+                else
+                    tagConfig.iOutPutFile = OUT_LOC_FILE;
+            }
+            return true;
+        }       
+    }
+    else if(inputData.contains("LogConfig"))
+    {
+        auto jsonLogConfig = inputData.at("LogConfig");
+        if(jsonLogConfig.is_object())
+            tagConfig = jsonLogConfig.get<LOG_CONFIG_INFO>();
+        else
+            perror("LogConfig error\n");
+        return true;
+    }
+    return false;
+}
 
 FileLogger& FileLogger::getInstance() {
     return m_sFileLogger;
@@ -152,88 +279,45 @@ void FileLogger::setLogLevel(LogLevel level) {
 
 void FileLogger::initLog(const std::string &strCfgName)
 {
-
     closeLog(); 
-    std::string strBaseName("./Logs/log.log");
-    int iMaxFileNum = 10;
-    int iMaxFileSize = 0x3200000;//0x500000;
-    std::string strNetIpAddr ="127.0.0.1";
-    int iNetPort = 0;
-    int iOutPutFile = OUT_LOC_FILE;
-    std::string strLogFormat("[%D] [%l] [tid:%t] [%!] %v%n");
-
+    LOG_CONFIG_INFO tagConfig;
     if (!strCfgName.empty())
     {
-        std::map<std::string, std::string> mapCfg = FileSystem::parseConfig(strCfgName);
-        if (!mapCfg.empty())
+        std::ifstream inFile(strCfgName);
+        if (!inFile.is_open()) 
         {
- 
-            if (!mapCfg["file_name"].empty())
-                strBaseName = mapCfg["file_name"];
-      
-            if(!mapCfg["max_files"].empty())
-                iMaxFileNum = str2Int(mapCfg["max_files"]);
-  
-            if(!mapCfg["max_size"].empty())
-                iMaxFileSize = str2Uint(mapCfg["max_size"]);
-     
-            if (!mapCfg["log_level"].empty())
-                m_emLogLevel = OnStringToLevel(mapCfg["log_level"]);
-       
-            if (!mapCfg["out_put"].empty())
-            {
-                if (equals(mapCfg["out_put"].c_str(), "console", false))
-                    iOutPutFile = OUT_CONSOLE;
-                else if(equals(mapCfg["out_put"].c_str(), "netudp", false))
-                    iOutPutFile = OUT_NET_UDP;
-                else
-                    iOutPutFile = OUT_LOC_FILE;
-            }
-    
-            if (!mapCfg["out_mode"].empty())
-                m_bSync = equals(mapCfg["out_mode"].c_str(), "sync", false);
-      
-            if (!mapCfg["log_pattern"].empty())
-                strLogFormat = mapCfg["log_pattern"];
-
-            if (iOutPutFile == OUT_NET_UDP)
-            {
-                if (!mapCfg["netIp"].empty())
-                {
-                    std::pair<std::string, std::string> pairNet = spiltKv(mapCfg["netIp"], ':');
-                    if (!pairNet.first.empty() && !pairNet.second.empty())
-                    {
-                        strNetIpAddr = pairNet.first;
-                        iNetPort = str2Int(pairNet.second);
-                    }
-                    else
-                        iOutPutFile = OUT_LOC_FILE;
-                }
-                else
-                    iOutPutFile = OUT_LOC_FILE;
-            }
+            std::cerr << "无法打开文件 "<< strCfgName << std::endl;
+            return;
         }
+        if(OnGetLogConfig(inFile, tagConfig))
+        {
+            m_emLogLevel = tagConfig.emLogLevel;
+            m_bSync = tagConfig.bSync;
+        }
+        else
+            printf("read config error,use default config\n");
     }
-        
-    m_pPatternFmt = new FormatterBuilder(strLogFormat);
-
-    if (iOutPutFile == OUT_NET_UDP)
+    // printf("read config info {outmodel: %d, filename: %s, maxsize: %d, maxnum: %d, logPattern: %s}\n",
+    //     tagConfig.iOutPutFile, tagConfig.strBaseName.c_str(), tagConfig.iMaxFileSize, tagConfig.iMaxFileNum, tagConfig.strLogFormat.c_str());    
+    m_pPatternFmt = new FormatterBuilder(tagConfig.strLogFormat);
+    if (tagConfig.iOutPutFile == OUT_NET_UDP)
     {
         m_pOutputMode = new UdpOutPutMode;
-        m_pOutputMode->initOutMode(strNetIpAddr.c_str(), iNetPort);
+        m_pOutputMode->initOutMode(tagConfig.strNetIpAddr.c_str(), tagConfig.iNetPort);
     }
 
-    else if (iOutPutFile == OUT_LOC_FILE)
+    else if (tagConfig.iOutPutFile == OUT_LOC_FILE)
     {
         m_pOutputMode = new FileOutPutMode;
-        std::string strBaseAbsolute = FileSystem::relative2AbsolutePath(strBaseName);
-        m_pOutputMode->initOutMode(strBaseAbsolute.c_str(), iMaxFileSize);
-        m_pOutputMode->setMaxFileNum(iMaxFileNum);
+        std::string strBaseAbsolute = FileSystem::relative2AbsolutePath(tagConfig.strBaseName);
+        m_pOutputMode->initOutMode(strBaseAbsolute.c_str(), tagConfig.iMaxFileSize);
+        m_pOutputMode->setMaxFileNum(tagConfig.iMaxFileNum);
     } 
     else
         m_pOutputMode = new ConsoleOutPutMode;
 
-    LOG_SELF_LOG(EM_LOG_INFO,"Init log finsh,outmodel : {}, filename : {}",iOutPutFile,strBaseName);
+    LOG_SELF_LOG(EM_LOG_INFO,"Init log finsh,outmodel: {}, filename: {}, maxsize: {}, maxnum: {}, logPattern: {}",
+        tagConfig.iOutPutFile, tagConfig.strBaseName, tagConfig.iMaxFileSize, tagConfig.iMaxFileNum, tagConfig.strLogFormat);
     if (!m_bSync)
     {
         std::thread tRead(&FileLogger::outPut2File, this);
