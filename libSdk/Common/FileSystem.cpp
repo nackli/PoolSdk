@@ -802,4 +802,73 @@ static inline std::string normalizePath(const std::string& path) {
 		}
 		return strWorkDir;
 	}
+
+	std::string getMimeTypeFromFileName(const std::string& strFilePath)
+	{
+		if(strFilePath.empty())
+			return "application/octet-stream";
+
+		size_t dot_pos = strFilePath.find_last_of('.');
+		if (dot_pos == std::string::npos) 
+			return "application/octet-stream"; // 无后缀，当作二进制流
+		
+		std::string ext = strFilePath.substr(dot_pos + 1);
+		std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
+	
+		static const std::unordered_map<std::string, std::string> mime_map = {
+			// 文本类
+			{"txt", "text/plain"},
+			{"html", "text/html"},
+			{"htm", "text/html"},
+			{"css", "text/css"},
+			{"js", "application/javascript"},
+			{"json", "application/json"},
+			{"xml", "application/xml"},
+			{"csv", "text/csv"},
+			
+			// 图片类
+			{"png", "image/png"},
+			{"jpg", "image/jpeg"},
+			{"jpeg", "image/jpeg"},
+			{"gif", "image/gif"},
+			{"bmp", "image/bmp"},
+			{"svg", "image/svg+xml"},
+			{"webp", "image/webp"},
+			{"ico", "image/x-icon"},
+			
+			// 音视频类
+			{"mp3", "audio/mpeg"},
+			{"wav", "audio/wav"},
+			{"mp4", "video/mp4"},
+			{"avi", "video/x-msvideo"},
+			{"mov", "video/quicktime"},
+			{"mkv", "video/x-matroska"},
+			
+			// 文档/压缩类
+			{"pdf", "application/pdf"},
+			{"doc", "application/msword"},
+			{"docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"},
+			{"xls", "application/vnd.ms-excel"},
+			{"xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
+			{"ppt", "application/vnd.ms-powerpoint"},
+			{"pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation"},
+			{"zip", "application/zip"},
+			{"rar", "application/x-rar-compressed"},
+			{"gz", "application/gzip"},
+			{"7z", "application/x-7z-compressed"},
+			
+			// 可执行/其他
+			{"exe", "application/x-msdownload"},
+			{"dll", "application/x-msdownload"},
+			{"apk", "application/vnd.android.package-archive"}
+		};
+
+		auto it = mime_map.find(ext);
+		if (it != mime_map.end()) {
+			return it->second;
+		}
+		
+		return "application/octet-stream"; // 未知类型默认值		
+	}
 }

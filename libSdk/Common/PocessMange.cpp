@@ -1089,8 +1089,15 @@
         fclose(fp);
         
         // 重新加载systemd
-        system("systemctl daemon-reload");
-        
+        int ret = system("systemctl daemon-reload");
+        if (ret == -1) {
+            // system() 调用本身失败（例如无法创建子进程）
+            perror("system failed");
+        } else if (ret != 0) {
+            // 命令执行失败，ret 为命令的退出状态码
+            fprintf(stderr, "systemctl daemon-reload exited with code %d\n", ret);
+            // 根据业务逻辑决定是否退出或重试
+        }
         // 启用服务
         std::string enableCmd = "systemctl enable " + serviceName;
         return system(enableCmd.c_str()) == 0;
@@ -1104,17 +1111,38 @@
         // 禁用服务
         if (access("/bin/systemctl", X_OK) == 0) {
             std::string disableCmd = "systemctl disable " + serviceName;
-            system(disableCmd.c_str());
-            
+            int ret = system(disableCmd.c_str());
+            if (ret == -1) {
+                // system() 调用本身失败（例如无法创建子进程）
+                perror("system failed");
+            } else if (ret != 0) {
+                // 命令执行失败，ret 为命令的退出状态码
+                fprintf(stderr, "systemctl daemon-reload exited with code %d\n", ret);
+                // 根据业务逻辑决定是否退出或重试
+            }
             // 删除服务文件
             std::string serviceFile = "/etc/systemd/system/" + serviceName + ".service";
             std::string rmCmd = "rm -f " + serviceFile;
-            system(rmCmd.c_str());
-            
-            system("systemctl daemon-reload");
-            return true;
+            ret = system(rmCmd.c_str());
+            if (ret == -1) {
+                // system() 调用本身失败（例如无法创建子进程）
+                perror("system failed");
+            } else if (ret != 0) {
+                // 命令执行失败，ret 为命令的退出状态码
+                fprintf(stderr, "systemctl daemon-reload exited with code %d\n", ret);
+                // 根据业务逻辑决定是否退出或重试
+            }            
+            ret = system("systemctl daemon-reload");
+            if (ret == -1) {
+                // system() 调用本身失败（例如无法创建子进程）
+                perror("system failed");
+            } else if (ret != 0) {
+                // 命令执行失败，ret 为命令的退出状态码
+                fprintf(stderr, "systemctl daemon-reload exited with code %d\n", ret);
+                // 根据业务逻辑决定是否退出或重试
+            } 
+            return ret == 0;
         }
-        
         return false;
     }
 

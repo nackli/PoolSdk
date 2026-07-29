@@ -82,5 +82,6 @@ using MAPSTRING = std::map<std::string, std::string>;
 	std::string getCurVersionINfo();
 	std::string getCurExeDir();
 	std::string getWorkDir();
-#endif
+	std::string getMimeTypeFromFileName(const std::string& strFilePath);
 }
+#endif

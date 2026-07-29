@@ -258,10 +258,13 @@ static bool OnGetLogConfig(std::ifstream &inFile,LOG_CONFIG_INFO &tagConfig)
     {
         auto jsonLogConfig = inputData.at("LogConfig");
         if(jsonLogConfig.is_object())
+        {
             tagConfig = jsonLogConfig.get<LOG_CONFIG_INFO>();
+            return true;
+        }
         else
             perror("LogConfig error\n");
-        return true;
+        return false;
     }
     return false;
 }
