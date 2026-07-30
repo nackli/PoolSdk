@@ -45,14 +45,14 @@
 //    EM_LOG_ERROR,
 //    EM_LOG_FATAL
 //};
-#define LOG_BASE(Level,format, ...)         FileLogger::getInstance().log(true,Level,__func__, __FILE__, __LINE__, format, ##__VA_ARGS__)
+#define LOG_BASE(Level,format, ...)         FileLogger::getInstance().log<true>(Level,__func__, __FILE__, __LINE__, format, ##__VA_ARGS__)
 #define LOG_TRACE(format, ...)              LOG_BASE(EM_LOG_TRACE, format, ##__VA_ARGS__)
 #define LOG_DEBUG(format, ...)              LOG_BASE(EM_LOG_DEBUG, format, ##__VA_ARGS__)
 #define LOG_INFO(format, ...)               LOG_BASE(EM_LOG_INFO, format, ##__VA_ARGS__)
 #define LOG_WARN(format, ...)               LOG_BASE(EM_LOG_WARN, format, ##__VA_ARGS__)
 #define LOG_ERROR(format, ...)              LOG_BASE(EM_LOG_ERROR, format, ##__VA_ARGS__)
 #define LOG_FATAL(format, ...)              LOG_BASE(EM_LOG_FATAL, format, ##__VA_ARGS__)
-#define LOG_BASE_S(Level,format, ...)       FileLogger::getInstance().log(false,Level,__func__, __FILE__, __LINE__, format, ##__VA_ARGS__)
+#define LOG_BASE_S(Level,format, ...)       FileLogger::getInstance().log<false>(Level,__func__, __FILE__, __LINE__, format, ##__VA_ARGS__)
 #define LOG_TRACE_S(format, ...)            LOG_BASE_S(EM_LOG_TRACE, format, ##__VA_ARGS__)
 #define LOG_DEBUG_S(format, ...)            LOG_BASE_S(EM_LOG_DEBUG, format, ##__VA_ARGS__)
 #define LOG_INFO_S(format, ...)             LOG_BASE_S(EM_LOG_INFO, format, ##__VA_ARGS__)
@@ -75,13 +75,13 @@ public:
     void setLogFileName(const std::string& strFileName);
     void closeLog();
 
-    template<typename FormatStr,typename... Args>
-    void log(bool bFormat,LogLevel emLevel, const char* szFun,const char *szFileName, 
+    template<bool BFormat, typename FormatStr,typename... Args>
+    void log(LogLevel emLevel, const char* szFun,const char *szFileName, 
         const int iLine, const FormatStr& format, Args&&... args)
     {
         if (emLevel < m_emLogLevel)
             return;         
-        formatMessage(bFormat,emLevel, szFun, szFileName, iLine, format,
+        formatMessage<BFormat>(emLevel, szFun, szFileName, iLine, format,
             std::forward<Args>(args)...);
     }
 
@@ -90,18 +90,20 @@ private:
 
     ~FileLogger();
 
-    template<typename FormatStr,typename... Args>
-    void formatMessage(bool bFormat,LogLevel emLevel, const char* szFun, const char* szFileName,
+    template<bool BFormat,typename FormatStr,typename... Args>
+    void formatMessage(LogLevel emLevel, const char* szFun, const char* szFileName,
         const int iLine, const FormatStr& formatValue, Args&&... args)
     {
         std::string strContent;
-        if(bFormat)
+        strContent.reserve(1024);
+        if constexpr (BFormat) 
             strContent = fmt::sprintf(formatValue, /*std::forward<Args>*/(args)...); 
         else
         {
-            fmt::memory_buffer outBuf;
-            fmt::format_to(fmt::appender(outBuf), fmt::runtime(formatValue), std::forward<Args>(args)...);
-            strContent = std::string(outBuf.data(), outBuf.size());
+            fmt::format_to(std::back_inserter(strContent), fmt::runtime(formatValue), std::forward<Args>(args)...);
+            // fmt::memory_buffer outBuf;
+            // fmt::format_to(fmt::appender(outBuf), fmt::runtime(formatValue), std::forward<Args>(args)...);
+            // strContent.assign(outBuf.data(), outBuf.size());
         }
         formatMessage(emLevel, szFun, szFileName, iLine, strContent);
     }

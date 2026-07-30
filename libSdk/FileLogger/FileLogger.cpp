@@ -42,7 +42,7 @@
 #define OUT_NET_UDP                                    0x02
 
 
-#define LOG_SELF_LOG(Level,format, ...)                log(false,Level,__func__, __FILE__, __LINE__,format, ##__VA_ARGS__);
+#define LOG_SELF_LOG(Level,format, ...)                log<false>(Level,__func__, __FILE__, __LINE__,format, ##__VA_ARGS__);
 #define FREE_MEM(x)                                    if((x)) {PM_FREE((x)); (x)=nullptr;}
 FileLogger FileLogger::m_sFileLogger;
 
@@ -429,7 +429,6 @@ void FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, const ch
     //     initLog("");
     // //}
     LogMessage logMsg(emLevel, szFileName, iLine, strMessage.c_str(), szFunName);
-    memory_buf_t bufDest;
     std::string strFormatted = m_pPatternFmt->format(logMsg);
     writeToOutPut(emLevel, strFormatted);
 }
