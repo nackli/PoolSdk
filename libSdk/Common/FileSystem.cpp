@@ -12,8 +12,10 @@
 #include "FileSystem.h"
 #include <string>
 #ifdef _WIN32
-#include <Windows.h>
-#include <unordered_map>
+	#include <Windows.h>
+	#include <unordered_map>
+	#include <direct.h>
+	#define getcwd _getcwd
 #else
 #include <dirent.h>
 #include <sys/stat.h>
@@ -815,11 +817,7 @@ static inline std::string normalizePath(const std::string& path) {
 	std::string getWorkDir()
 	{
 		std::string strWorkDir;
-	#ifdef _WIN32
-		char *szPath = _getcwd(NULL, 0);
-	#else
 		char *szPath = getcwd(NULL, 0);
-	#endif
 		if(szPath)
 		{
 			strWorkDir = szPath;
