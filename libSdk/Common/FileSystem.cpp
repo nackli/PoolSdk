@@ -130,7 +130,7 @@ namespace FileSystem
 		return strReg;
 	}
 
-	FileInfoList getFilesInCurDir(const string& strFilePathAndReg, const string& strExt,bool bOnlyFileName)
+	FileInfoList getFilesInCurDir(const string& strFilePathAndReg, const string& strExt, int16_t iMaxSort, bool bOnlyFileName)
 	{
 		if (strFilePathAndReg.empty())
 			return FileInfoList();
@@ -168,7 +168,18 @@ namespace FileSystem
 		} while (FindNextFileA(hFind, &findData));
 
 		FindClose(hFind);
-		files.sort([](const FILEINFO& tagLeft, const FILEINFO& tagRight) {return CompareFileTime(&tagLeft.lastWriteTime, &tagRight.lastWriteTime) < 0; });
+		if(iMaxSort == -1 || files.size() < iMaxSort)
+			sort(files.begin(), files.end(), [](const FILEINFO& tagLeft, const FILEINFO& tagRight) {return  CompareFileTime(&tagLeft.lastWriteTime, &tagRight.lastWriteTime) < 0; });
+		else
+		{
+			size_t uNthElemNum = files.size() - iMaxSort;
+			nth_element(files.begin(), files.begin() + uNthElemNum, files.end(),
+						[](const auto& a, const auto& b) {
+							return  CompareFileTime(&a.lastWriteTime, &b.lastWriteTime) < 0;   // 按修改时间升序
+						});	
+		}
+
+		//files.sort([](const FILEINFO& tagLeft, const FILEINFO& tagRight) {return CompareFileTime(&tagLeft.lastWriteTime, &tagRight.lastWriteTime) < 0; });
 #else
 		DIR* dir = opendir(strDir.c_str());
 		if (dir == NULL)
@@ -203,8 +214,18 @@ namespace FileSystem
 				}
 			}
 		}
-		// sort the returned files
-		files.sort([](const FILEINFO& tagLeft, const FILEINFO& tagRight) {return tagLeft.lastWriteTime < tagRight.lastWriteTime; });
+
+		if(iMaxSort == -1 || files.size() < (size_t)iMaxSort)
+			sort(files.begin(), files.end(), [](const FILEINFO& tagLeft, const FILEINFO& tagRight) {return tagLeft.lastWriteTime < tagRight.lastWriteTime; });
+		else
+		{
+			size_t uNthElemNum = files.size() - iMaxSort;
+			nth_element(files.begin(), files.begin() + uNthElemNum, files.end(),
+						[](const auto& a, const auto& b) {
+							return a.lastWriteTime < b.lastWriteTime;   // 按修改时间升序
+						});	
+		}
+
 		closedir(dir);
 #endif		
 		return 	files;

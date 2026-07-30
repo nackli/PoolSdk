@@ -183,7 +183,7 @@ int FileOutPutMode::findMaxFileIndex()
 #endif
 #else
 	string strRegFile = m_strFilePrefix + "_";
-	FileSystem::FileInfoList listFile = FileSystem::getFilesInCurDir(strRegFile, m_strFileExt,true);
+	FileSystem::FileInfoList listFile = FileSystem::getFilesInCurDir(strRegFile, m_strFileExt, -1, true);
 	for(auto it = listFile.begin();it != listFile.end();it ++)
 		processFileName(it->strFileName, vecIndices);
 #endif
@@ -200,7 +200,7 @@ void FileOutPutMode::purgeOldFiles()
 		m_cvSwitchFile.wait(lock);
 #if 1
 		string strRegFile = m_strFilePrefix + "_";
-		FileSystem::FileInfoList listFile = FileSystem::getFilesInCurDir(strRegFile, m_strFileExt);
+		FileSystem::FileInfoList listFile = FileSystem::getFilesInCurDir(strRegFile, m_strFileExt,m_iMaxFileNum,false);
 		size_t iIndex = listFile.size();
 
 		for (auto item : listFile)

@@ -12,7 +12,9 @@
 #ifndef __PLATFORM_FILE_SYSTEM_H_
 #define __PLATFORM_FILE_SYSTEM_H_
 #include <string>
-#include <list>
+//#include <list>
+#include <stdint.h>
+#include <vector>
 #include <map>
 #ifdef _WIN32
 #include <Windows.h>
@@ -30,14 +32,14 @@ typedef struct FILEINFO
 	uint64_t lastWriteTime;
 #endif
 }FILEINFO,*LP_FILEINFO;
-using FileInfoList = std::list<FILEINFO>;
+using FileInfoList = std::vector<FILEINFO>;
 using MAPSTRING = std::map<std::string, std::string>;
 #ifdef _WIN32		
 	std::string DosPathToNtPath(const std::string& strPath);
 	std::string NtPathToDosPath(const std::string& strPath);
 #endif	
 	std::string getDirFromFilePath(const std::string& filepath);
-	FileInfoList getFilesInCurDir(const std::string& strFilePathAndReg, const std::string& strExt,bool bOnlyFileName = false);
+	FileInfoList getFilesInCurDir(const std::string& strFilePathAndReg, const std::string& strExt, int16_t iMaxSort = -1, bool bOnlyFileName = false);
 	bool IsDirectoryExists(const std::string& strDir);
 	bool IsFileExists(const std::string& strDir);
 	bool createDirectoryRecursive(std::string& strDir);
