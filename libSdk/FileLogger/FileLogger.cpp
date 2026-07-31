@@ -369,7 +369,7 @@ void FileLogger::initLog(std::ifstream& inFile)
 void FileLogger::initLog(const std::string &strCfgName)
 {
     LOG_CONFIG_INFO tagConfig;
-    std::ifstream inFile(strCfgName);
+    std::ifstream inFile(FileSystem::relative2AbsolutePath(strCfgName)); 
     initLog(inFile);
 }
 
