@@ -430,7 +430,7 @@ void FileLogger::formatMessage(LogLevel emLevel, const char* szFunName, const ch
     // //}
     LogMessage logMsg(emLevel, szFileName, iLine, strMessage.c_str(), szFunName);
     std::string strFormatted = m_pPatternFmt->format(logMsg);
-    writeToOutPut(emLevel, strFormatted);
+    writeToOutPut(emLevel, std::move(strFormatted));
 }
 
 void FileLogger::outPut2File()

@@ -71,7 +71,7 @@ constexpr std::string_view format_as(test_level level) {
 
 int main()
 {
-	FileLogger::getInstance().initLog("./logCfg.json");
+	FileLogger::getInstance().initLog("../logCfg.json");
 	//FileLogger::getInstance().setLogFileName()
 	const int iCntNum = 45000;
 	while (1)

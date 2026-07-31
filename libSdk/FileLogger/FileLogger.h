@@ -95,11 +95,12 @@ private:
         const int iLine, const FormatStr& formatValue, Args&&... args)
     {
         std::string strContent;
-        strContent.reserve(1024);
+        
         if constexpr (BFormat) 
             strContent = fmt::sprintf(formatValue, /*std::forward<Args>*/(args)...); 
         else
         {
+            strContent.reserve(1024);
             fmt::format_to(std::back_inserter(strContent), fmt::runtime(formatValue), std::forward<Args>(args)...);
             // fmt::memory_buffer outBuf;
             // fmt::format_to(fmt::appender(outBuf), fmt::runtime(formatValue), std::forward<Args>(args)...);

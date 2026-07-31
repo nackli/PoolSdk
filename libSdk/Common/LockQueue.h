@@ -45,7 +45,7 @@ public:
         {
             lock_type lock(m_mtxLock);
             m_cvWrite.wait(lock, [this]() {return m_queueData.size() != m_uCapSize; });
-            m_queueData.emplace(value);
+            m_queueData.emplace(std::move(value));
         }
         m_cvRead.notify_one();
     }
@@ -66,7 +66,7 @@ public:
         {
             lock_type lock(m_mtxLock);
             m_cvRead.wait(lock, [this]() {return !m_queueData.empty(); });
-            value = m_queueData.front();
+            value = std::move(m_queueData.front());
         }
         return value;
     }
@@ -98,7 +98,8 @@ public:
         {
             lock_type lock(m_mtxLock);
             m_cvRead.wait(lock, [this]() {return !m_queueData.empty(); });
-            value = m_queueData.front();
+            value = std::move(m_queueData.front());
+            // value = m_queueData.front();
             m_queueData.pop();
         }
         m_cvWrite.notify_one();
@@ -111,7 +112,7 @@ public:
         {
             lock_type lock(m_mtxLock);
             m_cvRead.wait(lock, [this]() {return !m_queueData.empty(); });
-            value = m_queueData.back();
+            value = std::move(m_queueData.back());
             m_queueData.pop();
         }
         m_cvWrite.notify_one();
