@@ -11,9 +11,9 @@
 
 #include "FileSystem.h"
 #include <string>
+#include <unordered_map>
 #ifdef _WIN32
 	#include <Windows.h>
-	#include <unordered_map>
 	#include <direct.h>
 	#define getcwd _getcwd
 #else
