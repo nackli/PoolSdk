@@ -34,7 +34,7 @@ namespace fmt {
         template <typename FormatContext>
         auto format(const HexDump& dump, FormatContext& ctx) const {  // 注意这里是 const
             auto out = ctx.out();
-
+            out = fmt::format_to(out, "Mem len: {:08x}  \n", dump.len);
             for (size_t i = 0; i < dump.len; i += bytes_per_line) {
                 size_t line_len = std::min((size_t)bytes_per_line, dump.len - i);
 
