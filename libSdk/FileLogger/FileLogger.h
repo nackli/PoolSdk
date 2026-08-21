@@ -27,6 +27,8 @@
 #include "../Common/StringUtils.h"
 #include "fmt/printf.h"
 #include "LoggerLevel.h"
+#include "hexDumpFormatter.h"
+#include "fmt/ranges.h"
 #ifdef _WIN32
 #include <windows.h>
 #define getCurThreadtid() GetCurrentThreadId()
@@ -53,6 +55,13 @@
 #define LOG_ERROR(format, ...)              LOG_BASE(EM_LOG_ERROR, format, ##__VA_ARGS__)
 #define LOG_FATAL(format, ...)              LOG_BASE(EM_LOG_FATAL, format, ##__VA_ARGS__)
 #define LOG_BASE_S(Level,format, ...)       FileLogger::getInstance().log<false>(Level,__func__, __FILE__, __LINE__, format, ##__VA_ARGS__)
+#define LOG_HEXDUMP(PTR, LEN)               LOG_BASE_S(EM_LOG_TRACE, "{}", HexDump(PTR,LEN))
+#define LOG_RANGES(LEVEL, VEC, SEP)         LOG_BASE_S(LEVEL, "{}", fmt::join(VEC, SEP))
+#define LOG_RANGE_T(format, VEC, SEP)       LOG_BASE_S(EM_LOG_TRACE, format"{}", fmt::join(VEC, SEP))
+#define LOG_RANGE_D(format, VEC, SEP)       LOG_BASE_S(EM_LOG_DEBUG, format"{}", fmt::join(VEC, SEP))
+#define LOG_RANGE_I(format, VEC, SEP)       LOG_BASE_S(EM_LOG_INFO, format"{}", fmt::join(VEC, SEP))
+#define LOG_RANGE_E(format, VEC, SEP)       LOG_BASE_S(EM_LOG_ERROR, format"{}", fmt::join(VEC, SEP))
+#define LOG_RANGE_F(format, VEC, SEP)       LOG_BASE_S(EM_LOG_FATAL, format"{}", fmt::join(VEC, SEP))
 #define LOG_TRACE_S(format, ...)            LOG_BASE_S(EM_LOG_TRACE, format, ##__VA_ARGS__)
 #define LOG_DEBUG_S(format, ...)            LOG_BASE_S(EM_LOG_DEBUG, format, ##__VA_ARGS__)
 #define LOG_INFO_S(format, ...)             LOG_BASE_S(EM_LOG_INFO, format, ##__VA_ARGS__)

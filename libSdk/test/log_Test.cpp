@@ -10,6 +10,9 @@
 /***************************************************************************************************************************************************/
 #include "./FileLogger/FileLogger.h"
 #include "Common/LockQueue.h"
+#include <vector>
+#include <list>
+#include <map>
 #ifdef _WIN32
 #include <Windows.h>
 #else
@@ -87,13 +90,19 @@ int main()
 			LOG_ERROR("Welcome to nack log space::");
 			LOG_FATAL("Welcome to nack log space::");
 #else
-			LOG_TRACE_S("Welcome to nack log space:: {}", i);
-			LOG_DEBUG_S("Welcome to nack log space:: {}",test_level_27);
-			LOG_INFO_S("Welcome to nack log space::");
-			LOG_WARN_S("Welcome to nack log space::");
-			LOG_ERROR_S("Welcome to nack log space::");
-			LOG_FATAL_S("Welcome to nack log space::");
-			LOG_ERROR_S("Create file mapping fail: {}", 6851);
+			// LOG_TRACE_S("Welcome to nack log space:: {}", i);
+			// LOG_DEBUG_S("Welcome to nack log space:: {}",test_level_27);
+			// LOG_INFO_S("Welcome to nack log space::");
+			// LOG_WARN_S("Welcome to nack log space::");
+			// LOG_ERROR_S("Welcome to nack log space::");
+			// LOG_FATAL_S("Welcome to nack log space::");
+			// LOG_ERROR_S("Create file mapping fail: {}", 6851);
+			std::string str= "Welcome to nack log space, static int lora_config(e22t33LoraHandle *h)";
+			std::vector<uint8_t> vecData(str.begin(), str.end());
+			std::list<std::string> vecString = {"aaaaaaaa","bbbbbbbbb", "cccccccccc"};
+			std::map<std::string, std::string> mapData = { {"key1", "value1"}, {"key2", "value2"} };
+			LOG_HEXDUMP(vecData.data(), vecData.size());
+			LOG_RANGE_I("aaaa", mapData, " ");
 #endif
 		}
 
