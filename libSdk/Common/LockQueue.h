@@ -119,6 +119,12 @@ public:
         return value;
     }
 
+    void wakeup()
+    {
+        std::lock_guard<std::mutex> lock(m_mtxLock);
+        m_cvWrite.notify_all();
+        m_cvRead.notify_all();    
+    }
 private:
     std::queue<value_type> m_queueData;
     std::mutex m_mtxLock;
