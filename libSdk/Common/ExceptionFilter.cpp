@@ -5,7 +5,7 @@
 * @copyright 2025 nackli. All rights reserved.
 * @License: MIT (https://opensource.org/licenses/MIT).
 * @Date: 2025-08-29
-* @LastEditTime: 2025-08-29
+ * @LastEditTime: 2026-09-02 23:22:50
 */
 /***************************************************************************************************************************************************/
 #ifdef BACKTRACE_ENBALE
@@ -229,7 +229,7 @@ void initExceptionDump()
 	DisableSetUnhandlerExcptionFilter();
 #else
 	const char signalId[] = { SIGILL,SIGABRT,SIGFPE,SIGPIPE,SIGTERM,SIGSEGV };
-	for(size_t iIndex = 0;iIndex < sizeof(signalId) / sizeof(signalId);iIndex++)
+	for(size_t iIndex = 0;iIndex < sizeof(signalId) / sizeof(signalId[0]);iIndex++)
 		signal(signalId[iIndex], SignalHandler);
 #endif
 }
