@@ -16,6 +16,10 @@ set(PACKAGE_STRING "${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_VERSION}")
 option(ENABLE_POOL_SDK_TEST "Enable test" OFF)
 option(ENABLE_MEM_POOL "mem pool enable" ON)
 option(USE_LIBFMT_FORMAT "use fmtlib" ON)
+set(LIB_TYPE STATIC)
+if(BUILD_SHARED_LIBS)
+  set(LIB_TYPE SHARED)
+endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -93,7 +97,7 @@ file(GLOB_RECURSE DEV_SOURCES_EXE ./libSdk/*.cpp ./libSdk/*.cc)
 file(GLOB_RECURSE REMOVE_SOURCES ./libSdk/test/*.cpp)
 list(REMOVE_ITEM DEV_SOURCES_EXE ${REMOVE_SOURCES})
 
-add_library(${PROJECT_NAME} ${DEV_SOURCES_EXE})
+add_library(${PROJECT_NAME} ${LIB_TYPE} ${DEV_SOURCES_EXE})
 add_msvc_options(${PROJECT_NAME})
 
 add_executable(${PROJECT_NAME}_test .//libSdk/test/log_Test.cpp)
