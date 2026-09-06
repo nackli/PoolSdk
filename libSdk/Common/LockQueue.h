@@ -5,7 +5,7 @@
 * @copyright 2025 nackli. All rights reserved.
 * @License: MIT (https://opensource.org/licenses/MIT).
 * @Date: 2025-08-29
-* @LastEditTime: 2025-08-29
+ * @LastEditTime: 2026-09-06 09:39:01
 */
 /***************************************************************************************************************************************************/
 #ifndef _PLATFORM_CIRCULAR_QUEUE_H_
@@ -44,7 +44,9 @@ public:
     {
         {
             lock_type lock(m_mtxLock);
-            m_cvWrite.wait(lock, [this]() {return m_queueData.size() != m_uCapSize; });
+            m_cvWrite.wait(lock, [this]() {return m_queueData.size() != m_uCapSize || m_bStop; });
+            if (m_bStop)
+                return;                 // 队列已停止，丢弃新数据，避免永久阻塞
             m_queueData.emplace(std::move(value));
         }
         m_cvRead.notify_one();
@@ -54,7 +56,9 @@ public:
     {
         {
             lock_type lock(m_mtxLock);
-            m_cvWrite.wait(lock, [this]() {return m_queueData.size() != m_uCapSize; });
+            m_cvWrite.wait(lock, [this]() {return m_queueData.size() != m_uCapSize || m_bStop; });
+            if (m_bStop)
+                return;
             m_queueData.emplace(value);
         }
         m_cvRead.notify_one();
@@ -65,8 +69,9 @@ public:
         value_type value;
         {
             lock_type lock(m_mtxLock);
-            m_cvRead.wait(lock, [this]() {return !m_queueData.empty(); });
-            value = std::move(m_queueData.front());
+            m_cvRead.wait(lock, [this]() {return !m_queueData.empty() || m_bStop; });
+            if (!m_queueData.empty())
+                value = std::move(m_queueData.front());
         }
         return value;
     }
@@ -76,8 +81,9 @@ public:
         value_type value;
         {
             lock_type lock(m_mtxLock);
-            m_cvRead.wait(lock, [this]() {return !m_queueData.empty(); });
-            value = m_queueData.back();
+            m_cvRead.wait(lock, [this]() {return !m_queueData.empty() || m_bStop; });
+            if (!m_queueData.empty())
+                value = m_queueData.back();
         }
         return value;
     }
@@ -86,8 +92,9 @@ public:
     {
         {
             lock_type lock(m_mtxLock);    
-            m_cvRead.wait(lock, [this]() {return !m_queueData.empty(); });
-            m_queueData.pop();
+            m_cvRead.wait(lock, [this]() {return !m_queueData.empty() || m_bStop; });
+            if (!m_queueData.empty())
+                m_queueData.pop();
         }
         m_cvWrite.notify_one();
     }
@@ -97,10 +104,13 @@ public:
         value_type value;
         {
             lock_type lock(m_mtxLock);
-            m_cvRead.wait(lock, [this]() {return !m_queueData.empty(); });
-            value = std::move(m_queueData.front());
-            // value = m_queueData.front();
-            m_queueData.pop();
+            m_cvRead.wait(lock, [this]() {return !m_queueData.empty() || m_bStop; });
+            if (!m_queueData.empty())
+            {
+                value = std::move(m_queueData.front());
+                // value = m_queueData.front();
+                m_queueData.pop();
+            }
         }
         m_cvWrite.notify_one();
         return value;
@@ -111,17 +121,25 @@ public:
         value_type value;
         {
             lock_type lock(m_mtxLock);
-            m_cvRead.wait(lock, [this]() {return !m_queueData.empty(); });
-            value = std::move(m_queueData.back());
-            m_queueData.pop();
+            m_cvRead.wait(lock, [this]() {return !m_queueData.empty() || m_bStop; });
+            if (!m_queueData.empty())
+            {
+                value = std::move(m_queueData.back());
+                m_queueData.pop();
+            }
         }
         m_cvWrite.notify_one();
         return value;
     }
 
+    /* 停止并唤醒所有等待者：wakeup 之后所有 pop/push 立即返回，不再阻塞。
+       仅供析构/停机场景使用，普通运行期不要调用。 */
     void wakeup()
     {
-        std::lock_guard<std::mutex> lock(m_mtxLock);
+        {
+            std::lock_guard<std::mutex> lock(m_mtxLock);
+            m_bStop = true;
+        }
         m_cvWrite.notify_all();
         m_cvRead.notify_all();    
     }
@@ -130,6 +148,7 @@ private:
     std::mutex m_mtxLock;
     std::condition_variable m_cvWrite;
     std::condition_variable m_cvRead;
+    bool m_bStop = false;               // wakeup 置位后所有等待立即返回
     size_t m_uCapSize = 100;
 };
 #endif
