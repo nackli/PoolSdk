@@ -81,6 +81,7 @@ std::string Utf8ToGbk(const std::string& str);
 bool OnIsExistGBK(const std::string & strInPut);
 std::string generateUUID();
 std::string randomString(size_t length);
+std::string chinese2Pinyin(const std::string& strChinese);
 
 #ifdef NLOHMANN_JSON
 bool isJsonString(const std::string& str);

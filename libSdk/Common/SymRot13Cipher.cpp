@@ -105,7 +105,7 @@ std::string SymRot13Cipher::decryptAdvanced(const std::string& ciphertext)
     {
         char decryptedChar = ciphertext[i];
 
-        // ·´Ïò¶àÖØ±ä»»
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø±ä»»
         decryptedChar = decryptedChar ^ (expandedKey[i] + i) % 256;
         decryptedChar = rot13Decrypt(decryptedChar);
         decryptedChar = decryptedChar ^ expandedKey[i];
@@ -119,7 +119,7 @@ bool SymRot13Cipher::isKeyStrong(const std::string& key)
 {
     if (key.length() < 8) 
         return false;
-    bool hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
+    bool hasUpper = false, hasLower = false, hasDigit = false;
     for (char c : key) 
     {
         if (c >= 'A' && c <= 'Z') 
@@ -128,8 +128,6 @@ bool SymRot13Cipher::isKeyStrong(const std::string& key)
             hasLower = true;
         else if (c >= '0' && c <= '9') 
             hasDigit = true;
-        else 
-            hasSpecial = true;
     }
     return hasUpper && hasLower && hasDigit;
 }
